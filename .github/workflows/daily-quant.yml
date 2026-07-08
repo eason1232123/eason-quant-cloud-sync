@@ -25,13 +25,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Build market report
+      - name: Build market report cache-safe
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
-          MAX_TIINGO_REQUESTS_PER_RUN: "35"
-          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "8"
-          TIINGO_REQUEST_SLEEP_SECONDS: "0.9"
-        run: python scripts/build_report.py
+          MAX_TIINGO_REQUESTS_PER_RUN: "6"
+          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "2"
+          TIINGO_REQUEST_SLEEP_SECONDS: "2.5"
+        run: python scripts/build_report_safe.py
 
       - name: Build vectorbt validation
         run: python scripts/build_vectorbt_validation.py
