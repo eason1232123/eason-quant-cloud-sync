@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-08T10:05:46.385294+00:00",
+  "generated_at_utc": "2026-07-08T10:23:01.158762+00:00",
   "source": "Derived from market_report.json, backtest_summary.csv, and portfolio_backtest.json when available.",
   "decision_policy": {
     "github_role": "quantitative evidence filter and portfolio-model backtest only",
@@ -25,13 +25,13 @@
     "important_limit": "This is an evidence report, not an automatic trading bot. Final orders require live quote, news, macro, portfolio, and human confirmation."
   },
   "freshness": {
-    "source_report_generated_at_utc": "2026-07-08T10:04:48.080962+00:00",
+    "source_report_generated_at_utc": "2026-07-08T10:21:57.511217+00:00",
     "latest_price_date_max": "2026-07-07",
     "latest_price_date_min": "2026-07-07",
-    "loaded_ticker_count": 48,
+    "loaded_ticker_count": 51,
     "configured_ticker_count": 94,
-    "fresh_request_count": 1,
-    "errors_count": 46
+    "fresh_request_count": 3,
+    "errors_count": 0
   },
   "portfolio_backtest": {
     "available": true,
@@ -143,6 +143,29 @@
       "benchmark": "SPY",
       "avg_alpha_vs_benchmark_pct": 0.92,
       "evidence_score_0_100": 51.3,
+      "fail_reasons": [
+        "worst_MAE<-15%"
+      ],
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "ANET",
+      "rule": "momentum_leader",
+      "status": "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE",
+      "latest_date": "2026-07-07",
+      "latest_price": 166.46,
+      "horizon_days": 20,
+      "samples": 1093,
+      "valid": true,
+      "win_rate_pct": 61.12,
+      "avg_return_pct": 1.86,
+      "median_return_pct": 2.71,
+      "worst_return_pct": -34.18,
+      "avg_mae_pct": -7.67,
+      "worst_mae_pct": -36.79,
+      "benchmark": "SPY",
+      "avg_alpha_vs_benchmark_pct": 1.04,
+      "evidence_score_0_100": 49.6,
       "fail_reasons": [
         "worst_MAE<-15%"
       ],
@@ -811,6 +834,26 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
+      "ticker": "ADI",
+      "severity_0_100": 40,
+      "latest_date": "2026-07-07",
+      "latest_price": 379.03,
+      "reasons": [
+        "below MA20",
+        "below MA50",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 726,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 2.17,
+      "failed_rebound_median_return_pct": 1.88,
+      "failed_rebound_worst_mae_pct": -28.66,
+      "ret_5d_pct": -3.25,
+      "ret_20d_pct": -5.57,
+      "drawdown_from_52w_high_pct": -14.92,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
       "ticker": "META",
       "severity_0_100": 35,
       "latest_date": "2026-07-07",
@@ -1014,6 +1057,24 @@
       "ret_20d_pct": 3.02,
       "drawdown_from_52w_high_pct": -17.99,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "IGM",
+      "severity_0_100": 10,
+      "latest_date": "2026-07-07",
+      "latest_price": 156.65,
+      "reasons": [
+        "below MA20"
+      ],
+      "failed_rebound_samples_20d": 646,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 1.81,
+      "failed_rebound_median_return_pct": 2.21,
+      "failed_rebound_worst_mae_pct": -33.38,
+      "ret_5d_pct": -2.03,
+      "ret_20d_pct": 0.05,
+      "drawdown_from_52w_high_pct": -8.35,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     }
   ],
   "top_valid_watchlist_evidence": [
@@ -1086,6 +1147,16 @@
       "median_return_20d_pct": 2.62,
       "worst_mae_20d_pct": -77.67,
       "evidence_score_0_100": 50.0
+    },
+    {
+      "ticker": "ANET",
+      "rule": "momentum_leader",
+      "active_latest_day": true,
+      "samples_20d": 1093,
+      "win_rate_20d_pct": 61.12,
+      "median_return_20d_pct": 2.71,
+      "worst_mae_20d_pct": -36.79,
+      "evidence_score_0_100": 49.6
     },
     {
       "ticker": "KLAC",
@@ -1256,64 +1327,7 @@
       "median_return_20d_pct": 8.71,
       "worst_mae_20d_pct": -14.03,
       "evidence_score_0_100": 73.9
-    },
-    {
-      "ticker": "USMV",
-      "rule": "rsi_oversold_reclaim_40",
-      "active_latest_day": false,
-      "samples_20d": 142,
-      "win_rate_20d_pct": 85.92,
-      "median_return_20d_pct": 2.34,
-      "worst_mae_20d_pct": -31.1,
-      "evidence_score_0_100": 73.2
     }
   ],
-  "errors": {
-    "ADBE": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "ADI": "ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "ANET": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "CRM": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "IGM": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "INTC": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "IYW": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "MCHP": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "MPWR": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "MRVL": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "NXPI": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "ON": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "QCOM": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "TXN": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "ABNB": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "APP": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "ASTS": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "CFLT": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "COST": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "CSCO": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "DLR": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "EQIX": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "ESTC": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "GE": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "GTLB": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "HIMS": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "HOOD": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "JPM": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "LLY": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "MSTR": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "OKTA": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "PATH": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "RBLX": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "RDDT": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "RKLB": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "SHOP": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "SHY": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "SMR": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "SOFI": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "TEAM": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "UBER": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "VST": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "VYM": "deferred_no_cache: Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
-    "XLE": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "XLF": "deferred_no_cache: new ticker full download deferred by tier rotation",
-    "ZS": "deferred_no_cache: new ticker full download deferred by tier rotation"
-  }
+  "errors": {}
 }
