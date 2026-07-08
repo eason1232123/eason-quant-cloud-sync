@@ -1,12 +1,13 @@
 # Eason Quant Cloud Sync
 
-目标：部署一次，以后 ChatGPT 可以读取固定公开链接里的量化报告。这个仓库不负责自动下单，只负责生成可核验的行情、技术指标、单信号回测、组合级回测、样本外稳定性检查、交易复盘和风险候选。
+目标：部署一次，以后 ChatGPT 可以读取固定公开链接里的量化报告。这个仓库不负责自动下单，只负责生成可核验的行情、技术指标、单信号回测、vectorbt验证、组合级回测、样本外稳定性检查、交易复盘和风险候选。
 
-## 当前 v3.0 结构
+## 当前 v3.5 结构
 
 ```text
 .github/workflows/daily-quant.yml
 scripts/build_report.py
+scripts/build_vectorbt_validation.py
 scripts/build_portfolio_backtest.py
 scripts/build_walk_forward_report.py
 scripts/build_trade_review.py
@@ -67,10 +68,11 @@ https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/
 
 如果能看到 JSON，就成功了。
 
-## v3.0 每日自动流程
+## v3.5 每日自动流程
 
 ```text
 build_report.py
+→ build_vectorbt_validation.py
 → build_portfolio_backtest.py
 → build_walk_forward_report.py
 → build_trade_review.py
@@ -98,7 +100,18 @@ docs/rule_evidence_ranking.csv
 
 包含每个 ticker、每个规则、每个 forward horizon 的样本数、胜率、平均/中位数收益、最大不利波动、与 QQQ/SPY/SMH/SOXX 同日期持有对比。
 
-### 3. 组合级回测 v2.0
+### 3. vectorbt 验证层 v3.5
+
+```text
+docs/vectorbt_validation.json
+docs/vectorbt_signal_stats.csv
+```
+
+`build_vectorbt_validation.py` 使用 vectorbt 对核心规则做独立验证。它适合做高速、多ticker、多规则的 audit layer，帮助检查 pandas 单信号回测是否方向一致。
+
+注意：vectorbt 验证层不是最终交易系统。它每个 ticker/rule 独立回测，不等于你的真实组合资金分配，也不替代组合级回测、walk-forward、实时行情、新闻和真实仓位检查。
+
+### 4. 组合级回测 v2.0
 
 ```text
 docs/portfolio_backtest.json
@@ -119,7 +132,7 @@ docs/portfolio_vs_benchmark.csv
 
 注意：这是模型组合回测，不是你的真实账户交易记录。真实股数、现金、IBKR成交价仍然要在 ChatGPT 里单独确认。
 
-### 4. 样本外 / 稳定性检查 v2.5
+### 5. 样本外 / 稳定性检查 v2.5
 
 ```text
 docs/walk_forward_report.json
@@ -137,7 +150,7 @@ test_2022_latest
 
 目标是检查策略是不是只在某一段历史碰巧有效，而不是长期稳定有效。
 
-### 5. 真实交易复盘 v3.0
+### 6. 真实交易复盘 v3.0
 
 ```text
 data/trade_log.csv
@@ -160,7 +173,7 @@ date,ticker,action,shares,fill_price,fees,reason,signal_source,backtest_sample_c
 
 重要：这个仓库是 public 时，不建议记录真实敏感账户信息。如果要记录真实成交，最好改 private，或者只记录脱敏数据。
 
-### 6. 总控板 / ChatGPT 主入口
+### 7. 总控板 / ChatGPT 主入口
 
 ```text
 docs/action_board.json
@@ -181,6 +194,7 @@ docs/action_board.json
 
 ```text
 单信号回测
+vectorbt 独立验证
 组合级回测
 walk-forward 稳定性
 过拟合风险
@@ -211,6 +225,7 @@ ChatGPT 应该优先读取：
 ```text
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/action_board.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/eason_master_status.json
+https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/vectorbt_validation.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/eason_signal.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/portfolio_backtest.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/walk_forward_report.json
