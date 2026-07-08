@@ -1,6 +1,7 @@
 # Eason Quant large universe, cache-safe mode.
 # Keep many stocks in the universe, but scripts/build_report.py only refreshes a capped number per run
 # so the free Tiingo API is less likely to hit HTTP 429.
+# Workflow trigger: 2026-07-08T15:00:00-04:00
 
 TICKERS = [
     # Market / regime anchors
