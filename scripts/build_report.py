@@ -7,7 +7,7 @@ import requests
 import numpy as np
 import pandas as pd
 
-from config import TICKERS, START_DATE, PORTFOLIO
+from config import TICKERS, START_DATE,
 
 API_KEY = os.getenv("TIINGO_API_KEY")
 if not API_KEY:
