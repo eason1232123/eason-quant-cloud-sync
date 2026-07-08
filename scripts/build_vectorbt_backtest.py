@@ -19,6 +19,7 @@ FEES = 0.0005
 SLIPPAGE = 0.0005
 MIN_SAMPLE = 20
 HORIZONS = [5, 10, 20, 60]
+EXECUTION_SHIFT_DAYS = 1
 
 ENTRY_RULES = {
     "ma20_reclaim_bullish": {
@@ -86,8 +87,6 @@ def json_safe(value: Any) -> Any:
         if pd.isna(value) or np.isinf(value):
             return None
         return float(value)
-    if value is pd.NaT:
-        return None
     try:
         if pd.isna(value):
             return None
@@ -105,7 +104,6 @@ def load_price(ticker: str) -> pd.DataFrame:
     path = csv_path(ticker)
     if not path.exists():
         return pd.DataFrame()
-
     df = pd.read_csv(path)
     if df.empty:
         return pd.DataFrame()
@@ -195,6 +193,10 @@ def metric_summary(value: pd.Series) -> dict[str, Any]:
     }
 
 
+def shift_execution(signal: pd.Series) -> pd.Series:
+    return signal.shift(EXECUTION_SHIFT_DAYS).fillna(False).astype(bool)
+
+
 def trade_returns(close: pd.Series, entries: pd.Series, exits: pd.Series) -> list[float]:
     in_pos = False
     entry_price = None
@@ -224,34 +226,48 @@ def latest_position(entries: pd.Series, exits: pd.Series) -> bool:
     return in_pos
 
 
+def portfolio_value_series(pf: Any, index: pd.Index) -> pd.Series:
+    value = pf.value()
+    if isinstance(value, pd.DataFrame):
+        value = value.iloc[:, 0]
+    if isinstance(value, pd.Series):
+        return pd.Series(value.to_numpy(), index=index)
+    arr = np.asarray(value).reshape(-1)
+    return pd.Series(arr, index=index)
+
+
 def run_vectorbt_strategy(ticker: str, d: pd.DataFrame, strategy_name: str, spec: dict[str, str]) -> dict[str, Any]:
     entry_col = spec["entry_col"]
     exit_col = spec["exit_col"]
     data = d.dropna(subset=["close"]).copy()
-    entries = data[entry_col].astype(bool)
-    exits = data[exit_col].astype(bool)
+    raw_entries = data[entry_col].astype(bool)
+    raw_exits = data[exit_col].astype(bool)
+    entries = shift_execution(raw_entries)
+    exits = shift_execution(raw_exits)
 
     row: dict[str, Any] = {
         "ticker": ticker,
         "strategy": strategy_name,
         "engine": "vectorbt",
+        "execution_assumption": "EOD signal, next-bar execution: entries/exits shifted 1 trading day to avoid same-close look-ahead.",
         "tested_entry_rule": entry_col.replace("entry_", ""),
         "tested_risk_rule": exit_col.replace("exit_", ""),
-        "sample_count": int(entries.sum()),
+        "sample_count": int(raw_entries.sum()),
+        "executed_entry_count": int(entries.sum()),
         "lookback_start": data["date"].min().date().isoformat() if not data.empty else None,
         "lookback_end": data["date"].max().date().isoformat() if not data.empty else None,
-        "forward_horizon": "signal_to_exit_or_latest_close",
-        "valid": bool(int(entries.sum()) >= MIN_SAMPLE and len(data) >= 252),
+        "forward_horizon": "signal_to_shifted_exit_or_latest_close",
+        "valid": bool(int(raw_entries.sum()) >= MIN_SAMPLE and len(data) >= 252),
         "min_sample_required": MIN_SAMPLE,
         "description": spec["description"],
     }
-    if entries.sum() == 0 or len(data) < 60:
+    if raw_entries.sum() == 0 or len(data) < 60:
         row["reason"] = "not enough signals or history"
         return row
 
     close = data["close"]
     pf = vbt.Portfolio.from_signals(close=close, entries=entries, exits=exits, init_cash=INITIAL_CASH, fees=FEES, slippage=SLIPPAGE, freq="1D")
-    value = pd.Series(pf.value(), index=data.index)
+    value = portfolio_value_series(pf, data.index)
     row.update(metric_summary(value))
 
     buy_hold_return = close.iloc[-1] / close.iloc[0] - 1
@@ -266,8 +282,8 @@ def run_vectorbt_strategy(ticker: str, d: pd.DataFrame, strategy_name: str, spec
             "median_trade_return": clean_float(np.median(returns) if returns else None),
             "worst_trade_return": clean_float(np.min(returns) if returns else None),
             "best_trade_return": clean_float(np.max(returns) if returns else None),
-            "latest_entry_active": bool(entries.iloc[-1]),
-            "latest_exit_active": bool(exits.iloc[-1]),
+            "latest_entry_signal_active": bool(raw_entries.iloc[-1]),
+            "latest_exit_signal_active": bool(raw_exits.iloc[-1]),
             "latest_position_active": bool(latest_position(entries, exits)),
         }
     )
@@ -280,13 +296,18 @@ def attach_benchmark(data: pd.DataFrame, benchmark: pd.DataFrame | None, horizon
     b = benchmark[["date", "close"]].copy().rename(columns={"close": "bench_close"})
     b[f"bench_fwd_{horizon}d"] = b["bench_close"].shift(-horizon) / b["bench_close"] - 1
     merged = data[["date"]].merge(b[["date", f"bench_fwd_{horizon}d"]], on="date", how="left")
-    return merged[f"bench_fwd_{horizon}d"]
+    return pd.Series(merged[f"bench_fwd_{horizon}d"].to_numpy(), index=data.index)
+
+
+def future_mae(data: pd.DataFrame, horizon: int) -> pd.Series:
+    # For row i, this gives min low over rows i+1 ... i+horizon.
+    return data["low"].rolling(horizon).min().shift(-horizon) / data["close"] - 1
 
 
 def forward_evidence_row(ticker: str, d: pd.DataFrame, rule_name: str, rule_type: str, signal_col: str, horizon: int, benchmark: pd.DataFrame | None, description: str) -> dict[str, Any]:
     data = d.copy()
     data[f"fwd_{horizon}d"] = data["close"].shift(-horizon) / data["close"] - 1
-    data[f"mae_{horizon}d"] = data["low"].rolling(horizon).min().shift(-horizon) / data["close"] - 1
+    data[f"mae_{horizon}d"] = future_mae(data, horizon)
     data[f"bench_fwd_{horizon}d"] = attach_benchmark(data, benchmark, horizon)
     sig = data[data[signal_col]].dropna(subset=[f"fwd_{horizon}d"])
 
@@ -301,6 +322,7 @@ def forward_evidence_row(ticker: str, d: pd.DataFrame, rule_name: str, rule_type
         "min_sample_required": MIN_SAMPLE,
         "lookback_start": data["date"].min().date().isoformat() if not data.empty else None,
         "lookback_end": data["date"].max().date().isoformat() if not data.empty else None,
+        "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": description,
     }
     if sig.empty:
@@ -406,10 +428,11 @@ def main() -> None:
     report = {
         "available": True,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "vectorbt-validation-layer-v1.1-json-safe",
+        "version": "vectorbt-validation-layer-v1.2-next-bar-execution",
         "engine": "vectorbt",
         "vectorbt_version": getattr(vbt, "__version__", None),
-        "data_source": "Local Tiingo CSV cache in docs generated by scripts/build_report.py",
+        "execution_assumption": "Executable strategy backtests shift entry/exit signals by 1 trading day to avoid same-close look-ahead. Forward evidence remains signal-close outcome measurement.",
+        "data_source": "Local Tiingo CSV cache in docs generated by scripts/build_report_safe.py",
         "loaded_ticker_count": len(price_map),
         "configured_ticker_count": len(TICKERS),
         "initial_cash": INITIAL_CASH,
