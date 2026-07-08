@@ -1,13 +1,14 @@
 # Eason Quant Cloud Sync
 
-目标：部署一次，以后 ChatGPT 可以读取固定公开链接里的量化报告。这个仓库不负责自动下单，只负责生成可核验的行情、技术指标、单信号回测、vectorbt验证、组合级回测、样本外稳定性检查、交易复盘和风险候选。
+目标：部署一次，以后 ChatGPT 可以读取固定公开链接里的量化报告。这个仓库不负责自动下单，只负责生成可核验的行情、技术指标、单信号回测、vectorbt验证/证据层、组合级回测、样本外稳定性检查、交易复盘和风险候选。
 
-## 当前 v3.5 结构
+## 当前 v3.6 结构
 
 ```text
 .github/workflows/daily-quant.yml
 scripts/build_report.py
 scripts/build_vectorbt_validation.py
+scripts/build_vectorbt_backtest.py
 scripts/build_portfolio_backtest.py
 scripts/build_walk_forward_report.py
 scripts/build_trade_review.py
@@ -68,11 +69,12 @@ https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/
 
 如果能看到 JSON，就成功了。
 
-## v3.5 每日自动流程
+## v3.6 每日自动流程
 
 ```text
 build_report.py
 → build_vectorbt_validation.py
+→ build_vectorbt_backtest.py
 → build_portfolio_backtest.py
 → build_walk_forward_report.py
 → build_trade_review.py
@@ -100,16 +102,21 @@ docs/rule_evidence_ranking.csv
 
 包含每个 ticker、每个规则、每个 forward horizon 的样本数、胜率、平均/中位数收益、最大不利波动、与 QQQ/SPY/SMH/SOXX 同日期持有对比。
 
-### 3. vectorbt 验证层 v3.5
+### 3. vectorbt 验证与证据层 v3.6
 
 ```text
 docs/vectorbt_validation.json
 docs/vectorbt_signal_stats.csv
+docs/vectorbt_report.json
+docs/vectorbt_strategy_summary.csv
+docs/vectorbt_forward_evidence.csv
 ```
 
-`build_vectorbt_validation.py` 使用 vectorbt 对核心规则做独立验证。它适合做高速、多ticker、多规则的 audit layer，帮助检查 pandas 单信号回测是否方向一致。
+`build_vectorbt_validation.py` 使用 vectorbt 对核心规则做独立快速验证。它适合做多 ticker、多规则的 audit layer，帮助检查 pandas 单信号回测是否方向一致。
 
-注意：vectorbt 验证层不是最终交易系统。它每个 ticker/rule 独立回测，不等于你的真实组合资金分配，也不替代组合级回测、walk-forward、实时行情、新闻和真实仓位检查。
+`build_vectorbt_backtest.py` 额外输出更接近 ChatGPT 决策需要的证据字段：tested risk rule、sample count、lookback window、forward horizon、win rate / avoidance rate、average / median forward return、worst case / max drawdown，以及与持有或 QQQ 同日期表现对比。
+
+注意：vectorbt 验证/证据层不是最终交易系统。它不等于你的真实组合资金分配，也不替代组合级回测、walk-forward、实时行情、新闻和真实仓位检查。
 
 ### 4. 组合级回测 v2.0
 
@@ -195,6 +202,7 @@ docs/action_board.json
 ```text
 单信号回测
 vectorbt 独立验证
+vectorbt 证据层
 组合级回测
 walk-forward 稳定性
 过拟合风险
@@ -226,6 +234,7 @@ ChatGPT 应该优先读取：
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/action_board.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/eason_master_status.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/vectorbt_validation.json
+https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/vectorbt_report.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/eason_signal.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/portfolio_backtest.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/walk_forward_report.json
