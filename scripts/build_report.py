@@ -1,12 +1,15 @@
+from __future__ import annotations
+
+import json
 import os
 import time
-import json
-from pathlib import Path
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
+from typing import Any
 
-import requests
 import numpy as np
 import pandas as pd
+import requests
 
 from config import TICKERS, START_DATE
 
@@ -20,9 +23,31 @@ OUT.mkdir(exist_ok=True)
 HORIZONS = [5, 10, 20, 60]
 MIN_SAMPLE = 20
 
+MAX_TIINGO_REQUESTS_PER_RUN = int(os.getenv("MAX_TIINGO_REQUESTS_PER_RUN", "35"))
+MAX_NEW_FULL_DOWNLOADS_PER_RUN = int(os.getenv("MAX_NEW_FULL_DOWNLOADS_PER_RUN", "8"))
+REQUEST_SLEEP_SECONDS = float(os.getenv("TIINGO_REQUEST_SLEEP_SECONDS", "0.9"))
+
+CORE_ALWAYS_REFRESH = {
+    "SPY", "QQQ", "SMH", "SOXX", "SGOV",
+    "MSFT", "NVDA", "AAPL", "GOOGL", "AMZN", "META",
+    "GLD", "TLT", "IEF",
+}
+
 
 def csv_path(ticker: str) -> Path:
-    return OUT / f"{ticker}_daily.csv"
+    safe = ticker.replace("/", "-").replace(".", "-")
+    return OUT / f"{safe}_daily.csv"
+
+
+def clean_float(value: Any, digits: int = 4) -> Any:
+    if value is None:
+        return None
+    try:
+        if pd.isna(value) or np.isinf(value):
+            return None
+        return round(float(value), digits)
+    except Exception:
+        return None
 
 
 def normalize(df: pd.DataFrame, ticker: str) -> pd.DataFrame:
@@ -37,31 +62,44 @@ def normalize(df: pd.DataFrame, ticker: str) -> pd.DataFrame:
     low_col = "adjLow" if "adjLow" in df.columns else "low"
     high_col = "adjHigh" if "adjHigh" in df.columns else "high"
 
-    df["price"] = df[price_col]
-    df["low_price"] = df[low_col]
-    df["high_price"] = df[high_col]
+    df["price"] = pd.to_numeric(df[price_col], errors="coerce")
+    df["low_price"] = pd.to_numeric(df[low_col], errors="coerce")
+    df["high_price"] = pd.to_numeric(df[high_col], errors="coerce")
 
-    return df.sort_values("date").reset_index(drop=True)
+    return df.dropna(subset=["date", "price"]).sort_values("date").reset_index(drop=True)
+
+
+def load_existing(ticker: str) -> pd.DataFrame:
+    path = csv_path(ticker)
+    if not path.exists():
+        return pd.DataFrame()
+
+    try:
+        df = pd.read_csv(path)
+        if df.empty:
+            return df
+        return normalize(df, ticker)
+    except Exception:
+        return pd.DataFrame()
+
+
+def cached_latest_date(ticker: str):
+    existing = load_existing(ticker)
+    if existing.empty:
+        return None
+    return pd.to_datetime(existing["date"]).max().date()
 
 
 def get_fetch_start_date(ticker: str) -> str:
-    path = csv_path(ticker)
-    if not path.exists():
+    last_date = cached_latest_date(ticker)
+    if last_date is None:
         return START_DATE
 
-    try:
-        old = pd.read_csv(path, usecols=["date"])
-        if old.empty:
-            return START_DATE
-
-        last_date = pd.to_datetime(old["date"]).max().date()
-        start = last_date - timedelta(days=7)
-        min_start = pd.to_datetime(START_DATE).date()
-        if start < min_start:
-            start = min_start
-        return start.isoformat()
-    except Exception:
-        return START_DATE
+    start = last_date - timedelta(days=7)
+    min_start = pd.to_datetime(START_DATE).date()
+    if start < min_start:
+        start = min_start
+    return start.isoformat()
 
 
 def fetch_tiingo(ticker: str, start_date: str) -> pd.DataFrame:
@@ -74,23 +112,11 @@ def fetch_tiingo(ticker: str, start_date: str) -> pd.DataFrame:
 
     r = requests.get(url, params=params, timeout=45)
     if r.status_code != 200:
-        raise RuntimeError(f"{ticker} HTTP {r.status_code}: {r.text[:200]}")
+        raise RuntimeError(f"{ticker} HTTP {r.status_code}: {r.text[:240]}")
 
     df = pd.DataFrame(r.json())
     if df.empty:
         raise RuntimeError(f"{ticker}: empty data from {start_date}")
-
-    return normalize(df, ticker)
-
-
-def load_existing(ticker: str) -> pd.DataFrame:
-    path = csv_path(ticker)
-    if not path.exists():
-        return pd.DataFrame()
-
-    df = pd.read_csv(path)
-    if df.empty:
-        return df
 
     return normalize(df, ticker)
 
@@ -121,13 +147,24 @@ def merge_and_save(ticker: str, new_df: pd.DataFrame) -> pd.DataFrame:
     return merged
 
 
+def request_priority(ticker: str) -> tuple:
+    last = cached_latest_date(ticker)
+    core_rank = 0 if ticker in CORE_ALWAYS_REFRESH else 1
+
+    if last is None:
+        return (core_rank, 0, datetime(1900, 1, 1).date())
+
+    return (core_rank, 1, last)
+
+
 def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
     d = df.copy()
     d["date"] = pd.to_datetime(d["date"])
-    d["ret_1d"] = d["price"].pct_change(1)
-    d["ret_5d"] = d["price"].pct_change(5)
-    d["ret_10d"] = d["price"].pct_change(10)
-    d["ret_20d"] = d["price"].pct_change(20)
+    d["price"] = pd.to_numeric(d["price"], errors="coerce")
+    d = d.dropna(subset=["price"]).sort_values("date").reset_index(drop=True)
+
+    for n in [1, 5, 10, 20, 60]:
+        d[f"ret_{n}d"] = d["price"].pct_change(n)
 
     for n in [5, 10, 20, 50, 100, 200]:
         d[f"ma{n}"] = d["price"].rolling(n).mean()
@@ -142,13 +179,18 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
 
     d["ma20_slope_10d"] = d["ma20"] / d["ma20"].shift(10) - 1
     d["ma50_slope_20d"] = d["ma50"] / d["ma50"].shift(20) - 1
+    d["rolling_high_20d"] = d["price"].rolling(20).max()
+    d["rolling_high_252d"] = d["price"].rolling(252, min_periods=20).max()
+    d["drawdown_from_52w_high"] = d["price"] / d["rolling_high_252d"] - 1
+    d["volatility_20d"] = d["ret_1d"].rolling(20).std() * np.sqrt(252)
+    d["volatility_60d"] = d["ret_1d"].rolling(60).std() * np.sqrt(252)
 
     return d
 
 
-def prepare_benchmarks(price_map: dict) -> dict:
+def prepare_benchmarks(price_map: dict[str, pd.DataFrame]) -> dict[str, pd.DataFrame]:
     benches = {}
-    for ticker in ["QQQ", "SPY", "SMH"]:
+    for ticker in ["QQQ", "SPY", "SMH", "SOXX"]:
         if ticker in price_map:
             benches[ticker] = add_indicators(price_map[ticker])[["date", "price"]].rename(
                 columns={"price": f"{ticker}_price"}
@@ -157,25 +199,40 @@ def prepare_benchmarks(price_map: dict) -> dict:
 
 
 def choose_relative_benchmark(ticker: str) -> str:
+    semis = {
+        "SMH", "SOXX", "NVDA", "AVGO", "AMD", "ASML", "TSM", "MU", "LRCX", "AMAT",
+        "KLAC", "ARM", "INTC", "MRVL", "QCOM", "ON", "ADI", "TXN", "NXPI", "MCHP", "MPWR"
+    }
+    software = {
+        "IGV", "CRWD", "PLTR", "SNOW", "DDOG", "NET", "NOW", "PANW", "MDB", "ORCL",
+        "CRM", "ADBE", "ZS", "OKTA", "TEAM", "SHOP", "CFLT", "ESTC", "GTLB", "PATH"
+    }
+    defensive = {"GLD", "TLT", "IEF", "SHY", "XLV", "XLP", "XLU", "USMV", "VYM", "SGOV"}
     if ticker in ["QQQ", "SPY"]:
         return "SPY" if ticker == "QQQ" else "QQQ"
-    if ticker in ["SMH", "SOXX", "SOXQ", "NVDA", "AVGO", "AMD", "ASML", "TSM", "MU"]:
+    if ticker in semis:
+        return "SMH" if "SMH" in TICKERS else "QQQ"
+    if ticker in software:
         return "QQQ"
+    if ticker in defensive:
+        return "SPY"
     return "SPY"
 
 
-def build_rule_frame(ticker: str, df: pd.DataFrame, price_map: dict) -> pd.DataFrame:
+def build_rule_frame(ticker: str, df: pd.DataFrame, price_map: dict[str, pd.DataFrame]) -> pd.DataFrame:
     d = add_indicators(df)
 
     rel_bench = choose_relative_benchmark(ticker)
     if rel_bench in price_map:
-        b = add_indicators(price_map[rel_bench])[["date", "ret_20d"]].rename(
-            columns={"ret_20d": "bench_ret_20d"}
+        b = add_indicators(price_map[rel_bench])[["date", "ret_20d", "ret_60d"]].rename(
+            columns={"ret_20d": "bench_ret_20d", "ret_60d": "bench_ret_60d"}
         )
         d = d.merge(b, on="date", how="left")
         d["relative_20d"] = d["ret_20d"] - d["bench_ret_20d"]
+        d["relative_60d"] = d["ret_60d"] - d["bench_ret_60d"]
     else:
         d["relative_20d"] = np.nan
+        d["relative_60d"] = np.nan
 
     d["rule_pullback_reclaim_5dma"] = (d["ret_5d"] <= -0.04) & (d["price"] > d["ma5"])
 
@@ -204,6 +261,14 @@ def build_rule_frame(ticker: str, df: pd.DataFrame, price_map: dict) -> pd.DataF
         & (d["relative_20d"] > 0)
     )
 
+    d["rule_momentum_leader"] = (
+        (d["price"] > d["ma20"])
+        & (d["price"] > d["ma50"])
+        & (d["ret_20d"] > 0.05)
+        & (d["relative_20d"] > 0)
+        & (d["rsi14"] < 78)
+    )
+
     d["rule_failed_rebound_risk"] = (
         (d["price"] < d["ma5"])
         & (d["price"] < d["price"].rolling(10).min().shift(1))
@@ -218,12 +283,12 @@ def max_adverse_excursion(df: pd.DataFrame, horizon: int) -> pd.Series:
         if i + horizon >= len(df):
             maes.append(np.nan)
         else:
-            future_min = df.loc[i + 1 : i + horizon, "low_price"].min()
+            future_min = df.loc[i + 1: i + horizon, "low_price"].min()
             maes.append(future_min / df.loc[i, "price"] - 1)
     return pd.Series(maes, index=df.index)
 
 
-def attach_benchmark_forward_returns(df: pd.DataFrame, benchmarks: dict, horizon: int) -> pd.DataFrame:
+def attach_benchmark_forward_returns(df: pd.DataFrame, benchmarks: dict[str, pd.DataFrame], horizon: int) -> pd.DataFrame:
     out = df[["date"]].copy()
     for bench_name, bench_df in benchmarks.items():
         b = bench_df.copy()
@@ -237,7 +302,7 @@ def summarize_rule(
     ticker: str,
     df: pd.DataFrame,
     rule_col: str,
-    benchmarks: dict,
+    benchmarks: dict[str, pd.DataFrame],
     horizon: int,
 ) -> dict:
     d = df.copy()
@@ -267,29 +332,29 @@ def summarize_rule(
 
     result.update(
         {
-            "win_rate": round(float((fwd > 0).mean()), 4),
-            "avg_return": round(float(fwd.mean()), 4),
-            "median_return": round(float(fwd.median()), 4),
-            "worst_return": round(float(fwd.min()), 4),
-            "best_return": round(float(fwd.max()), 4),
-            "avg_mae": round(float(mae.mean()), 4),
-            "worst_mae": round(float(mae.min()), 4),
+            "win_rate": clean_float((fwd > 0).mean()),
+            "avg_return": clean_float(fwd.mean()),
+            "median_return": clean_float(fwd.median()),
+            "worst_return": clean_float(fwd.min()),
+            "best_return": clean_float(fwd.max()),
+            "avg_mae": clean_float(mae.mean()),
+            "worst_mae": clean_float(mae.min()),
             "lookback_start": d["date"].min().date().isoformat(),
             "lookback_end": d["date"].max().date().isoformat(),
         }
     )
 
-    for bench_name in ["QQQ", "SPY", "SMH"]:
+    for bench_name in ["QQQ", "SPY", "SMH", "SOXX"]:
         col = f"{bench_name}_fwd_{horizon}d"
         if col in sig.columns and sig[col].notna().any():
             bench_avg = float(sig[col].mean())
-            result[f"avg_{bench_name}_same_dates"] = round(bench_avg, 4)
-            result[f"avg_alpha_vs_{bench_name}"] = round(float(fwd.mean() - bench_avg), 4)
+            result[f"avg_{bench_name}_same_dates"] = clean_float(bench_avg)
+            result[f"avg_alpha_vs_{bench_name}"] = clean_float(float(fwd.mean() - bench_avg))
 
     return result
 
 
-def summarize_all_rules(ticker: str, df: pd.DataFrame, price_map: dict, benchmarks: dict) -> tuple[dict, list]:
+def summarize_all_rules(ticker: str, df: pd.DataFrame, price_map: dict[str, pd.DataFrame], benchmarks: dict[str, pd.DataFrame]) -> tuple[dict, list]:
     rule_frame = build_rule_frame(ticker, df, price_map)
     rule_cols = [
         "rule_pullback_reclaim_5dma",
@@ -297,6 +362,7 @@ def summarize_all_rules(ticker: str, df: pd.DataFrame, price_map: dict, benchmar
         "rule_ma20_reclaim_bullish",
         "rule_ma50_reclaim_bullish",
         "rule_relative_strength_rebound",
+        "rule_momentum_leader",
         "rule_failed_rebound_risk",
     ]
 
@@ -317,34 +383,59 @@ def summarize_all_rules(ticker: str, df: pd.DataFrame, price_map: dict, benchmar
 
     nested["active_signals_latest_day"] = active
     nested["latest_date"] = latest["date"].date().isoformat()
-    nested["latest_price"] = round(float(latest["price"]), 4)
+    nested["latest_price"] = clean_float(latest["price"])
+    nested["trading_days"] = int(len(rule_frame))
+    nested["short_history"] = bool(len(rule_frame) < 252)
+    nested["very_short_history"] = bool(len(rule_frame) < 90)
 
     return nested, all_rows
 
 
-def latest_technical(df: pd.DataFrame, price_map: dict, ticker: str) -> dict:
+def latest_technical(df: pd.DataFrame, price_map: dict[str, pd.DataFrame], ticker: str) -> dict:
     d = build_rule_frame(ticker, df, price_map)
     row = d.iloc[-1]
 
+    trading_days = int(len(d))
+    active = {}
+    for col in d.columns:
+        if col.startswith("rule_"):
+            active[col.replace("rule_", "")] = bool(row.get(col, False))
+
     return {
         "latest_date": row["date"].date().isoformat(),
-        "latest_price": round(float(row["price"]), 4),
-        "ret_1d": round(float(row["ret_1d"]), 4) if pd.notna(row["ret_1d"]) else None,
-        "ret_5d": round(float(row["ret_5d"]), 4) if pd.notna(row["ret_5d"]) else None,
-        "ret_20d": round(float(row["ret_20d"]), 4) if pd.notna(row["ret_20d"]) else None,
-        "rsi14": round(float(row["rsi14"]), 2) if pd.notna(row["rsi14"]) else None,
-        "above_ma5": bool(row["price"] > row["ma5"]) if pd.notna(row["ma5"]) else None,
-        "above_ma20": bool(row["price"] > row["ma20"]) if pd.notna(row["ma20"]) else None,
-        "above_ma50": bool(row["price"] > row["ma50"]) if pd.notna(row["ma50"]) else None,
-        "above_ma200": bool(row["price"] > row["ma200"]) if pd.notna(row["ma200"]) else None,
-        "relative_20d": round(float(row["relative_20d"]), 4) if pd.notna(row["relative_20d"]) else None,
+        "latest_price": clean_float(row["price"]),
+        "trading_days": trading_days,
+        "short_history": bool(trading_days < 252),
+        "very_short_history": bool(trading_days < 90),
+        "new_listing_policy": (
+            "Insufficient full-cycle backtest. Can be considered only as watchlist/tiny satellite if momentum, liquidity, "
+            "relative strength, news/fundamentals, and market regime all confirm."
+            if trading_days < 252 else "Normal backtest evidence available."
+        ),
+        "ret_1d": clean_float(row.get("ret_1d")),
+        "ret_5d": clean_float(row.get("ret_5d")),
+        "ret_10d": clean_float(row.get("ret_10d")),
+        "ret_20d": clean_float(row.get("ret_20d")),
+        "ret_60d": clean_float(row.get("ret_60d")),
+        "rsi14": clean_float(row.get("rsi14"), 2),
+        "above_ma5": bool(row["price"] > row["ma5"]) if pd.notna(row.get("ma5")) else None,
+        "above_ma20": bool(row["price"] > row["ma20"]) if pd.notna(row.get("ma20")) else None,
+        "above_ma50": bool(row["price"] > row["ma50"]) if pd.notna(row.get("ma50")) else None,
+        "above_ma200": bool(row["price"] > row["ma200"]) if pd.notna(row.get("ma200")) else None,
+        "drawdown_from_52w_high": clean_float(row.get("drawdown_from_52w_high")),
+        "volatility_20d": clean_float(row.get("volatility_20d")),
+        "volatility_60d": clean_float(row.get("volatility_60d")),
+        "relative_20d": clean_float(row.get("relative_20d")),
+        "relative_60d": clean_float(row.get("relative_60d")),
         "relative_benchmark": choose_relative_benchmark(ticker),
+        "active_signals": active,
     }
 
 
-def corr_90d(price_map: dict) -> dict:
-    core = ["QQQ", "SMH", "SPY", "MSFT"]
-    if not all(x in price_map for x in core):
+def corr_90d(price_map: dict[str, pd.DataFrame]) -> dict:
+    core = ["QQQ", "SMH", "SPY", "MSFT", "NVDA"]
+    core = [x for x in core if x in price_map]
+    if len(core) < 3:
         return {}
 
     merged = None
@@ -358,65 +449,107 @@ def corr_90d(price_map: dict) -> dict:
     return rets.corr().round(4).to_dict()
 
 
+def evidence_score(row: dict) -> float:
+    samples = row.get("samples", 0) or 0
+    win_rate = row.get("win_rate")
+    median_ret = row.get("median_return")
+    worst_mae = row.get("worst_mae")
+    if win_rate is None or median_ret is None:
+        return 0.0
+
+    score = 0.0
+    score += min(samples, 80) / 80 * 30
+    score += max(0, float(win_rate) - 0.5) / 0.3 * 30
+    score += max(0, float(median_ret)) / 0.08 * 25
+    if worst_mae is not None:
+        score += max(0, 0.25 + float(worst_mae)) / 0.25 * 15
+    return round(float(min(100, score)), 1)
+
+
 def rank_rule_evidence(backtests: dict) -> dict:
     ranking = {}
     for ticker, rules in backtests.items():
         rows = []
         for rule_name, horizons in rules.items():
-            if rule_name in ["active_signals_latest_day", "latest_date", "latest_price"]:
+            if rule_name in ["active_signals_latest_day", "latest_date", "latest_price", "trading_days", "short_history", "very_short_history"]:
+                continue
+            if not isinstance(horizons, dict):
                 continue
             res20 = horizons.get("20d", {})
             if not res20:
                 continue
 
-            samples = res20.get("samples", 0)
-            valid = res20.get("valid", False)
-            median_ret = res20.get("median_return", None)
-            win_rate = res20.get("win_rate", None)
-            worst_mae = res20.get("worst_mae", None)
             active = rules.get("active_signals_latest_day", {}).get(rule_name, False)
-
-            if median_ret is None or win_rate is None:
-                evidence_score = 0
-            else:
-                evidence_score = 0
-                evidence_score += min(samples, 80) / 80 * 30
-                evidence_score += max(0, win_rate - 0.5) / 0.3 * 30
-                evidence_score += max(0, median_ret) / 0.08 * 25
-                if worst_mae is not None:
-                    evidence_score += max(0, 0.25 + worst_mae) / 0.25 * 15
-                evidence_score = round(float(min(100, evidence_score)), 1)
+            score = evidence_score(res20)
 
             rows.append(
                 {
+                    "ticker": ticker,
                     "rule": rule_name,
-                    "samples_20d": samples,
-                    "valid": valid,
-                    "win_rate_20d": win_rate,
-                    "median_return_20d": median_ret,
-                    "worst_mae_20d": worst_mae,
+                    "samples_20d": res20.get("samples", 0),
+                    "samples": res20.get("samples", 0),
+                    "valid": res20.get("valid", False),
+                    "win_rate_20d": res20.get("win_rate"),
+                    "win_rate": res20.get("win_rate"),
+                    "median_return_20d": res20.get("median_return"),
+                    "median_return": res20.get("median_return"),
+                    "worst_mae_20d": res20.get("worst_mae"),
+                    "worst_mae": res20.get("worst_mae"),
                     "active_latest_day": active,
-                    "evidence_score_0_100": evidence_score,
+                    "evidence_score_0_100": score,
                 }
             )
-        rows = sorted(rows, key=lambda x: (x["valid"], x["evidence_score_0_100"]), reverse=True)
+        rows = sorted(rows, key=lambda x: (x["valid"], x["active_latest_day"], x["evidence_score_0_100"]), reverse=True)
         ranking[ticker] = rows
     return ranking
 
 
 def main():
-    price_map = {}
-    errors = {}
-    update_log = {}
+    price_map: dict[str, pd.DataFrame] = {}
+    errors: dict[str, str] = {}
+    update_log: dict[str, dict] = {}
 
-    for ticker in TICKERS:
+    requested = 0
+    new_full_downloads = 0
+
+    ordered_tickers = sorted(TICKERS, key=request_priority)
+
+    for ticker in ordered_tickers:
+        existing = load_existing(ticker)
+        has_cache = not existing.empty
+        is_new_full_download = not has_cache
+
+        if requested >= MAX_TIINGO_REQUESTS_PER_RUN:
+            if has_cache:
+                price_map[ticker] = existing
+                update_log[ticker] = {
+                    "status": "cache_only_request_cap",
+                    "latest_date": pd.to_datetime(existing["date"]).max().date().isoformat(),
+                    "total_rows_loaded": int(len(existing)),
+                }
+                print(f"[CACHE] {ticker}: request cap reached; using cached data")
+            else:
+                errors[ticker] = "deferred_no_cache_request_cap"
+                print(f"[DEFER] {ticker}: no cache and request cap reached")
+            continue
+
+        if is_new_full_download and new_full_downloads >= MAX_NEW_FULL_DOWNLOADS_PER_RUN:
+            errors[ticker] = "deferred_new_full_download_cap"
+            print(f"[DEFER] {ticker}: new full download cap reached")
+            continue
+
         try:
             fetch_start = get_fetch_start_date(ticker)
             new_df = fetch_tiingo(ticker, fetch_start)
+            requested += 1
+            if is_new_full_download:
+                new_full_downloads += 1
+
             merged = merge_and_save(ticker, new_df)
 
             price_map[ticker] = merged
             update_log[ticker] = {
+                "status": "fresh_from_tiingo",
                 "fetch_start": fetch_start,
                 "new_rows_downloaded": int(len(new_df)),
                 "total_rows_saved": int(len(merged)),
@@ -426,10 +559,22 @@ def main():
             print(f"[OK] {ticker}: fetched {len(new_df)} rows from {fetch_start}; saved {len(merged)} total")
 
         except Exception as e:
-            errors[ticker] = str(e)
-            print(f"[FAIL] {ticker}: {e}")
+            requested += 1
+            if has_cache:
+                price_map[ticker] = existing
+                update_log[ticker] = {
+                    "status": "cache_after_fetch_error",
+                    "fetch_error": str(e),
+                    "latest_date": pd.to_datetime(existing["date"]).max().date().isoformat(),
+                    "total_rows_loaded": int(len(existing)),
+                }
+                errors[ticker] = f"using cached data after fetch error: {e}"
+                print(f"[CACHE_AFTER_FAIL] {ticker}: {e}")
+            else:
+                errors[ticker] = str(e)
+                print(f"[FAIL] {ticker}: {e}")
 
-        time.sleep(0.8)
+        time.sleep(REQUEST_SLEEP_SECONDS)
 
     benchmarks = prepare_benchmarks(price_map)
 
@@ -438,17 +583,43 @@ def main():
     technicals = {}
 
     for ticker, df in price_map.items():
-        nested, rows = summarize_all_rules(ticker, df, price_map, benchmarks)
-        backtests[ticker] = nested
-        all_rows.extend(rows)
-        technicals[ticker] = latest_technical(df, price_map, ticker)
+        if df.empty or len(df) < 30:
+            errors[ticker] = errors.get(ticker, "not enough rows for indicators")
+            continue
+        try:
+            nested, rows = summarize_all_rules(ticker, df, price_map, benchmarks)
+            backtests[ticker] = nested
+            all_rows.extend(rows)
+            technicals[ticker] = latest_technical(df, price_map, ticker)
+        except Exception as e:
+            errors[ticker] = f"analysis_error: {e}"
 
     report = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "data_source": "Tiingo Free API, adjusted daily prices when available",
-        "update_mode": "incremental with 7-day overlap; first run downloads full history",
-        "strategy_version": "Eason Master US Market Monitor Cloud Sync v3.0 multi-rule sanitized",
+        "data_source": "Tiingo Free API with local CSV cache fallback",
+        "update_mode": (
+            "large universe, capped Tiingo requests per run, capped new full-history downloads, "
+            "cached data used when request cap or Tiingo 429 occurs"
+        ),
+        "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.0 large-universe-cache-safe",
         "privacy_mode": "sanitized_public_report_no_cash_no_shares_no_account_value",
+        "universe": {
+            "configured_ticker_count": len(TICKERS),
+            "loaded_ticker_count": len(price_map),
+            "fresh_request_count": requested,
+            "max_tiingo_requests_per_run": MAX_TIINGO_REQUESTS_PER_RUN,
+            "max_new_full_downloads_per_run": MAX_NEW_FULL_DOWNLOADS_PER_RUN,
+            "note": "A ticker can remain in the universe even if not refreshed today. ChatGPT should check update_log status and latest_date.",
+        },
+        "new_listing_policy": {
+            "rule": "Short-history stocks are not rejected automatically.",
+            "how_to_use": (
+                "If a stock has less than 252 trading days, do not treat backtest evidence as reliable. "
+                "It can still be recommended only as watchlist or tiny satellite when price action, relative strength, liquidity, "
+                "fundamentals/news, and market regime confirm."
+            ),
+            "position_limit": "Usually 0% to 2% max unless user explicitly accepts high risk and evidence improves.",
+        },
         "rule_engine": {
             "rules": [
                 "pullback_reclaim_5dma",
@@ -456,6 +627,7 @@ def main():
                 "ma20_reclaim_bullish",
                 "ma50_reclaim_bullish",
                 "relative_strength_rebound",
+                "momentum_leader",
                 "failed_rebound_risk",
             ],
             "horizons_days": HORIZONS,
@@ -471,7 +643,7 @@ def main():
     }
 
     with open(OUT / "market_report.json", "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=2)
+        json.dump(report, f, indent=2, allow_nan=False)
 
     pd.DataFrame(all_rows).to_csv(OUT / "backtest_summary.csv", index=False)
 
@@ -484,7 +656,8 @@ def main():
     with open(OUT / "index.html", "w", encoding="utf-8") as f:
         f.write(
             "<h1>Eason Quant Cloud Sync</h1>"
-            "<p>Sanitized public report. Open market_report.json, backtest_summary.csv, or rule_evidence_ranking.csv.</p>"
+            "<p>Sanitized public report. Open market_report.json, latest_summary.json, eason_signal.json, "
+            "backtest_summary.csv, or rule_evidence_ranking.csv.</p>"
         )
 
     print("Saved sanitized docs/market_report.json, docs/backtest_summary.csv, docs/rule_evidence_ranking.csv")
