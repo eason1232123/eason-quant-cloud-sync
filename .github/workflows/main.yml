@@ -27,7 +27,13 @@ jobs:
       - name: Build market report
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
+          PYTHONPATH: ${{ github.workspace }}
         run: python scripts/build_report.py
+
+      - name: Build ChatGPT light summary
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python scripts/build_latest_summary.py
 
       - name: Commit updated reports
         run: |
