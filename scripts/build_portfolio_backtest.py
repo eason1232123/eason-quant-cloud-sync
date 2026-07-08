@@ -13,6 +13,7 @@ OUT = Path("docs")
 INITIAL_CAPITAL = 20000.0
 SLIPPAGE_BPS = 5.0
 MIN_TRADE_DOLLARS = 25.0
+EXECUTION_SHIFT_DAYS = 1
 
 CORE_TICKERS = ["QQQ", "SMH", "MSFT", "SPY"]
 BENCHMARK_TICKERS = ["SPY", "QQQ", "SMH"]
@@ -40,14 +41,6 @@ SEVERE_DEFENSIVE_WEIGHTS = {
     "MSFT": 0.12,
     "SPY": 0.10,
     "CASH": 0.60,
-}
-
-TARGET_BANDS = {
-    "QQQ": (0.25, 0.30),
-    "SMH": (0.20, 0.25),
-    "MSFT": (0.15, 0.20),
-    "SPY": (0.05, 0.10),
-    "CASH": (0.15, 0.40),
 }
 
 
@@ -153,15 +146,24 @@ def should_rebalance(current_weights: dict[str, float], target: dict[str, float]
     return False
 
 
-def apply_cash_return(cash: float, cash_ret: float) -> float:
-    if pd.isna(cash_ret):
-        return cash
-    return cash * (1 + float(cash_ret))
+def build_cash_returns() -> pd.Series | None:
+    sgov = load_price(CASH_TICKER)
+    if sgov.empty:
+        return None
+    sgov["date"] = pd.to_datetime(sgov["date"])
+    sgov["cash_ret"] = sgov[CASH_TICKER].pct_change().fillna(0.0)
+    return sgov.set_index("date")["cash_ret"]
 
 
 def simulate_strategy(prices: pd.DataFrame, cash_returns: pd.Series | None = None) -> tuple[pd.DataFrame, pd.DataFrame, dict]:
     d = add_trend_columns(prices)
     d = d.dropna(subset=CORE_TICKERS).reset_index(drop=True)
+
+    # Regime is known only after the signal day closes. Execution therefore uses
+    # the previous row's regime signal at today's close. This avoids same-close
+    # signal + same-close fill look-ahead.
+    d["raw_regime_signal"] = d.apply(choose_regime, axis=1)
+    d["exec_regime"] = d["raw_regime_signal"].shift(EXECUTION_SHIFT_DAYS).fillna("warmup_base")
 
     if cash_returns is None:
         d["CASH_RET"] = 0.0
@@ -175,13 +177,11 @@ def simulate_strategy(prices: pd.DataFrame, cash_returns: pd.Series | None = Non
     trades = []
     prev_date = None
     prev_regime = None
-    last_prices = None
 
     for i, row in d.iterrows():
         date = pd.to_datetime(row["date"])
-
-        if last_prices is not None:
-            cash = apply_cash_return(cash, row.get("CASH_RET", 0.0))
+        if i > 0:
+            cash *= 1 + float(row.get("CASH_RET", 0.0) or 0.0)
 
         prices_now = {ticker: float(row[ticker]) for ticker in CORE_TICKERS}
         holdings_value = {ticker: shares[ticker] * prices_now[ticker] for ticker in CORE_TICKERS}
@@ -190,7 +190,8 @@ def simulate_strategy(prices: pd.DataFrame, cash_returns: pd.Series | None = Non
         current_weights = {ticker: holdings_value[ticker] / total_value if total_value else 0.0 for ticker in CORE_TICKERS}
         current_weights["CASH"] = cash / total_value if total_value else 1.0
 
-        regime = choose_regime(row)
+        regime = str(row["exec_regime"])
+        raw_regime_signal = str(row["raw_regime_signal"])
         target = normalize_weights(weights_for_regime(regime))
         month_changed = is_month_change(prev_date, date)
         regime_changed = prev_regime is not None and regime != prev_regime
@@ -203,6 +204,7 @@ def simulate_strategy(prices: pd.DataFrame, cash_returns: pd.Series | None = Non
                 delta = target_dollars - current_dollars
                 if abs(delta) < MIN_TRADE_DOLLARS:
                     continue
+
                 slip = SLIPPAGE_BPS / 10000.0
                 if delta > 0:
                     execution_price = prices_now[ticker] * (1 + slip)
@@ -213,6 +215,7 @@ def simulate_strategy(prices: pd.DataFrame, cash_returns: pd.Series | None = Non
                     shares[ticker] += buy_shares
                     cash -= dollars
                     action = "BUY"
+                    traded_shares = buy_shares
                 else:
                     execution_price = prices_now[ticker] * (1 - slip)
                     sell_shares = min(abs(delta) / execution_price, shares[ticker])
@@ -222,16 +225,18 @@ def simulate_strategy(prices: pd.DataFrame, cash_returns: pd.Series | None = Non
                     shares[ticker] -= sell_shares
                     cash += dollars
                     action = "SELL"
+                    traded_shares = sell_shares
 
                 trades.append(
                     {
                         "date": date.date().isoformat(),
                         "ticker": ticker,
                         "action": action,
-                        "shares": clean_float(buy_shares if action == "BUY" else sell_shares, 6),
+                        "shares": clean_float(traded_shares, 6),
                         "execution_price": clean_float(execution_price, 4),
                         "dollars": clean_float(dollars, 2),
-                        "regime": regime,
+                        "regime_used_for_execution": regime,
+                        "raw_regime_signal_same_day": raw_regime_signal,
                         "reason": "regime_change" if regime_changed else "monthly_or_drift_rebalance",
                     }
                 )
@@ -246,6 +251,8 @@ def simulate_strategy(prices: pd.DataFrame, cash_returns: pd.Series | None = Non
                 "date": date.date().isoformat(),
                 "strategy_value": clean_float(total_value, 4),
                 "regime": regime,
+                "raw_regime_signal_same_day": raw_regime_signal,
+                "execution_assumption": "previous-day regime signal, current-day close execution",
                 "cash": clean_float(cash, 4),
                 "cash_weight": clean_float(current_weights.get("CASH"), 6),
                 "QQQ_weight": clean_float(current_weights.get("QQQ"), 6),
@@ -260,7 +267,6 @@ def simulate_strategy(prices: pd.DataFrame, cash_returns: pd.Series | None = Non
 
         prev_date = date
         prev_regime = regime
-        last_prices = prices_now
 
     equity = pd.DataFrame(records)
     trade_log = pd.DataFrame(trades)
@@ -268,6 +274,8 @@ def simulate_strategy(prices: pd.DataFrame, cash_returns: pd.Series | None = Non
     return equity, trade_log, {
         "initial_capital": INITIAL_CAPITAL,
         "slippage_bps": SLIPPAGE_BPS,
+        "execution_shift_days": EXECUTION_SHIFT_DAYS,
+        "execution_assumption": "Regime signal is calculated after the prior close and executed on the next bar/current row. This avoids same-close look-ahead.",
         "base_weights": BASE_WEIGHTS,
         "defensive_weights": DEFENSIVE_WEIGHTS,
         "severe_defensive_weights": SEVERE_DEFENSIVE_WEIGHTS,
@@ -323,8 +331,12 @@ def benchmark_curves(prices: pd.DataFrame, equity: pd.DataFrame) -> pd.DataFrame
     px["date"] = pd.to_datetime(px["date"])
     out = out.merge(px[["date"] + BENCHMARK_TICKERS], on="date", how="left")
     for ticker in BENCHMARK_TICKERS:
-        first = out[ticker].dropna().iloc[0]
-        out[f"buy_hold_{ticker}"] = INITIAL_CAPITAL * out[ticker] / first
+        first_series = out[ticker].dropna()
+        if first_series.empty:
+            out[f"buy_hold_{ticker}"] = np.nan
+        else:
+            first = first_series.iloc[0]
+            out[f"buy_hold_{ticker}"] = INITIAL_CAPITAL * out[ticker] / first
     out = out.drop(columns=BENCHMARK_TICKERS)
     return out
 
@@ -364,18 +376,9 @@ def exposure_summary(equity: pd.DataFrame) -> dict:
     }
 
 
-def build_cash_returns(prices: pd.DataFrame) -> pd.Series | None:
-    sgov = load_price(CASH_TICKER)
-    if sgov.empty:
-        return None
-    sgov["date"] = pd.to_datetime(sgov["date"])
-    sgov["cash_ret"] = sgov[CASH_TICKER].pct_change().fillna(0.0)
-    return sgov.set_index("date")["cash_ret"]
-
-
 def main() -> None:
     prices = load_prices(CORE_TICKERS)
-    cash_returns = build_cash_returns(prices)
+    cash_returns = build_cash_returns()
     equity, trades, assumptions = simulate_strategy(prices, cash_returns)
     vs = benchmark_curves(prices, equity)
 
@@ -396,12 +399,14 @@ def main() -> None:
         )
 
     report = {
+        "available": True,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "portfolio-backtest-v2.0",
+        "version": "portfolio-backtest-v2.1-next-bar-regime-execution",
         "purpose": "Model-level portfolio backtest for Eason strategy. This is not live execution and not personalized account truth.",
         "important_limits": [
             "Uses daily adjusted prices from cached docs CSV files; not intraday bid/ask.",
             "Uses model weights, not Eason's private real account shares/cash.",
+            "Regime signal is shifted one trading day to avoid same-close signal/fill look-ahead.",
             "Cash return uses SGOV when available; otherwise cash earns 0% before SGOV history.",
             "Portfolio rebalances are model assumptions and may not match actual fills.",
             "Final trading decisions still require ChatGPT live quote/news/macro/portfolio review and human confirmation.",
@@ -413,9 +418,11 @@ def main() -> None:
         "trade_metrics": trade_metrics(trades),
         "exposure_summary": exposure_summary(equity),
         "latest_regime": equity.iloc[-1]["regime"] if not equity.empty else None,
+        "latest_raw_regime_signal_same_day": equity.iloc[-1]["raw_regime_signal_same_day"] if not equity.empty else None,
         "latest_strategy_value": clean_float(equity.iloc[-1]["strategy_value"], 2) if not equity.empty else None,
     }
 
+    OUT.mkdir(exist_ok=True)
     equity.to_csv(OUT / "portfolio_equity_curve.csv", index=False)
     trades.to_csv(OUT / "portfolio_trades.csv", index=False)
     vs.to_csv(OUT / "portfolio_vs_benchmark.csv", index=False)
