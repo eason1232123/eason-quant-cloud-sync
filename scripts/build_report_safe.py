@@ -27,8 +27,6 @@ WATCH_EVERY_3D_REFRESH = {
     "ORCL", "PLTR", "CRM", "ADBE", "SNOW", "DDOG", "NET", "NOW", "PANW", "CRWD",
     "VRT", "ETN", "PWR", "CEG", "NRG", "ANET",
 }
-# Everything else is treated as long-tail weekly rotation unless it has no cache.
-
 
 CACHE_OK_STATUSES = {
     "cache_fresh_enough_no_request",
@@ -38,6 +36,11 @@ CACHE_WARNING_STATUSES = {
     "cache_only_after_tiingo_circuit_breaker",
     "cache_after_fetch_error_append_only",
 }
+COVERAGE_GAP_STATUSES = {
+    "deferred_new_ticker_rotation",
+    "deferred_no_cache",
+    "fetch_failed_no_cache_rate_limit",
+}
 
 
 def stable_bucket(ticker: str, modulo: int) -> int:
@@ -45,13 +48,7 @@ def stable_bucket(ticker: str, modulo: int) -> int:
 
 
 def expected_latest_market_date(now_utc: datetime | None = None) -> datetime.date:
-    """Best-effort latest U.S. daily bar date without using an exchange calendar.
-
-    Tiingo daily bars are typically ready after the U.S. close. Before roughly
-    6pm New York time, expect the previous weekday; after that, expect today if
-    it is a weekday. Holidays may still make the expected date too new; in that
-    case the script will use cache and mark no new rows.
-    """
+    """Best-effort latest U.S. daily bar date without using an exchange calendar."""
     now_utc = now_utc or datetime.now(timezone.utc)
     ny = now_utc.astimezone(ZoneInfo("America/New_York"))
     candidate = ny.date()
@@ -94,7 +91,6 @@ def request_order_key(ticker: str) -> tuple:
     last = br.cached_latest_date(ticker)
     has_cache_rank = 0 if last is not None else 1
     last_for_sort = last if last is not None else datetime(1900, 1, 1).date()
-    # Older cached rows first inside each tier. New uncached tickers are capped separately.
     return (tier_rank, has_cache_rank, last_for_sort, ticker)
 
 
@@ -104,11 +100,7 @@ def is_tiingo_rate_limit_error(error: Exception) -> bool:
 
 
 def get_incremental_fetch_start(existing: pd.DataFrame) -> str:
-    """Fetch only rows after the latest cached date.
-
-    This avoids re-downloading and overwriting historical cached rows. It intentionally
-    gives up the old 7-day overlap refresh in order to preserve existing data exactly.
-    """
+    """Fetch only rows after the latest cached date to preserve append-only history."""
     if existing is None or existing.empty:
         return br.START_DATE
     latest = pd.to_datetime(existing["date"]).max().date()
@@ -157,14 +149,25 @@ def save_append_only(ticker: str, existing: pd.DataFrame, new_df: pd.DataFrame) 
     return merged, downloaded_rows, int(len(new_only))
 
 
-def record_warning_or_error(ticker: str, status: str, reason: str, warnings: dict, errors: dict, has_cache: bool) -> None:
+def record_warning_error_or_gap(
+    ticker: str,
+    status: str,
+    reason: str,
+    warnings: dict,
+    errors: dict,
+    coverage_gaps: dict,
+    has_cache: bool,
+) -> None:
     """Keep normal cache skips out of errors so errors_count stays meaningful."""
     if status in CACHE_OK_STATUSES and has_cache:
+        return
+    if status in COVERAGE_GAP_STATUSES or (not has_cache and "deferred" in status):
+        coverage_gaps[ticker] = reason
         return
     if has_cache:
         warnings[ticker] = reason
     else:
-        errors[ticker] = f"deferred_no_cache: {reason}"
+        errors[ticker] = reason
 
 
 def use_cache_or_defer(
@@ -173,6 +176,7 @@ def use_cache_or_defer(
     price_map: dict,
     warnings: dict,
     errors: dict,
+    coverage_gaps: dict,
     update_log: dict,
     reason: str,
     status: str | None = None,
@@ -190,7 +194,7 @@ def use_cache_or_defer(
             "total_rows_loaded": int(len(existing)),
             "tiingo_request_spent": False,
         }
-        record_warning_or_error(ticker, effective_status, reason, warnings, errors, has_cache=True)
+        record_warning_error_or_gap(ticker, effective_status, reason, warnings, errors, coverage_gaps, has_cache=True)
         print(f"[CACHE] {ticker}: {reason}")
     else:
         effective_status = status or "deferred_no_cache"
@@ -201,7 +205,7 @@ def use_cache_or_defer(
             "append_only_mode": APPEND_ONLY_MODE,
             "tiingo_request_spent": False,
         }
-        record_warning_or_error(ticker, effective_status, reason, warnings, errors, has_cache=False)
+        record_warning_error_or_gap(ticker, effective_status, reason, warnings, errors, coverage_gaps, has_cache=False)
         print(f"[DEFER] {ticker}: {reason}")
 
 
@@ -215,8 +219,6 @@ def should_fetch_today(ticker: str, existing: pd.DataFrame, expected_date, now_u
             return False, f"cache already covers expected latest market date {expected_date}", "cache_fresh_enough_no_request"
 
     if not has_cache:
-        # New ticker full downloads are expensive. Core gets priority every run;
-        # non-core new tickers only enter on their rotation day.
         if refresh_tier(ticker) != "core_daily" and not tier_due_today(ticker, now_utc):
             return False, "new ticker full download deferred by tier rotation", "deferred_new_ticker_rotation"
         return True, "no cache; eligible for full history download", "fetch"
@@ -231,6 +233,7 @@ def main() -> None:
     price_map: dict[str, pd.DataFrame] = {}
     warnings: dict[str, str] = {}
     errors: dict[str, str] = {}
+    coverage_gaps: dict[str, str] = {}
     update_log: dict[str, dict] = {}
 
     requested = 0
@@ -256,21 +259,22 @@ def main() -> None:
                 skipped_fresh_enough += 1
             else:
                 skipped_by_rotation += 1
-            use_cache_or_defer(ticker, existing, price_map, warnings, errors, update_log, skip_reason, skip_status)
+            use_cache_or_defer(ticker, existing, price_map, warnings, errors, coverage_gaps, update_log, skip_reason, skip_status)
             continue
 
         if tiingo_circuit_open:
-            use_cache_or_defer(ticker, existing, price_map, warnings, errors, update_log, tiingo_circuit_reason)
+            status = "fetch_failed_no_cache_rate_limit" if not has_cache else "cache_only_after_tiingo_circuit_breaker"
+            use_cache_or_defer(ticker, existing, price_map, warnings, errors, coverage_gaps, update_log, tiingo_circuit_reason, status)
             continue
 
         if requested >= br.MAX_TIINGO_REQUESTS_PER_RUN:
             reason = f"request cap reached ({br.MAX_TIINGO_REQUESTS_PER_RUN})"
-            use_cache_or_defer(ticker, existing, price_map, warnings, errors, update_log, reason)
+            use_cache_or_defer(ticker, existing, price_map, warnings, errors, coverage_gaps, update_log, reason)
             continue
 
         if is_new_full_download and new_full_downloads >= br.MAX_NEW_FULL_DOWNLOADS_PER_RUN:
             reason = f"new full download cap reached ({br.MAX_NEW_FULL_DOWNLOADS_PER_RUN})"
-            use_cache_or_defer(ticker, existing, price_map, warnings, errors, update_log, reason)
+            use_cache_or_defer(ticker, existing, price_map, warnings, errors, coverage_gaps, update_log, reason)
             continue
 
         try:
@@ -303,7 +307,8 @@ def main() -> None:
 
         except Exception as e:
             requested += 1
-            if is_tiingo_rate_limit_error(e):
+            rate_limited = is_tiingo_rate_limit_error(e)
+            if rate_limited:
                 tiingo_circuit_open = True
                 tiingo_circuit_reason = f"Tiingo 429 circuit breaker opened after {ticker}: {e}"
                 print(f"[CIRCUIT_OPEN] {tiingo_circuit_reason}")
@@ -324,14 +329,18 @@ def main() -> None:
                 warnings[ticker] = f"using cached data after fetch error: {e}"
                 print(f"[CACHE_AFTER_FAIL] {ticker}: {e}")
             else:
-                errors[ticker] = str(e)
+                status = "fetch_failed_no_cache_rate_limit" if rate_limited else "fetch_failed_no_cache"
                 update_log[ticker] = {
-                    "status": "fetch_failed_no_cache",
+                    "status": status,
                     "refresh_tier": refresh_tier(ticker),
                     "fetch_error": str(e),
                     "expected_latest_market_date": expected_date.isoformat(),
                     "tiingo_request_spent": True,
                 }
+                if rate_limited:
+                    coverage_gaps[ticker] = str(e)
+                else:
+                    errors[ticker] = str(e)
                 print(f"[FAIL] {ticker}: {e}")
 
         time.sleep(br.REQUEST_SLEEP_SECONDS)
@@ -362,7 +371,7 @@ def main() -> None:
             "cached data is always loaded; Tiingo requests are only spent when cache is stale and ticker is due; "
             "existing historical CSV rows are not overwritten, only new dates are appended"
         ),
-        "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.1 tiered-cache-refresh-warning-cleanup",
+        "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.2 tiered-cache-coverage-gaps",
         "privacy_mode": "sanitized_public_report_no_cash_no_shares_no_account_value",
         "universe": {
             "configured_ticker_count": len(br.TICKERS),
@@ -384,8 +393,9 @@ def main() -> None:
             "tiingo_circuit_open": tiingo_circuit_open,
             "tiingo_circuit_reason": tiingo_circuit_reason,
             "warnings_count": len(warnings),
+            "coverage_gaps_count": len(coverage_gaps),
             "errors_count": len(errors),
-            "note": "A ticker can remain in the universe even if not refreshed today. ChatGPT should check update_log status and latest_date.",
+            "note": "coverage_gaps are tickers without usable cache yet; errors are true processing/fetch failures not classified as rotation/rate-limit coverage gaps.",
         },
         "new_listing_policy": {
             "rule": "Short-history stocks are not rejected automatically.",
@@ -416,6 +426,7 @@ def main() -> None:
         "rolling_90d_correlation": br.corr_90d(price_map),
         "update_log": update_log,
         "warnings": warnings,
+        "coverage_gaps": coverage_gaps,
         "errors": errors,
     }
 
