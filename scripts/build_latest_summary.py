@@ -1,14 +1,13 @@
 """
-Build a small ChatGPT-friendly summary from docs/market_report.json.
+Build a small ChatGPT-friendly MARKET summary from docs/market_report.json.
 
 This script does not fetch data and does not change the main quant logic.
-It only reads the full report and writes:
-  - docs/latest_summary.json
-  - docs/latest_summary.txt
+It writes only:
+  - docs/latest_market_summary.json
+  - docs/latest_market_summary.txt
 
-Bug fix: active_signals dictionaries now count as active only when at least
-one nested signal is actually truthy. A non-empty dict full of False values is
-not treated as an active signal.
+Important: do not write docs/latest_summary.json. That name is intentionally
+retired to avoid confusion with the decision-layer summary.
 """
 
 from __future__ import annotations
@@ -20,8 +19,8 @@ from typing import Any
 
 DOCS_DIR = Path("docs")
 FULL_REPORT_PATH = DOCS_DIR / "market_report.json"
-SUMMARY_JSON_PATH = DOCS_DIR / "latest_summary.json"
-SUMMARY_TXT_PATH = DOCS_DIR / "latest_summary.txt"
+MARKET_SUMMARY_JSON_PATH = DOCS_DIR / "latest_market_summary.json"
+MARKET_SUMMARY_TXT_PATH = DOCS_DIR / "latest_market_summary.txt"
 
 MAX_TICKERS_IN_SUMMARY = 120
 MAX_EVIDENCE_ROWS = 50
@@ -63,17 +62,16 @@ def clean_value(value: Any) -> Any:
 
 
 def truthy_signal(value: Any) -> bool:
-    """Return True only when a signal is actually active.
-
-    The old version treated any non-empty dict as active. That made
-    {"momentum_leader": false, "failed_rebound_risk": false} look active.
-    """
+    """Return True only when a signal is actually active."""
     if value is True:
         return True
     if value is False or value is None:
         return False
     if isinstance(value, (int, float)) and not isinstance(value, bool):
-        return value != 0 and not math.isnan(float(value))
+        try:
+            return value != 0 and not math.isnan(float(value))
+        except Exception:
+            return False
     if isinstance(value, str):
         return value.strip().lower() in {"true", "yes", "active", "triggered", "buy", "sell", "risk"}
     if isinstance(value, list):
@@ -224,8 +222,8 @@ def extract_active_signals(report: dict[str, Any], compact_tech: dict[str, Any])
 
 def build_text_summary(summary: dict[str, Any]) -> str:
     lines: list[str] = []
-    lines.append("Eason Quant Latest Summary")
-    lines.append("=" * 32)
+    lines.append("Eason Quant Latest MARKET Summary")
+    lines.append("=" * 40)
     lines.append(f"generated_at_utc: {summary.get('generated_at_utc')}")
     lines.append(f"strategy_version: {summary.get('strategy_version')}")
     lines.append(f"privacy_mode: {summary.get('privacy_mode')}")
@@ -278,7 +276,8 @@ def main() -> None:
     summary: dict[str, Any] = {
         "generated_at_utc": report.get("generated_at_utc"),
         "source_file": "market_report.json",
-        "summary_file_version": "v3.2-chatgpt-light-summary-active-signal-fix",
+        "summary_file_version": "v4.4-latest-market-summary-no-name-conflict",
+        "summary_type": "market",
         "data_source": report.get("data_source"),
         "update_mode": report.get("update_mode"),
         "strategy_version": report.get("strategy_version"),
@@ -291,20 +290,20 @@ def main() -> None:
         "latest_technicals": compact_tech,
         "active_signals": extract_active_signals(report, compact_tech),
         "top_rule_evidence": compact_rule_evidence(report),
-        "note": "Small public summary for ChatGPT reading. Full evidence remains in market_report.json and CSV files.",
+        "note": "Market-only summary for ChatGPT reading. Decision summary is latest_decision_summary.json.",
     }
     summary = clean_value(summary)
 
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
-    with SUMMARY_JSON_PATH.open("w", encoding="utf-8") as f:
+    with MARKET_SUMMARY_JSON_PATH.open("w", encoding="utf-8") as f:
         json.dump(summary, f, ensure_ascii=False, indent=2, allow_nan=False)
         f.write("\n")
 
-    with SUMMARY_TXT_PATH.open("w", encoding="utf-8") as f:
+    with MARKET_SUMMARY_TXT_PATH.open("w", encoding="utf-8") as f:
         f.write(build_text_summary(summary))
 
-    print(f"Wrote {SUMMARY_JSON_PATH}")
-    print(f"Wrote {SUMMARY_TXT_PATH}")
+    print(f"Wrote {MARKET_SUMMARY_JSON_PATH}")
+    print(f"Wrote {MARKET_SUMMARY_TXT_PATH}")
 
 
 if __name__ == "__main__":
