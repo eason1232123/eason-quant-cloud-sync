@@ -29,53 +29,46 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build market report cache-safe append-only
-        timeout-minutes: 8
+        timeout-minutes: 12
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
-          MAX_TIINGO_REQUESTS_PER_RUN: "4"
-          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "1"
+          MAX_TIINGO_REQUESTS_PER_RUN: "25"
+          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "6"
           TIINGO_REQUEST_SLEEP_SECONDS: "1.5"
         run: python -u scripts/build_report_safe.py
 
-      - name: Build ChatGPT light summary
+      - name: Build ChatGPT light summary text
         timeout-minutes: 4
         env:
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_latest_summary.py
 
-      - name: Build final ChatGPT signal
-        timeout-minutes: 4
-        env:
-          PYTHONPATH: ${{ github.workspace }}
-          PYTHONUNBUFFERED: "1"
-        run: python -u scripts/build_eason_signal.py
-
       - name: Build vectorbt validation
-        timeout-minutes: 6
+        timeout-minutes: 8
         env:
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_vectorbt_validation.py
 
       - name: Build vectorbt evidence layer
-        timeout-minutes: 6
+        timeout-minutes: 8
         env:
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_vectorbt_backtest.py
 
       - name: Build portfolio backtest
-        timeout-minutes: 6
+        timeout-minutes: 8
         env:
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_portfolio_backtest.py
 
       - name: Build walk-forward and overfitting reports
-        timeout-minutes: 6
+        timeout-minutes: 8
         env:
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
@@ -88,6 +81,13 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_trade_review.py
 
+      - name: Build decision report
+        timeout-minutes: 4
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_decision_report.py
+
       - name: Build v3 master action board
         timeout-minutes: 4
         env:
@@ -99,6 +99,6 @@ jobs:
         run: |
           git config user.name "eason-quant-bot"
           git config user.email "actions@github.com"
-          git add docs/*.json docs/*.csv docs/*.html
+          git add docs/*.json docs/*.csv docs/*.html docs/*.txt
           git commit -m "Update daily quant report" || echo "No changes to commit"
           git push
