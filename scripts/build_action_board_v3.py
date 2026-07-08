@@ -16,6 +16,7 @@ FILES = {
     "overfitting_check": OUT / "overfitting_check.json",
     "trade_review": OUT / "trade_review.json",
     "actual_vs_backtest": OUT / "actual_vs_backtest.json",
+    "vectorbt_validation": OUT / "vectorbt_validation.json",
 }
 
 
@@ -71,7 +72,21 @@ def compact_walk_forward(walk: dict) -> dict:
     }
 
 
-def final_gate(signal: dict, overfit: dict, trade_review: dict) -> dict:
+def compact_vectorbt(vbt_report: dict) -> dict:
+    if not vbt_report.get("available"):
+        return vbt_report
+    return {
+        "available": True,
+        "version": vbt_report.get("version"),
+        "vectorbt_version": vbt_report.get("vectorbt_version"),
+        "data": vbt_report.get("data", {}),
+        "top_by_sharpe": vbt_report.get("top_by_sharpe", [])[:15],
+        "errors": vbt_report.get("errors", {}),
+        "important_limit": vbt_report.get("important_limit"),
+    }
+
+
+def final_gate(signal: dict, overfit: dict, trade_review: dict, vectorbt_report: dict) -> dict:
     base = signal.get("final_action", "UNKNOWN")
     warnings = []
     gates = {
@@ -83,6 +98,9 @@ def final_gate(signal: dict, overfit: dict, trade_review: dict) -> dict:
     overfit_verdict = overfit.get("verdict")
     if overfit_verdict in {"FAIL_OR_OVERFIT_RISK", "MIXED_NEEDS_CAUTION"}:
         warnings.append(f"overfitting_check={overfit_verdict}")
+
+    if vectorbt_report.get("available") and vectorbt_report.get("errors"):
+        warnings.append("vectorbt validation has rule-level errors; inspect vectorbt_validation.json")
 
     actual = trade_review.get("actual_vs_backtest", {}) if isinstance(trade_review, dict) else {}
     if actual.get("available") and actual.get("actual_20d_win_rate_pct") is not None:
@@ -121,17 +139,18 @@ def main() -> None:
     overfit = loaded.get("overfitting_check", {})
     trade = loaded.get("trade_review", {})
     actual = loaded.get("actual_vs_backtest", {})
+    vectorbt_report = loaded.get("vectorbt_validation", {})
 
     master = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "eason-master-action-board-v3.0",
-        "purpose": "One compact file for ChatGPT to review GitHub quant evidence, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
+        "version": "eason-master-action-board-v3.5-vectorbt",
+        "purpose": "One compact file for ChatGPT to review GitHub quant evidence, vectorbt validation, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
         "roles": {
-            "github": "data, backtest, stability, risk, and trade-review evidence layer",
+            "github": "data, backtest, vectorbt validation, stability, risk, and trade-review evidence layer",
             "chatgpt": "live quote/news/macro/valuation/account-risk reviewer and execution planner",
             "human": "final broker confirmation and order execution",
         },
-        "final_gate": final_gate(signal, overfit, trade),
+        "final_gate": final_gate(signal, overfit, trade, vectorbt_report),
         "base_action_board": board,
         "signal_summary": {
             "final_action": signal.get("final_action"),
@@ -140,6 +159,7 @@ def main() -> None:
             "top_risk": (signal.get("risk_candidates") or [None])[0],
             "freshness": signal.get("freshness"),
         },
+        "vectorbt_validation": compact_vectorbt(vectorbt_report),
         "portfolio_backtest": compact_portfolio(portfolio),
         "walk_forward_report": compact_walk_forward(walk),
         "market_regime_report": regime,
@@ -160,7 +180,6 @@ def main() -> None:
     with open(OUT / "eason_master_status.json", "w", encoding="utf-8") as f:
         json.dump(master, f, indent=2, ensure_ascii=False, allow_nan=False)
 
-    # Also enhance action_board.json so ChatGPT can load one primary file.
     with open(OUT / "action_board.json", "w", encoding="utf-8") as f:
         json.dump(master, f, indent=2, ensure_ascii=False, allow_nan=False)
 
