@@ -36,6 +36,9 @@ jobs:
       - name: Build vectorbt validation
         run: python scripts/build_vectorbt_validation.py
 
+      - name: Build vectorbt evidence layer
+        run: python scripts/build_vectorbt_backtest.py
+
       - name: Build portfolio backtest
         run: python scripts/build_portfolio_backtest.py
 
