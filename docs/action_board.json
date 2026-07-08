@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-08T09:44:19.771459+00:00",
+  "generated_at_utc": "2026-07-08T10:05:46.491881+00:00",
   "version": "eason-master-action-board-v3.7-no-self-nesting",
   "purpose": "One compact file for ChatGPT to review GitHub quant evidence, vectorbt validation/evidence, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
   "roles": {
@@ -45,34 +45,100 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     "freshness": {
-      "source_report_generated_at_utc": "2026-07-08T09:43:37.180369+00:00",
+      "source_report_generated_at_utc": "2026-07-08T10:04:48.080962+00:00",
       "latest_price_date_max": "2026-07-07",
       "latest_price_date_min": "2026-07-07",
       "loaded_ticker_count": 48,
       "configured_ticker_count": 94,
       "fresh_request_count": 1,
-      "errors_count": 94
+      "errors_count": 46
     },
     "universe": null
   },
   "market_report_status": {
     "available": true,
-    "generated_at_utc": "2026-07-08T09:43:37.180369+00:00",
-    "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.2 append-only-cache-safe",
+    "generated_at_utc": "2026-07-08T10:04:48.080962+00:00",
+    "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.1 tiered-cache-refresh-warning-cleanup",
     "universe": {
       "configured_ticker_count": 94,
       "loaded_ticker_count": 48,
       "fresh_request_count": 1,
+      "skipped_fresh_enough_no_request": 48,
+      "skipped_by_tier_rotation": 33,
       "rows_appended_total": 0,
       "append_only_mode": true,
       "historical_rows_overwritten": 0,
-      "max_tiingo_requests_per_run": 25,
-      "max_new_full_downloads_per_run": 6,
+      "expected_latest_market_date": "2026-07-07",
+      "refresh_policy": {
+        "core_daily": [
+          "AAPL",
+          "AMZN",
+          "AVGO",
+          "GLD",
+          "GOOGL",
+          "IEF",
+          "META",
+          "MSFT",
+          "NVDA",
+          "QQQ",
+          "SGOV",
+          "SMH",
+          "SOXX",
+          "SPY",
+          "TLT"
+        ],
+        "watch_every_3d": [
+          "ADBE",
+          "ADI",
+          "AMAT",
+          "AMD",
+          "ANET",
+          "ARM",
+          "ASML",
+          "CEG",
+          "CRM",
+          "CRWD",
+          "DDOG",
+          "ETN",
+          "IGM",
+          "IGV",
+          "INTC",
+          "IYW",
+          "KLAC",
+          "LRCX",
+          "MCHP",
+          "MPWR",
+          "MRVL",
+          "MU",
+          "NET",
+          "NOW",
+          "NRG",
+          "NXPI",
+          "ON",
+          "ORCL",
+          "PANW",
+          "PLTR",
+          "PWR",
+          "QCOM",
+          "SNOW",
+          "TSLA",
+          "TSM",
+          "TXN",
+          "VGT",
+          "VRT",
+          "XLK"
+        ],
+        "long_tail_weekly": "all other tickers, deterministic weekday rotation"
+      },
+      "max_tiingo_requests_per_run": 10,
+      "max_new_full_downloads_per_run": 3,
       "tiingo_circuit_open": true,
-      "tiingo_circuit_reason": "Tiingo 429 circuit breaker opened after SPY: SPY HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+      "tiingo_circuit_reason": "Tiingo 429 circuit breaker opened after ADI: ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+      "warnings_count": 0,
+      "errors_count": 46,
       "note": "A ticker can remain in the universe even if not refreshed today. ChatGPT should check update_log status and latest_date."
     },
-    "errors_count": 94
+    "errors_count": 46
   },
   "vectorbt_validation": {
     "available": true,
@@ -2652,7 +2718,7 @@
     ]
   },
   "market_regime_report": {
-    "generated_at_utc": "2026-07-08T09:44:19.153829+00:00",
+    "generated_at_utc": "2026-07-08T10:05:45.653896+00:00",
     "version": "market-regime-v2.5",
     "purpose": "Show how often the model is in base/defensive/severe defensive mode and how strategy returns behaved in each regime.",
     "regimes": [
@@ -2700,7 +2766,7 @@
     "available": true
   },
   "overfitting_check": {
-    "generated_at_utc": "2026-07-08T09:44:19.153954+00:00",
+    "generated_at_utc": "2026-07-08T10:05:45.654064+00:00",
     "version": "overfitting-check-v2.5",
     "purpose": "Flag whether the model only works in one historical window or remains acceptable across multiple periods.",
     "verdict": "PASS_STABILITY_CHECK",
@@ -2710,7 +2776,7 @@
     "available": true
   },
   "trade_review": {
-    "generated_at_utc": "2026-07-08T09:44:19.416344+00:00",
+    "generated_at_utc": "2026-07-08T10:05:46.008007+00:00",
     "version": "trade-review-v3.0",
     "purpose": "Review actual logged trades at 3/10/20 trading-day horizons and compare real execution with expected thesis.",
     "privacy_warning": "This repo may be public. Do not log sensitive account details unless you accept they may be public.",

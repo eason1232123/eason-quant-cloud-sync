@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-08T09:44:19.683698+00:00",
+  "generated_at_utc": "2026-07-08T10:05:46.385294+00:00",
   "summary_type": "decision",
   "source_file": "eason_signal.json",
   "summary_file_version": "v4.4-latest-decision-summary-no-name-conflict",
@@ -35,12 +35,12 @@
   "default_human_action_before_chatgpt_review": "DO_NOT_ADD_RISK_BEFORE_REVIEW",
   "portfolio_backtest_available": true,
   "freshness": {
-    "source_report_generated_at_utc": "2026-07-08T09:43:37.180369+00:00",
+    "source_report_generated_at_utc": "2026-07-08T10:04:48.080962+00:00",
     "latest_price_date_max": "2026-07-07",
     "latest_price_date_min": "2026-07-07",
     "loaded_ticker_count": 48,
     "configured_ticker_count": 94,
     "fresh_request_count": 1,
-    "errors_count": 94
+    "errors_count": 46
   }
 }

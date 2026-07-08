@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-08T09:44:19.153954+00:00",
+  "generated_at_utc": "2026-07-08T10:05:45.654064+00:00",
   "version": "overfitting-check-v2.5",
   "purpose": "Flag whether the model only works in one historical window or remains acceptable across multiple periods.",
   "verdict": "PASS_STABILITY_CHECK",
