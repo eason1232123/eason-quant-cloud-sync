@@ -9,6 +9,7 @@ import pandas as pd
 
 OUT = Path("docs")
 REPORT_PATH = OUT / "market_report.json"
+PORTFOLIO_PATH = OUT / "portfolio_backtest.json"
 MIN_SAMPLE = 20
 PRIMARY_HORIZON = "20d"
 
@@ -20,7 +21,16 @@ BUY_RULES = {
     "relative_strength_rebound",
     "momentum_leader",
 }
-RISK_RULES = {"failed_rebound_risk"}
+
+LIVE_REVIEW_CHECKLIST = [
+    "Read action_board.json, eason_signal.json, portfolio_backtest.json, and market_report.json freshness first.",
+    "Check current tradable bid/ask/last from IBKR if available; otherwise cross-check at least two public quote sources.",
+    "Check whether current price is still close to the tested signal entry area; do not chase if price already ran far away.",
+    "Check same-day regime: SPY/QQQ trend, VIX, 10Y yield, breadth, and semiconductor leadership.",
+    "Check fresh news, earnings, guidance, analyst changes, regulation, and macro events for the candidate and key leaders.",
+    "Check portfolio constraints: cash floor, offense cash, QQQ/SMH/MSFT concentration, semis max, MSFT max, and same-day repeat-buy rule.",
+    "Decide final action: buy/add, wait, pause, trim, sell, or no trade. GitHub evidence alone is never an automatic order.",
+]
 
 
 def clean_float(value: Any, digits: int = 4) -> Any:
@@ -46,7 +56,17 @@ def pct(value: Any) -> Any:
     return clean_float(v * 100, 2)
 
 
-def get_alpha(row: dict, ticker: str, technical: dict) -> tuple[str | None, Any]:
+def load_optional_json(path: Path) -> dict:
+    if not path.exists():
+        return {}
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except Exception as exc:
+        return {"load_error": str(exc)}
+
+
+def get_alpha(row: dict, technical: dict) -> tuple[str | None, Any]:
     preferred = technical.get("relative_benchmark")
     keys = []
     if preferred:
@@ -102,13 +122,13 @@ def build_buy_candidates(report: dict) -> list[dict]:
             if not as_bool(active.get(rule)):
                 continue
             row = (rules.get(rule, {}) or {}).get(PRIMARY_HORIZON, {}) or {}
-            bench, alpha = get_alpha(row, ticker, tech)
+            bench, alpha = get_alpha(row, tech)
             passes, fail_reasons = evidence_passes(row, alpha)
             candidates.append(
                 {
                     "ticker": ticker,
                     "rule": rule,
-                    "status": "ACTIONABLE_CANDIDATE" if passes else "WATCH_ONLY_INSUFFICIENT_EVIDENCE",
+                    "status": "QUANT_PASS_NEEDS_CHATGPT_REVIEW" if passes else "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE",
                     "latest_date": rules.get("latest_date") or tech.get("latest_date"),
                     "latest_price": tech.get("latest_price") or rules.get("latest_price"),
                     "horizon_days": 20,
@@ -124,13 +144,14 @@ def build_buy_candidates(report: dict) -> list[dict]:
                     "avg_alpha_vs_benchmark_pct": pct(alpha),
                     "evidence_score_0_100": score_lookup.get((ticker, rule), 0),
                     "fail_reasons": fail_reasons,
+                    "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
                 }
             )
 
     return sorted(
         candidates,
         key=lambda x: (
-            x["status"] == "ACTIONABLE_CANDIDATE",
+            x["status"] == "QUANT_PASS_NEEDS_CHATGPT_REVIEW",
             x.get("evidence_score_0_100") or 0,
             x.get("samples") or 0,
         ),
@@ -185,6 +206,7 @@ def build_risk_candidates(report: dict) -> list[dict]:
                     "ret_5d_pct": pct(tech.get("ret_5d")),
                     "ret_20d_pct": pct(tech.get("ret_20d")),
                     "drawdown_from_52w_high_pct": pct(dd),
+                    "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
                 }
             )
 
@@ -228,6 +250,76 @@ def freshness(report: dict) -> dict:
     }
 
 
+def portfolio_digest(portfolio: dict) -> dict:
+    if not portfolio:
+        return {"available": False, "reason": "portfolio_backtest.json not generated yet"}
+    if "load_error" in portfolio:
+        return {"available": False, "reason": portfolio["load_error"]}
+    return {
+        "available": True,
+        "version": portfolio.get("version"),
+        "latest_regime": portfolio.get("latest_regime"),
+        "strategy_metrics": portfolio.get("strategy_metrics", {}),
+        "strategy_vs_benchmarks": portfolio.get("strategy_vs_benchmarks", []),
+        "exposure_summary": portfolio.get("exposure_summary", {}),
+        "important_limits": portfolio.get("important_limits", []),
+    }
+
+
+def build_action_board(decision: dict, actionable: list[dict], buy_candidates: list[dict], risk_candidates: list[dict], high_risk: list[dict], portfolio: dict) -> dict:
+    final_action = decision["final_action"]
+    if final_action == "RISK_REVIEW_REQUIRED":
+        chatgpt_task = "Prioritize risk review. Check whether the risk ticker is actually held, then decide pause/hold/trim/sell using live quotes, news, macro, and portfolio concentration."
+        default_human_action = "DO_NOT_ADD_RISK_BEFORE_REVIEW"
+    elif final_action == "BUY_CANDIDATE_REVIEW_REQUIRED":
+        chatgpt_task = "Review top quant-pass candidate with live price, news, macro, valuation, portfolio backtest, and portfolio constraints before deciding buy/wait/no trade."
+        default_human_action = "WAIT_FOR_CHATGPT_FINAL_REVIEW"
+    else:
+        chatgpt_task = "Usually no trade. Only override if fresh live news or market risk appears after the daily report."
+        default_human_action = "NO_TRADE"
+
+    return {
+        "generated_at_utc": decision["generated_at_utc"],
+        "purpose": "Bridge GitHub quantitative evidence and portfolio backtest to ChatGPT final market judgment.",
+        "github_is_final_decision": False,
+        "automatic_order_allowed": False,
+        "default_human_action_before_chatgpt_review": default_human_action,
+        "quant_layer_final_action": final_action,
+        "quant_layer_reason": decision["reason"],
+        "portfolio_backtest": portfolio_digest(portfolio),
+        "chatgpt_final_review_required": final_action != "NO_TRADE",
+        "chatgpt_task": chatgpt_task,
+        "top_quant_buy_candidate": actionable[0] if actionable else None,
+        "top_active_buy_candidate_even_if_insufficient": buy_candidates[0] if buy_candidates else None,
+        "top_risk_candidate": risk_candidates[0] if risk_candidates else None,
+        "high_risk_count": len(high_risk),
+        "actionable_quant_buy_count": len(actionable),
+        "required_live_checks_before_any_order": LIVE_REVIEW_CHECKLIST,
+        "live_override_rules": {
+            "block_buy_if": [
+                "candidate gaps far above the tested entry area or latest report price",
+                "fresh negative earnings/guidance/regulatory/news changes the thesis",
+                "VIX/rates/macro regime deteriorates materially",
+                "QQQ/SMH/MSFT concentration, semis exposure, or cash floor would be violated",
+                "current bid/ask spread or liquidity makes limit execution poor",
+                "public quote sources conflict materially and IBKR quote is unavailable",
+                "portfolio-level backtest is clearly worse than QQQ/SPY without a risk-reduction benefit",
+            ],
+            "allow_buy_only_if": [
+                "quant evidence passes",
+                "portfolio-level backtest is acceptable versus QQQ/SPY/SMH",
+                "current price still offers acceptable risk/reward",
+                "news/fundamentals do not invalidate the signal",
+                "portfolio cash and concentration guardrails pass",
+                "explicit limit price and invalidation level are set",
+            ],
+            "risk_review_priority": "If risk candidate severity is high, review defense before any new buy.",
+        },
+        "recommended_user_prompt_to_chatgpt": "Read my GitHub action_board/eason_signal/portfolio_backtest/market_report, then check live price/news/macro and tell me whether to buy, wait, pause, trim, or do nothing with exact limit price and invalidation level.",
+        "freshness": decision["freshness"],
+    }
+
+
 def main() -> None:
     if not REPORT_PATH.exists():
         raise SystemExit("docs/market_report.json not found. Run scripts/build_report.py first.")
@@ -235,27 +327,32 @@ def main() -> None:
     with open(REPORT_PATH, "r", encoding="utf-8") as f:
         report = json.load(f)
 
+    portfolio = load_optional_json(PORTFOLIO_PATH)
     buy_candidates = build_buy_candidates(report)
     risk_candidates = build_risk_candidates(report)
     watch = top_watchlist(report)
 
-    actionable = [x for x in buy_candidates if x["status"] == "ACTIONABLE_CANDIDATE"]
+    actionable = [x for x in buy_candidates if x["status"] == "QUANT_PASS_NEEDS_CHATGPT_REVIEW"]
     high_risk = [x for x in risk_candidates if x["severity_0_100"] >= 65]
 
     if high_risk:
         final_action = "RISK_REVIEW_REQUIRED"
-        reason = "At least one ticker has high technical/rule risk. Review before adding risk."
+        reason = "At least one ticker has high technical/rule risk. Review defense before adding risk."
     elif actionable:
         final_action = "BUY_CANDIDATE_REVIEW_REQUIRED"
-        reason = "At least one active signal has valid 20d backtest evidence. Still require price/news/portfolio guardrail confirmation."
+        reason = "At least one active signal has valid 20d backtest evidence. Still require ChatGPT live price/news/macro/portfolio review."
     else:
         final_action = "NO_TRADE"
         reason = "No active signal passed the minimum sample, win-rate, median-return, alpha, and MAE filters."
 
     decision = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "source": "Derived from docs/market_report.json and docs/backtest_summary.csv produced by scripts/build_report.py",
+        "source": "Derived from market_report.json, backtest_summary.csv, and portfolio_backtest.json when available.",
         "decision_policy": {
+            "github_role": "quantitative evidence filter and portfolio-model backtest only",
+            "chatgpt_role": "final live-market reviewer, portfolio-risk reviewer, and execution planner",
+            "human_role": "final order confirmation in broker",
+            "automatic_order_allowed": False,
             "buy_requires": [
                 "active latest-day signal",
                 "20d sample count >= 20",
@@ -263,7 +360,8 @@ def main() -> None:
                 "average and median forward return > 0",
                 "average alpha versus selected benchmark > 0",
                 "worst 20d MAE not worse than -15%",
-                "separate real-time price/news/portfolio guardrail confirmation before order",
+                "portfolio-level backtest acceptable versus QQQ/SPY/SMH",
+                "separate ChatGPT real-time price/news/macro/portfolio guardrail confirmation before order",
             ],
             "risk_review_requires": [
                 "failed rebound risk",
@@ -271,9 +369,10 @@ def main() -> None:
                 "break of key moving averages",
                 "large drawdown from 52-week high",
             ],
-            "important_limit": "This is an evidence report, not an automatic trading bot. Final orders require live quote and account confirmation.",
+            "important_limit": "This is an evidence report, not an automatic trading bot. Final orders require live quote, news, macro, portfolio, and human confirmation.",
         },
         "freshness": freshness(report),
+        "portfolio_backtest": portfolio_digest(portfolio),
         "final_action": final_action,
         "reason": reason,
         "actionable_buy_candidates": actionable[:10],
@@ -283,8 +382,13 @@ def main() -> None:
         "errors": report.get("errors", {}),
     }
 
+    action_board = build_action_board(decision, actionable, buy_candidates, risk_candidates, high_risk, portfolio)
+
     with open(OUT / "eason_signal.json", "w", encoding="utf-8") as f:
         json.dump(decision, f, indent=2, ensure_ascii=False, allow_nan=False)
+
+    with open(OUT / "action_board.json", "w", encoding="utf-8") as f:
+        json.dump(action_board, f, indent=2, ensure_ascii=False, allow_nan=False)
 
     latest_summary = {
         "generated_at_utc": decision["generated_at_utc"],
@@ -295,6 +399,9 @@ def main() -> None:
         "high_risk_count": len(high_risk),
         "top_actionable_buy": actionable[0] if actionable else None,
         "top_risk": risk_candidates[0] if risk_candidates else None,
+        "chatgpt_final_review_required": action_board["chatgpt_final_review_required"],
+        "default_human_action_before_chatgpt_review": action_board["default_human_action_before_chatgpt_review"],
+        "portfolio_backtest_available": action_board["portfolio_backtest"].get("available", False),
         "freshness": decision["freshness"],
     }
     with open(OUT / "latest_summary.json", "w", encoding="utf-8") as f:
@@ -303,7 +410,7 @@ def main() -> None:
     pd.DataFrame(buy_candidates).to_csv(OUT / "signal_candidates.csv", index=False)
     pd.DataFrame(risk_candidates).to_csv(OUT / "risk_candidates.csv", index=False)
 
-    print("Saved docs/eason_signal.json, docs/latest_summary.json, docs/signal_candidates.csv, docs/risk_candidates.csv")
+    print("Saved docs/eason_signal.json, docs/action_board.json, docs/latest_summary.json, docs/signal_candidates.csv, docs/risk_candidates.csv")
 
 
 if __name__ == "__main__":
