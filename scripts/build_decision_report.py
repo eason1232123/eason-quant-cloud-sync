@@ -10,6 +10,7 @@ import pandas as pd
 OUT = Path("docs")
 REPORT_PATH = OUT / "market_report.json"
 PORTFOLIO_PATH = OUT / "portfolio_backtest.json"
+DECISION_SUMMARY_PATH = OUT / "latest_decision_summary.json"
 MIN_SAMPLE = 20
 PRIMARY_HORIZON = "20d"
 
@@ -57,7 +58,7 @@ def pct(value: Any) -> Any:
 
 
 def load_optional_json(path: Path) -> dict:
-    if not path.exists():
+    if not path.exists() or path.stat().st_size == 0:
         return {}
     try:
         with open(path, "r", encoding="utf-8") as f:
@@ -109,14 +110,16 @@ def build_buy_candidates(report: dict) -> list[dict]:
     rankings = report.get("rule_evidence_ranking", {})
 
     score_lookup: dict[tuple[str, str], Any] = {}
-    for ticker, rows in rankings.items():
-        for r in rows or []:
-            score_lookup[(ticker, r.get("rule"))] = r.get("evidence_score_0_100")
+    if isinstance(rankings, dict):
+        for ticker, rows in rankings.items():
+            for r in rows or []:
+                if isinstance(r, dict):
+                    score_lookup[(ticker, r.get("rule"))] = r.get("evidence_score_0_100")
 
     for ticker, rules in backtests.items():
         if not isinstance(rules, dict):
             continue
-        tech = technicals.get(ticker, {})
+        tech = technicals.get(ticker, {}) if isinstance(technicals, dict) else {}
         active = rules.get("active_signals_latest_day", {}) or {}
         for rule in BUY_RULES:
             if not as_bool(active.get(rule)):
@@ -163,6 +166,8 @@ def build_risk_candidates(report: dict) -> list[dict]:
     risks = []
     backtests = report.get("backtests", {})
     technicals = report.get("technicals", {})
+    if not isinstance(technicals, dict):
+        return risks
 
     for ticker, tech in technicals.items():
         active = tech.get("active_signals", {}) or {}
@@ -215,9 +220,12 @@ def build_risk_candidates(report: dict) -> list[dict]:
 
 def top_watchlist(report: dict, limit: int = 25) -> list[dict]:
     rows = []
-    for ticker, ranking in (report.get("rule_evidence_ranking", {}) or {}).items():
-        for r in ranking or []:
-            if r.get("valid"):
+    ranking = report.get("rule_evidence_ranking", {}) or {}
+    if not isinstance(ranking, dict):
+        return rows
+    for ticker, items in ranking.items():
+        for r in items or []:
+            if isinstance(r, dict) and r.get("valid"):
                 rows.append(
                     {
                         "ticker": ticker,
@@ -236,9 +244,10 @@ def top_watchlist(report: dict, limit: int = 25) -> list[dict]:
 def freshness(report: dict) -> dict:
     dates = []
     for item in (report.get("technicals", {}) or {}).values():
-        d = item.get("latest_date")
-        if d:
-            dates.append(d)
+        if isinstance(item, dict):
+            d = item.get("latest_date")
+            if d:
+                dates.append(d)
     return {
         "source_report_generated_at_utc": report.get("generated_at_utc"),
         "latest_price_date_max": max(dates) if dates else None,
@@ -321,8 +330,8 @@ def build_action_board(decision: dict, actionable: list[dict], buy_candidates: l
 
 
 def main() -> None:
-    if not REPORT_PATH.exists():
-        raise SystemExit("docs/market_report.json not found. Run scripts/build_report.py first.")
+    if not REPORT_PATH.exists() or REPORT_PATH.stat().st_size == 0:
+        raise SystemExit("docs/market_report.json not found or empty. Run scripts/build_report_safe.py first.")
 
     with open(REPORT_PATH, "r", encoding="utf-8") as f:
         report = json.load(f)
@@ -384,14 +393,18 @@ def main() -> None:
 
     action_board = build_action_board(decision, actionable, buy_candidates, risk_candidates, high_risk, portfolio)
 
+    OUT.mkdir(parents=True, exist_ok=True)
     with open(OUT / "eason_signal.json", "w", encoding="utf-8") as f:
         json.dump(decision, f, indent=2, ensure_ascii=False, allow_nan=False)
 
     with open(OUT / "action_board.json", "w", encoding="utf-8") as f:
         json.dump(action_board, f, indent=2, ensure_ascii=False, allow_nan=False)
 
-    latest_summary = {
+    latest_decision_summary = {
         "generated_at_utc": decision["generated_at_utc"],
+        "summary_type": "decision",
+        "source_file": "eason_signal.json",
+        "summary_file_version": "v4.4-latest-decision-summary-no-name-conflict",
         "final_action": final_action,
         "reason": reason,
         "actionable_buy_count": len(actionable),
@@ -404,13 +417,14 @@ def main() -> None:
         "portfolio_backtest_available": action_board["portfolio_backtest"].get("available", False),
         "freshness": decision["freshness"],
     }
-    with open(OUT / "latest_summary.json", "w", encoding="utf-8") as f:
-        json.dump(latest_summary, f, indent=2, ensure_ascii=False, allow_nan=False)
+    with open(DECISION_SUMMARY_PATH, "w", encoding="utf-8") as f:
+        json.dump(latest_decision_summary, f, indent=2, ensure_ascii=False, allow_nan=False)
+        f.write("\n")
 
     pd.DataFrame(buy_candidates).to_csv(OUT / "signal_candidates.csv", index=False)
     pd.DataFrame(risk_candidates).to_csv(OUT / "risk_candidates.csv", index=False)
 
-    print("Saved docs/eason_signal.json, docs/action_board.json, docs/latest_summary.json, docs/signal_candidates.csv, docs/risk_candidates.csv")
+    print("Saved docs/eason_signal.json, docs/action_board.json, docs/latest_decision_summary.json, docs/signal_candidates.csv, docs/risk_candidates.csv")
 
 
 if __name__ == "__main__":
