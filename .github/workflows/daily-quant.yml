@@ -36,8 +36,17 @@ jobs:
       - name: Build portfolio backtest
         run: python scripts/build_portfolio_backtest.py
 
+      - name: Build walk-forward and overfitting reports
+        run: python scripts/build_walk_forward_report.py
+
+      - name: Build trade review
+        run: python scripts/build_trade_review.py
+
       - name: Build decision report
         run: python scripts/build_decision_report.py
+
+      - name: Build v3 master action board
+        run: python scripts/build_action_board_v3.py
 
       - name: Commit updated docs
         run: |
