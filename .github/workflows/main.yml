@@ -2,6 +2,14 @@ name: Eason Quant Daily
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "config.py"
+      - "scripts/**"
+      - ".github/workflows/main.yml"
+      - "requirements.txt"
   schedule:
     - cron: "30 23 * * 1-5"
 
@@ -28,12 +36,19 @@ jobs:
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
           PYTHONPATH: ${{ github.workspace }}
+          MAX_TIINGO_REQUESTS_PER_RUN: "35"
+          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "8"
         run: python scripts/build_report.py
 
       - name: Build ChatGPT light summary
         env:
           PYTHONPATH: ${{ github.workspace }}
         run: python scripts/build_latest_summary.py
+
+      - name: Build final ChatGPT signal
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+        run: python scripts/build_eason_signal.py
 
       - name: Commit updated reports
         run: |
