@@ -34,7 +34,7 @@ ENTRY_RULES = {
     "momentum_leader": {
         "entry_col": "entry_momentum_leader",
         "exit_col": "exit_close_below_ma20",
-        "description": "Trend leader filter: above 20/50/200-day averages with positive 20-day momentum and non-overheated RSI.",
+        "description": "Above 20/50/200-day averages with positive 20-day momentum and non-overheated RSI.",
     },
     "pullback_reclaim_5dma": {
         "entry_col": "entry_pullback_reclaim_5dma",
@@ -71,6 +71,31 @@ def clean_float(value: Any, digits: int = 4) -> Any:
         return None
 
 
+def json_safe(value: Any) -> Any:
+    if isinstance(value, dict):
+        return {str(k): json_safe(v) for k, v in value.items()}
+    if isinstance(value, list):
+        return [json_safe(v) for v in value]
+    if isinstance(value, tuple):
+        return [json_safe(v) for v in value]
+    if isinstance(value, (np.bool_, bool)):
+        return bool(value)
+    if isinstance(value, (np.integer,)):
+        return int(value)
+    if isinstance(value, (np.floating, float)):
+        if pd.isna(value) or np.isinf(value):
+            return None
+        return float(value)
+    if value is pd.NaT:
+        return None
+    try:
+        if pd.isna(value):
+            return None
+    except Exception:
+        pass
+    return value
+
+
 def csv_path(ticker: str) -> Path:
     safe = ticker.replace("/", "-").replace(".", "-")
     return OUT / f"{safe}_daily.csv"
@@ -90,11 +115,7 @@ def load_price(ticker: str) -> pd.DataFrame:
     low_col = "low_price" if "low_price" in df.columns else "adjLow" if "adjLow" in df.columns else "low"
 
     out = df[["date", price_col]].rename(columns={price_col: "close"}).copy()
-    if low_col in df.columns:
-        out["low"] = pd.to_numeric(df[low_col], errors="coerce")
-    else:
-        out["low"] = pd.to_numeric(out["close"], errors="coerce")
-
+    out["low"] = pd.to_numeric(df[low_col], errors="coerce") if low_col in df.columns else pd.to_numeric(out["close"], errors="coerce")
     out["close"] = pd.to_numeric(out["close"], errors="coerce")
     out = out.dropna(subset=["date", "close"]).sort_values("date").drop_duplicates("date", keep="last")
     return out.reset_index(drop=True)
@@ -143,7 +164,6 @@ def add_signals(df: pd.DataFrame) -> pd.DataFrame:
 
     d["exit_close_below_ma20"] = d["close"] < d["ma20"]
     d["exit_close_below_ma50"] = d["close"] < d["ma50"]
-
     d["risk_break_ma20"] = (d["close"].shift(1) >= d["ma20"].shift(1)) & (d["close"] < d["ma20"])
     d["risk_break_ma50"] = (d["close"].shift(1) >= d["ma50"].shift(1)) & (d["close"] < d["ma50"])
     d["risk_failed_rebound"] = (d["close"] < d["ma5"]) & (d["close"] < d["close"].rolling(10).min().shift(1))
@@ -225,21 +245,12 @@ def run_vectorbt_strategy(ticker: str, d: pd.DataFrame, strategy_name: str, spec
         "min_sample_required": MIN_SAMPLE,
         "description": spec["description"],
     }
-
     if entries.sum() == 0 or len(data) < 60:
         row["reason"] = "not enough signals or history"
         return row
 
     close = data["close"]
-    pf = vbt.Portfolio.from_signals(
-        close=close,
-        entries=entries,
-        exits=exits,
-        init_cash=INITIAL_CASH,
-        fees=FEES,
-        slippage=SLIPPAGE,
-        freq="1D",
-    )
+    pf = vbt.Portfolio.from_signals(close=close, entries=entries, exits=exits, init_cash=INITIAL_CASH, fees=FEES, slippage=SLIPPAGE, freq="1D")
     value = pd.Series(pf.value(), index=data.index)
     row.update(metric_summary(value))
 
@@ -272,16 +283,7 @@ def attach_benchmark(data: pd.DataFrame, benchmark: pd.DataFrame | None, horizon
     return merged[f"bench_fwd_{horizon}d"]
 
 
-def forward_evidence_row(
-    ticker: str,
-    d: pd.DataFrame,
-    rule_name: str,
-    rule_type: str,
-    signal_col: str,
-    horizon: int,
-    benchmark: pd.DataFrame | None,
-    description: str,
-) -> dict[str, Any]:
+def forward_evidence_row(ticker: str, d: pd.DataFrame, rule_name: str, rule_type: str, signal_col: str, horizon: int, benchmark: pd.DataFrame | None, description: str) -> dict[str, Any]:
     data = d.copy()
     data[f"fwd_{horizon}d"] = data["close"].shift(-horizon) / data["close"] - 1
     data[f"mae_{horizon}d"] = data["low"].rolling(horizon).min().shift(-horizon) / data["close"] - 1
@@ -339,6 +341,14 @@ def evidence_score(row: dict[str, Any]) -> float:
     return round(min(100, valid_bonus + min(sample, 80) / 80 * 30 + max(0, float(win) - 0.5) / 0.3 * 25 + max(0, float(median)) / 0.08 * 15 + max(0, float(alpha)) / 0.08 * 10), 1)
 
 
+def ensure_columns(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
+    out = df.copy()
+    for col in columns:
+        if col not in out.columns:
+            out[col] = np.nan
+    return out
+
+
 def main() -> None:
     price_map: dict[str, pd.DataFrame] = {}
     for ticker in TICKERS:
@@ -357,33 +367,10 @@ def main() -> None:
             for strategy_name, spec in ENTRY_RULES.items():
                 strategy_rows.append(run_vectorbt_strategy(ticker, d, strategy_name, spec))
                 for horizon in HORIZONS:
-                    evidence_rows.append(
-                        forward_evidence_row(
-                            ticker=ticker,
-                            d=d,
-                            rule_name=strategy_name,
-                            rule_type="entry",
-                            signal_col=spec["entry_col"],
-                            horizon=horizon,
-                            benchmark=benchmark,
-                            description=spec["description"],
-                        )
-                    )
-
+                    evidence_rows.append(forward_evidence_row(ticker, d, strategy_name, "entry", spec["entry_col"], horizon, benchmark, spec["description"]))
             for risk_name, spec in RISK_RULES.items():
                 for horizon in HORIZONS:
-                    evidence_rows.append(
-                        forward_evidence_row(
-                            ticker=ticker,
-                            d=d,
-                            rule_name=risk_name,
-                            rule_type="risk",
-                            signal_col=spec["signal_col"],
-                            horizon=horizon,
-                            benchmark=benchmark,
-                            description=spec["description"],
-                        )
-                    )
+                    evidence_rows.append(forward_evidence_row(ticker, d, risk_name, "risk", spec["signal_col"], horizon, benchmark, spec["description"]))
 
             latest = d.iloc[-1]
             latest_active[ticker] = {
@@ -399,31 +386,29 @@ def main() -> None:
     evidence_df = pd.DataFrame(evidence_rows)
 
     if not strategy_df.empty:
-        strategy_df = strategy_df.sort_values(
-            by=["valid", "alpha_vs_buy_hold", "strategy_sharpe", "sample_count"],
-            ascending=[False, False, False, False],
-            na_position="last",
-        )
+        strategy_df = ensure_columns(strategy_df, ["valid", "alpha_vs_buy_hold", "strategy_sharpe", "sample_count"])
+        strategy_df = strategy_df.sort_values(["valid", "alpha_vs_buy_hold", "strategy_sharpe", "sample_count"], ascending=[False, False, False, False], na_position="last")
         strategy_df.to_csv(OUT / "vectorbt_strategy_summary.csv", index=False)
 
     if not evidence_df.empty:
         evidence_df["evidence_score_0_100"] = evidence_df.apply(lambda r: evidence_score(r.to_dict()), axis=1)
-        evidence_df = evidence_df.sort_values(
-            by=["valid", "evidence_score_0_100", "sample_count"],
-            ascending=[False, False, False],
-            na_position="last",
-        )
+        evidence_df = ensure_columns(evidence_df, ["valid", "evidence_score_0_100", "sample_count", "rule_type", "horizon_days"])
+        evidence_df = evidence_df.sort_values(["valid", "evidence_score_0_100", "sample_count"], ascending=[False, False, False], na_position="last")
         evidence_df.to_csv(OUT / "vectorbt_forward_evidence.csv", index=False)
 
-    top_strategies = strategy_df.head(20).to_dict("records") if not strategy_df.empty else []
-    top_entry_evidence = evidence_df[(evidence_df["rule_type"] == "entry") & (evidence_df["horizon_days"] == 20)].head(20).to_dict("records") if not evidence_df.empty else []
-    top_risk_evidence = evidence_df[(evidence_df["rule_type"] == "risk") & (evidence_df["horizon_days"] == 20)].head(20).to_dict("records") if not evidence_df.empty else []
+    if evidence_df.empty:
+        top_entry_evidence = []
+        top_risk_evidence = []
+    else:
+        top_entry_evidence = evidence_df[(evidence_df["rule_type"] == "entry") & (evidence_df["horizon_days"] == 20)].head(20).to_dict("records")
+        top_risk_evidence = evidence_df[(evidence_df["rule_type"] == "risk") & (evidence_df["horizon_days"] == 20)].head(20).to_dict("records")
 
     report = {
         "available": True,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "vectorbt-validation-layer-v1.0",
+        "version": "vectorbt-validation-layer-v1.1-json-safe",
         "engine": "vectorbt",
+        "vectorbt_version": getattr(vbt, "__version__", None),
         "data_source": "Local Tiingo CSV cache in docs generated by scripts/build_report.py",
         "loaded_ticker_count": len(price_map),
         "configured_ticker_count": len(TICKERS),
@@ -444,7 +429,7 @@ def main() -> None:
         },
         "entry_rules": ENTRY_RULES,
         "risk_rules": RISK_RULES,
-        "top_strategy_results": top_strategies,
+        "top_strategy_results": strategy_df.head(20).to_dict("records") if not strategy_df.empty else [],
         "top_entry_forward_evidence_20d": top_entry_evidence,
         "top_risk_forward_evidence_20d": top_risk_evidence,
         "latest_active_signals": latest_active,
@@ -463,7 +448,7 @@ def main() -> None:
     }
 
     with open(OUT / "vectorbt_report.json", "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=2, ensure_ascii=False, allow_nan=False)
+        json.dump(json_safe(report), f, indent=2, ensure_ascii=False, allow_nan=False)
 
     print("Saved docs/vectorbt_report.json, docs/vectorbt_strategy_summary.csv, docs/vectorbt_forward_evidence.csv")
 
