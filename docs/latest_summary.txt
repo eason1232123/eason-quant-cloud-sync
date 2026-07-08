@@ -1,0 +1,35 @@
+Eason Quant Latest Summary
+================================
+generated_at_utc: 2026-07-08T06:43:50.631256+00:00
+strategy_version: Eason Master US Market Monitor Cloud Sync v3.0 multi-rule sanitized
+privacy_mode: sanitized_public_report_no_cash_no_shares_no_account_value
+ticker_count: 44
+errors: {"AAPL": "AAPL HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}", "GOOGL": "GOOGL HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}", "AMZN": "AMZN HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}", "META": "META HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}"}
+
+Tickers:
+AMAT, AMD, ARKK, ARM, ASML, AVGO, CEG, COIN, CRWD, DDOG, ETN, GLD, GRID, IBB, IEF, IGV, KLAC, LRCX, MDB, MSFT, MU, NET, NOW, NRG, NVDA, ORCL, PANW, PLTR, PWR, QQQ, SGOV, SMH, SNOW, SOXX, SPY, TLT, TSLA, TSM, USMV, VRT, XBI, XLP, XLU, XLV
+
+Active signals (0):
+None
+
+Top rule evidence (50 shown):
+- NET | ma20_reclaim_bullish | 60d | valid=True | samples=54 | win_rate=0.7222 | avg_return=0.2087 | alpha_vs_QQQ=0.1721
+- ARM | rsi_oversold_reclaim_40 | 60d | valid=True | samples=25 | win_rate=0.76 | avg_return=0.2652 | alpha_vs_QQQ=0.1711
+- AMD | relative_strength_rebound | 60d | valid=True | samples=35 | win_rate=0.7143 | avg_return=0.2197 | alpha_vs_QQQ=0.1675
+- ARM | failed_rebound_risk | 60d | valid=True | samples=97 | win_rate=0.6598 | avg_return=0.2164 | alpha_vs_QQQ=0.1545
+- VRT | rsi_oversold_reclaim_40 | 60d | valid=True | samples=56 | win_rate=0.7321 | avg_return=0.1646 | alpha_vs_QQQ=0.1493
+- PLTR | ma50_reclaim_bullish | 60d | valid=True | samples=27 | win_rate=0.7407 | avg_return=0.2127 | alpha_vs_QQQ=0.1385
+- VRT | failed_rebound_risk | 60d | valid=True | samples=219 | win_rate=0.7671 | avg_return=0.19 | alpha_vs_QQQ=0.138
+- VRT | ma50_reclaim_bullish | 60d | valid=True | samples=38 | win_rate=0.7105 | avg_return=0.1852 | alpha_vs_QQQ=0.1263
+- CRWD | pullback_reclaim_5dma | 60d | valid=True | samples=37 | win_rate=0.6757 | avg_return=0.1897 | alpha_vs_QQQ=0.1237
+- NET | rsi_oversold_reclaim_40 | 60d | valid=True | samples=61 | win_rate=0.6393 | avg_return=0.1927 | alpha_vs_QQQ=0.1206
+- CEG | failed_rebound_risk | 60d | valid=True | samples=144 | win_rate=0.7222 | avg_return=0.1801 | alpha_vs_QQQ=0.1117
+- MDB | ma20_reclaim_bullish | 60d | valid=True | samples=52 | win_rate=0.6154 | avg_return=0.161 | alpha_vs_QQQ=0.1091
+- CEG | rsi_oversold_reclaim_40 | 60d | valid=True | samples=46 | win_rate=0.8478 | avg_return=0.2283 | alpha_vs_QQQ=0.109
+- VRT | pullback_reclaim_5dma | 60d | valid=True | samples=32 | win_rate=0.6875 | avg_return=0.1709 | alpha_vs_QQQ=0.1084
+- MU | pullback_reclaim_5dma | 60d | valid=True | samples=90 | win_rate=0.6556 | avg_return=0.1554 | alpha_vs_QQQ=0.0983
+- NET | failed_rebound_risk | 60d | valid=True | samples=225 | win_rate=0.6711 | avg_return=0.1512 | alpha_vs_QQQ=0.0953
+- PLTR | failed_rebound_risk | 60d | valid=True | samples=210 | win_rate=0.5762 | avg_return=0.1348 | alpha_vs_QQQ=0.0932
+- PWR | pullback_reclaim_5dma | 60d | valid=True | samples=49 | win_rate=0.7551 | avg_return=0.1198 | alpha_vs_QQQ=0.0929
+- DDOG | rsi_oversold_reclaim_40 | 60d | valid=True | samples=93 | win_rate=0.6667 | avg_return=0.1621 | alpha_vs_QQQ=0.092
+- NET | ma50_reclaim_bullish | 60d | valid=True | samples=34 | win_rate=0.7353 | avg_return=0.1703 | alpha_vs_QQQ=0.0916
