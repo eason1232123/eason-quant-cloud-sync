@@ -1,0 +1,1 @@
+date,ticker,action,shares,fill_price,fees,reason,signal_source,backtest_sample_count,buy_score,sell_risk_score,expected_thesis,invalidation_level,notes
