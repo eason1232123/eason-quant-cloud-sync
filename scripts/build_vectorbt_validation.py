@@ -14,6 +14,10 @@ INITIAL_CASH = 10000.0
 FEES = 0.0005
 SLIPPAGE = 0.0005
 
+# Signals are calculated from end-of-day close data. To avoid same-close look-ahead,
+# vectorbt execution uses next bar by shifting entries/exits by one trading day.
+EXECUTION_SHIFT_DAYS = 1
+
 VALIDATION_TICKERS = [
     "SPY", "QQQ", "SMH", "SOXX", "MSFT", "NVDA", "AAPL", "GOOGL", "AMZN", "META", "AVGO",
     "AMD", "ASML", "TSM", "PLTR", "CRWD", "PANW", "VRT", "CEG", "GLD", "TLT", "SGOV",
@@ -53,18 +57,25 @@ def load_price(ticker: str) -> pd.DataFrame:
 
 def load_price_matrix() -> pd.DataFrame:
     merged = None
-    loaded = []
     for ticker in VALIDATION_TICKERS:
         df = load_price(ticker)
         if df.empty:
             continue
-        loaded.append(ticker)
         merged = df if merged is None else merged.merge(df, on="date", how="outer")
     if merged is None:
         raise SystemExit("No price data found for vectorbt validation")
     merged = merged.sort_values("date").set_index("date")
     merged = merged.ffill().dropna(axis=1, how="all").dropna(axis=0, how="all")
     return merged
+
+
+def rsi(close: pd.DataFrame, period: int = 14) -> pd.DataFrame:
+    delta = close.diff()
+    gain = delta.clip(lower=0)
+    loss = -delta.clip(upper=0)
+    avg_gain = gain.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
+    avg_loss = loss.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
+    return 100 - (100 / (1 + avg_gain / avg_loss.replace(0, np.nan)))
 
 
 def make_rules(close: pd.DataFrame) -> dict[str, tuple[pd.DataFrame, pd.DataFrame]]:
@@ -74,12 +85,7 @@ def make_rules(close: pd.DataFrame) -> dict[str, tuple[pd.DataFrame, pd.DataFram
     ma200 = close.rolling(200).mean()
     ret5 = close.pct_change(5)
     ret20 = close.pct_change(20)
-    delta = close.diff()
-    gain = delta.clip(lower=0)
-    loss = -delta.clip(upper=0)
-    avg_gain = gain.ewm(alpha=1 / 14, min_periods=14, adjust=False).mean()
-    avg_loss = loss.ewm(alpha=1 / 14, min_periods=14, adjust=False).mean()
-    rsi14 = 100 - (100 / (1 + avg_gain / avg_loss.replace(0, np.nan)))
+    rsi14 = rsi(close)
 
     rules = {}
 
@@ -106,6 +112,12 @@ def make_rules(close: pd.DataFrame) -> dict[str, tuple[pd.DataFrame, pd.DataFram
     return rules
 
 
+def execution_signals(entries: pd.DataFrame, exits: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
+    entries_exec = entries.shift(EXECUTION_SHIFT_DAYS).fillna(False).astype(bool)
+    exits_exec = exits.shift(EXECUTION_SHIFT_DAYS).fillna(False).astype(bool)
+    return entries_exec, exits_exec
+
+
 def to_series_dict(x: Any) -> dict[str, Any]:
     if isinstance(x, pd.Series):
         return {str(k): clean_float(v, 6) for k, v in x.items()}
@@ -114,7 +126,8 @@ def to_series_dict(x: Any) -> dict[str, Any]:
     return {"ALL": clean_float(x, 6)}
 
 
-def build_rows(rule_name: str, close: pd.DataFrame, entries: pd.DataFrame, exits: pd.DataFrame) -> list[dict]:
+def build_rows(rule_name: str, close: pd.DataFrame, raw_entries: pd.DataFrame, raw_exits: pd.DataFrame) -> list[dict]:
+    entries, exits = execution_signals(raw_entries, raw_exits)
     pf = vbt.Portfolio.from_signals(
         close,
         entries,
@@ -141,13 +154,17 @@ def build_rows(rule_name: str, close: pd.DataFrame, entries: pd.DataFrame, exits
             {
                 "ticker": ticker,
                 "rule": rule_name,
+                "engine": "vectorbt",
+                "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
                 "vectorbt_total_return_pct": clean_float((total_return.get(ticker) or 0) * 100, 2),
                 "vectorbt_max_drawdown_pct": clean_float((max_drawdown.get(ticker) or 0) * 100, 2),
                 "vectorbt_sharpe": clean_float(sharpe.get(ticker), 3),
                 "vectorbt_final_value": clean_float(final_value.get(ticker), 2),
                 "vectorbt_trade_count": clean_float(trade_count.get(ticker), 0),
-                "entry_count": int(entries[ticker].sum()) if ticker in entries else 0,
-                "exit_count": int(exits[ticker].sum()) if ticker in exits else 0,
+                "raw_entry_signal_count": int(raw_entries[ticker].sum()) if ticker in raw_entries else 0,
+                "executed_entry_count": int(entries[ticker].sum()) if ticker in entries else 0,
+                "raw_exit_signal_count": int(raw_exits[ticker].sum()) if ticker in raw_exits else 0,
+                "executed_exit_count": int(exits[ticker].sum()) if ticker in exits else 0,
             }
         )
     return rows
@@ -170,10 +187,12 @@ def main() -> None:
         df = df.sort_values(["rule", "vectorbt_sharpe", "vectorbt_total_return_pct"], ascending=[True, False, False])
 
     summary = {
+        "available": True,
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "vectorbt-validation-v3.5",
+        "version": "vectorbt-validation-v3.6-next-bar-execution",
         "purpose": "Independent vectorbt validation layer for signal rules. It does not replace pandas portfolio backtest or ChatGPT live review.",
         "vectorbt_version": getattr(vbt, "__version__", None),
+        "execution_assumption": "End-of-day signals are executed on the next bar by shifting entries/exits 1 trading day.",
         "data": {
             "loaded_tickers": list(close.columns),
             "start_date": close.index.min().date().isoformat(),
@@ -185,6 +204,7 @@ def main() -> None:
             "fees": FEES,
             "slippage": SLIPPAGE,
             "freq": "1D",
+            "execution_shift_days": EXECUTION_SHIFT_DAYS,
             "meaning": "Each ticker/rule column is independently backtested, not a real combined portfolio allocation.",
         },
         "top_by_sharpe": df.head(25).to_dict(orient="records") if not df.empty else [],
@@ -192,6 +212,7 @@ def main() -> None:
         "important_limit": "Vectorbt results are a fast validation/audit layer. Final trade decisions still require portfolio-level backtest, walk-forward stability, live market/news checks, real account constraints, and human confirmation.",
     }
 
+    OUT.mkdir(exist_ok=True)
     df.to_csv(OUT / "vectorbt_signal_stats.csv", index=False)
     with open(OUT / "vectorbt_validation.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False, allow_nan=False)
