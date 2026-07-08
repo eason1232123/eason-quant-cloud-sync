@@ -32,9 +32,9 @@ jobs:
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
           PYTHONPATH: ${{ github.workspace }}
-          MAX_TIINGO_REQUESTS_PER_RUN: "35"
-          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "8"
-        run: python scripts/build_report.py
+          MAX_TIINGO_REQUESTS_PER_RUN: "25"
+          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "6"
+        run: python scripts/build_report_safe.py
 
       - name: Build ChatGPT light summary
         env:
