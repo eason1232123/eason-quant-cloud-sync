@@ -1,0 +1,279 @@
+{
+  "generated_at_utc": "2026-07-08T07:57:08.766051+00:00",
+  "source_file": "market_report.json",
+  "signal_version": "v1-large-universe-cache-safe",
+  "today_action": "WAIT",
+  "market_regime": "CAUTION",
+  "risk_points": 2,
+  "buy_permission": "SMALL_BUY_OR_WAIT",
+  "notes": [
+    "QQQ below MA50",
+    "SMH below MA50"
+  ],
+  "data_status": "partial_check_errors",
+  "universe": {
+    "configured_ticker_count": 94,
+    "loaded_ticker_count": 42,
+    "fresh_request_count": 35,
+    "max_tiingo_requests_per_run": 35,
+    "max_new_full_downloads_per_run": 8,
+    "note": "A ticker can remain in the universe even if not refreshed today. ChatGPT should check update_log status and latest_date."
+  },
+  "buy_candidates": [
+    {
+      "ticker": "CRWD",
+      "latest_price": 194.62,
+      "active_signals": {
+        "momentum_leader": true
+      },
+      "best_evidence_score_0_100": 52.3,
+      "best_rule": "momentum_leader",
+      "valid_backtest": true,
+      "short_history": false,
+      "trading_days": 1776,
+      "note": "normal evidence candidate"
+    },
+    {
+      "ticker": "ARKK",
+      "latest_price": 81.19,
+      "active_signals": {
+        "momentum_leader": true
+      },
+      "best_evidence_score_0_100": 51.3,
+      "best_rule": "momentum_leader",
+      "valid_backtest": true,
+      "short_history": false,
+      "trading_days": 2935,
+      "note": "normal evidence candidate"
+    },
+    {
+      "ticker": "DDOG",
+      "latest_price": 256.81,
+      "active_signals": {
+        "momentum_leader": true
+      },
+      "best_evidence_score_0_100": 47.7,
+      "best_rule": "momentum_leader",
+      "valid_backtest": true,
+      "short_history": false,
+      "trading_days": 1707,
+      "note": "normal evidence candidate"
+    },
+    {
+      "ticker": "NET",
+      "latest_price": 268.83,
+      "active_signals": {
+        "momentum_leader": true
+      },
+      "best_evidence_score_0_100": 47.0,
+      "best_rule": "momentum_leader",
+      "valid_backtest": true,
+      "short_history": false,
+      "trading_days": 1711,
+      "note": "normal evidence candidate"
+    },
+    {
+      "ticker": "XLV",
+      "latest_price": 164.44,
+      "active_signals": {
+        "momentum_leader": true
+      },
+      "best_evidence_score_0_100": 46.5,
+      "best_rule": "momentum_leader",
+      "valid_backtest": true,
+      "short_history": false,
+      "trading_days": 5410,
+      "note": "normal evidence candidate"
+    },
+    {
+      "ticker": "PANW",
+      "latest_price": 337.04,
+      "active_signals": {
+        "momentum_leader": true
+      },
+      "best_evidence_score_0_100": 45.6,
+      "best_rule": "momentum_leader",
+      "valid_backtest": true,
+      "short_history": false,
+      "trading_days": 3509,
+      "note": "normal evidence candidate"
+    },
+    {
+      "ticker": "SNOW",
+      "latest_price": 262.74,
+      "active_signals": {
+        "momentum_leader": true
+      },
+      "best_evidence_score_0_100": 37.2,
+      "best_rule": "momentum_leader",
+      "valid_backtest": true,
+      "short_history": false,
+      "trading_days": 1457,
+      "note": "normal evidence candidate"
+    }
+  ],
+  "risk_candidates": [
+    {
+      "ticker": "SMH",
+      "risk": "failed_rebound_risk",
+      "latest_price": 581.45,
+      "ret_5d": -0.08,
+      "above_ma50": false
+    },
+    {
+      "ticker": "SOXX",
+      "risk": "failed_rebound_risk",
+      "latest_price": 551.69,
+      "ret_5d": -0.102,
+      "above_ma50": true
+    },
+    {
+      "ticker": "TLT",
+      "risk": "failed_rebound_risk",
+      "latest_price": 84.55,
+      "ret_5d": -0.0296,
+      "above_ma50": false
+    },
+    {
+      "ticker": "AMD",
+      "risk": "failed_rebound_risk",
+      "latest_price": 516.11,
+      "ret_5d": -0.0433,
+      "above_ma50": true
+    },
+    {
+      "ticker": "ASML",
+      "risk": "failed_rebound_risk",
+      "latest_price": 1747.28,
+      "ret_5d": -0.0721,
+      "above_ma50": true
+    },
+    {
+      "ticker": "ARM",
+      "risk": "failed_rebound_risk",
+      "latest_price": 300.43,
+      "ret_5d": -0.1256,
+      "above_ma50": false
+    },
+    {
+      "ticker": "MU",
+      "risk": "failed_rebound_risk",
+      "latest_price": 938.38,
+      "ret_5d": -0.1805,
+      "above_ma50": true
+    },
+    {
+      "ticker": "LRCX",
+      "risk": "failed_rebound_risk",
+      "latest_price": 326.13,
+      "ret_5d": -0.2063,
+      "above_ma50": true
+    },
+    {
+      "ticker": "AMAT",
+      "risk": "failed_rebound_risk",
+      "latest_price": 554.5,
+      "ret_5d": -0.2017,
+      "above_ma50": true
+    },
+    {
+      "ticker": "KLAC",
+      "risk": "failed_rebound_risk",
+      "latest_price": 216.47,
+      "ret_5d": -0.2224,
+      "above_ma50": true
+    },
+    {
+      "ticker": "ETN",
+      "risk": "failed_rebound_risk",
+      "latest_price": 395.68,
+      "ret_5d": -0.0308,
+      "above_ma50": false
+    },
+    {
+      "ticker": "PWR",
+      "risk": "failed_rebound_risk",
+      "latest_price": 656.79,
+      "ret_5d": -0.0806,
+      "above_ma50": false
+    },
+    {
+      "ticker": "GRID",
+      "risk": "failed_rebound_risk",
+      "latest_price": 182.37,
+      "ret_5d": -0.0318,
+      "above_ma50": false
+    }
+  ],
+  "new_listing_candidates": [],
+  "new_listing_policy": {
+    "will_chatgpt_recommend_new_good_stocks_without_full_backtest": true,
+    "rule": "Yes, but not as a normal high-conviction backtest pick. If a stock is newly listed or has short history, ChatGPT may recommend it only as watchlist or tiny satellite after checking price action, relative strength, liquidity, fundamentals/news, valuation/context, and overall market regime.",
+    "default_position_limit": "0% to 2% max before sufficient backtest sample; usually observe first."
+  },
+  "errors": {
+    "AAPL": "AAPL HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "GOOGL": "GOOGL HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "AMZN": "AMZN HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "META": "META HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "SPY": "using cached data after fetch error: SPY HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "QQQ": "using cached data after fetch error: QQQ HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "SMH": "using cached data after fetch error: SMH HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "SOXX": "using cached data after fetch error: SOXX HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "SGOV": "using cached data after fetch error: SGOV HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "MSFT": "using cached data after fetch error: MSFT HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "NVDA": "using cached data after fetch error: NVDA HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "GLD": "using cached data after fetch error: GLD HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "TLT": "using cached data after fetch error: TLT HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "IEF": "using cached data after fetch error: IEF HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "VGT": "VGT HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "XLK": "XLK HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "IYW": "IYW HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "IGM": "IGM HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "INTC": "INTC HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "MRVL": "MRVL HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "QCOM": "QCOM HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "ON": "ON HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "ADI": "ADI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "TXN": "TXN HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "NXPI": "NXPI HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "MCHP": "MCHP HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "MPWR": "MPWR HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "CRM": "CRM HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "ADBE": "ADBE HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "ZS": "ZS HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "OKTA": "OKTA HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "TEAM": "TEAM HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "SHOP": "SHOP HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "CFLT": "CFLT HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "ESTC": "ESTC HTTP 429: {\"detail\":\"Error: You have run over your hourly request allocation. Please upgrade at https://api.tiingo.com/pricing to have your limits increased.\"}",
+    "GTLB": "deferred_no_cache_request_cap",
+    "PATH": "deferred_no_cache_request_cap",
+    "SMR": "deferred_no_cache_request_cap",
+    "GE": "deferred_no_cache_request_cap",
+    "VST": "deferred_no_cache_request_cap",
+    "DLR": "deferred_no_cache_request_cap",
+    "EQIX": "deferred_no_cache_request_cap",
+    "ANET": "deferred_no_cache_request_cap",
+    "CSCO": "deferred_no_cache_request_cap",
+    "SHY": "deferred_no_cache_request_cap",
+    "VYM": "deferred_no_cache_request_cap",
+    "MSTR": "deferred_no_cache_request_cap",
+    "SOFI": "deferred_no_cache_request_cap",
+    "RBLX": "deferred_no_cache_request_cap",
+    "UBER": "deferred_no_cache_request_cap",
+    "ABNB": "deferred_no_cache_request_cap",
+    "HOOD": "deferred_no_cache_request_cap",
+    "RDDT": "deferred_no_cache_request_cap",
+    "RKLB": "deferred_no_cache_request_cap",
+    "ASTS": "deferred_no_cache_request_cap",
+    "HIMS": "deferred_no_cache_request_cap",
+    "APP": "deferred_no_cache_request_cap",
+    "COST": "deferred_no_cache_request_cap",
+    "LLY": "deferred_no_cache_request_cap",
+    "JPM": "deferred_no_cache_request_cap",
+    "XLF": "deferred_no_cache_request_cap",
+    "XLE": "deferred_no_cache_request_cap"
+  },
+  "note": "This is a public sanitized signal file. Final trading decisions should still check live price, bid/ask, news, earnings date, valuation, portfolio concentration, and the user's position size limits."
+}
