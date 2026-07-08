@@ -2,16 +2,77 @@ from __future__ import annotations
 
 import json
 import time
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
+from typing import Any
 
 import pandas as pd
 
 from scripts import build_report as br
 
 
+APPEND_ONLY_MODE = True
+
+
 def is_tiingo_rate_limit_error(error: Exception) -> bool:
     text = str(error).lower()
     return "http 429" in text or "hourly request allocation" in text or "run over your hourly" in text
+
+
+def get_incremental_fetch_start(existing: pd.DataFrame) -> str:
+    """Fetch only rows after the latest cached date.
+
+    This avoids re-downloading and overwriting historical cached rows. It intentionally
+    gives up the old 7-day overlap refresh in order to preserve existing data exactly.
+    """
+    if existing is None or existing.empty:
+        return br.START_DATE
+    latest = pd.to_datetime(existing["date"]).max().date()
+    return (latest + timedelta(days=1)).isoformat()
+
+
+def clean_float(value: Any, digits: int = 4) -> Any:
+    return br.clean_float(value, digits)
+
+
+def save_append_only(ticker: str, existing: pd.DataFrame, new_df: pd.DataFrame) -> tuple[pd.DataFrame, int, int]:
+    """Append only new dates; never replace existing date rows.
+
+    Returns merged dataframe, downloaded row count, appended row count.
+    """
+    downloaded_rows = int(len(new_df)) if new_df is not None else 0
+
+    if existing is None or existing.empty:
+        merged = br.merge_and_save(ticker, new_df)
+        return merged, downloaded_rows, int(len(merged))
+
+    old = existing.copy()
+    old["date"] = pd.to_datetime(old["date"]).dt.tz_localize(None)
+    latest_cached = old["date"].max()
+
+    new = new_df.copy()
+    if new.empty:
+        return old, downloaded_rows, 0
+    new["date"] = pd.to_datetime(new["date"]).dt.tz_localize(None)
+    new_only = new[new["date"] > latest_cached].copy()
+
+    if new_only.empty:
+        return old.sort_values("date").reset_index(drop=True), downloaded_rows, 0
+
+    merged = pd.concat([old, new_only], ignore_index=True)
+    merged["date"] = pd.to_datetime(merged["date"]).dt.tz_localize(None)
+    merged = merged.sort_values("date")
+    # Keep existing rows first. This is the append-only guarantee.
+    merged = merged.drop_duplicates(subset=["date"], keep="first").reset_index(drop=True)
+
+    preferred = [
+        "ticker", "date", "open", "high", "low", "close", "volume",
+        "adjOpen", "adjHigh", "adjLow", "adjClose", "adjVolume",
+        "divCash", "splitFactor", "price", "low_price", "high_price",
+    ]
+    cols = [c for c in preferred if c in merged.columns] + [c for c in merged.columns if c not in preferred]
+    merged = merged[cols]
+    merged.to_csv(br.csv_path(ticker), index=False)
+    return merged, downloaded_rows, int(len(new_only))
 
 
 def use_cache_or_defer(ticker: str, existing: pd.DataFrame, price_map: dict, errors: dict, update_log: dict, reason: str) -> None:
@@ -20,6 +81,7 @@ def use_cache_or_defer(ticker: str, existing: pd.DataFrame, price_map: dict, err
         update_log[ticker] = {
             "status": "cache_only_after_tiingo_circuit_breaker" if "429" in reason.lower() else "cache_only",
             "reason": reason,
+            "append_only_mode": APPEND_ONLY_MODE,
             "latest_date": pd.to_datetime(existing["date"]).max().date().isoformat(),
             "total_rows_loaded": int(len(existing)),
         }
@@ -37,6 +99,7 @@ def main() -> None:
 
     requested = 0
     new_full_downloads = 0
+    rows_appended_total = 0
     tiingo_circuit_open = False
     tiingo_circuit_reason = ""
 
@@ -62,22 +125,29 @@ def main() -> None:
             continue
 
         try:
-            fetch_start = br.get_fetch_start_date(ticker)
+            fetch_start = get_incremental_fetch_start(existing)
             new_df = br.fetch_tiingo(ticker, fetch_start)
             requested += 1
             if is_new_full_download:
                 new_full_downloads += 1
 
-            merged = br.merge_and_save(ticker, new_df)
+            merged, downloaded_rows, appended_rows = save_append_only(ticker, existing, new_df)
+            rows_appended_total += appended_rows
             price_map[ticker] = merged
             update_log[ticker] = {
-                "status": "fresh_from_tiingo",
+                "status": "fresh_from_tiingo_append_only" if appended_rows else "fresh_checked_no_new_rows_append_only",
                 "fetch_start": fetch_start,
-                "new_rows_downloaded": int(len(new_df)),
+                "downloaded_rows": downloaded_rows,
+                "new_rows_appended": appended_rows,
+                "historical_rows_overwritten": 0,
+                "append_only_mode": APPEND_ONLY_MODE,
                 "total_rows_saved": int(len(merged)),
                 "latest_date": pd.to_datetime(merged["date"]).max().date().isoformat(),
             }
-            print(f"[OK] {ticker}: fetched {len(new_df)} rows from {fetch_start}; saved {len(merged)} total")
+            print(
+                f"[OK_APPEND_ONLY] {ticker}: fetched {downloaded_rows} rows from {fetch_start}; "
+                f"appended {appended_rows}; saved {len(merged)} total"
+            )
 
         except Exception as e:
             requested += 1
@@ -89,8 +159,10 @@ def main() -> None:
             if has_cache:
                 price_map[ticker] = existing
                 update_log[ticker] = {
-                    "status": "cache_after_fetch_error",
+                    "status": "cache_after_fetch_error_append_only",
                     "fetch_error": str(e),
+                    "append_only_mode": APPEND_ONLY_MODE,
+                    "historical_rows_overwritten": 0,
                     "latest_date": pd.to_datetime(existing["date"]).max().date().isoformat(),
                     "total_rows_loaded": int(len(existing)),
                 }
@@ -122,17 +194,21 @@ def main() -> None:
 
     report = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "data_source": "Tiingo Free API with local CSV cache fallback and 429 circuit breaker",
+        "data_source": "Tiingo Free API with local CSV cache fallback, 429 circuit breaker, append-only cache updates",
         "update_mode": (
             "large universe, capped Tiingo requests per run, capped new full-history downloads, "
-            "cached data used when request cap or Tiingo 429 occurs; first 429 opens circuit breaker"
+            "cached data used when request cap or Tiingo 429 occurs; first 429 opens circuit breaker; "
+            "existing historical CSV rows are not overwritten, only new dates are appended"
         ),
-        "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.1 large-universe-cache-safe-circuit-breaker",
+        "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.2 append-only-cache-safe",
         "privacy_mode": "sanitized_public_report_no_cash_no_shares_no_account_value",
         "universe": {
             "configured_ticker_count": len(br.TICKERS),
             "loaded_ticker_count": len(price_map),
             "fresh_request_count": requested,
+            "rows_appended_total": rows_appended_total,
+            "append_only_mode": APPEND_ONLY_MODE,
+            "historical_rows_overwritten": 0,
             "max_tiingo_requests_per_run": br.MAX_TIINGO_REQUESTS_PER_RUN,
             "max_new_full_downloads_per_run": br.MAX_NEW_FULL_DOWNLOADS_PER_RUN,
             "tiingo_circuit_open": tiingo_circuit_open,
@@ -189,7 +265,7 @@ def main() -> None:
             "backtest_summary.csv, or rule_evidence_ranking.csv.</p>"
         )
 
-    print("Saved sanitized docs/market_report.json, docs/backtest_summary.csv, docs/rule_evidence_ranking.csv")
+    print("Saved append-only docs/market_report.json, docs/backtest_summary.csv, docs/rule_evidence_ranking.csv")
 
 
 if __name__ == "__main__":
