@@ -1,0 +1,15 @@
+{
+  "generated_at_utc": "2026-07-08T09:44:19.416344+00:00",
+  "version": "trade-review-v3.0",
+  "purpose": "Review actual logged trades at 3/10/20 trading-day horizons and compare real execution with expected thesis.",
+  "privacy_warning": "This repo may be public. Do not log sensitive account details unless you accept they may be public.",
+  "trade_log_path": "data/trade_log.csv",
+  "summary": {
+    "trade_count": 0,
+    "message": "No real trades logged yet. Fill data/trade_log.csv after actual IBKR executions if you want 3/10/20-day review."
+  },
+  "actual_vs_backtest": {
+    "available": false,
+    "reason": "No actual trades logged yet."
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "generated_at_utc": "2026-07-08T09:44:19.153954+00:00",
+  "version": "overfitting-check-v2.5",
+  "purpose": "Flag whether the model only works in one historical window or remains acceptable across multiple periods.",
+  "verdict": "PASS_STABILITY_CHECK",
+  "score_0_100": 100.0,
+  "warnings": [],
+  "important_limit": "This is a heuristic stability check, not a formal statistical proof."
+}

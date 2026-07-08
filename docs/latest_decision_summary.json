@@ -1,0 +1,46 @@
+{
+  "generated_at_utc": "2026-07-08T09:44:19.683698+00:00",
+  "summary_type": "decision",
+  "source_file": "eason_signal.json",
+  "summary_file_version": "v4.4-latest-decision-summary-no-name-conflict",
+  "final_action": "RISK_REVIEW_REQUIRED",
+  "reason": "At least one ticker has high technical/rule risk. Review defense before adding risk.",
+  "actionable_buy_count": 0,
+  "risk_candidate_count": 36,
+  "high_risk_count": 13,
+  "top_actionable_buy": null,
+  "top_risk": {
+    "ticker": "SMH",
+    "severity_0_100": 95,
+    "latest_date": "2026-07-07",
+    "latest_price": 581.45,
+    "reasons": [
+      "failed_rebound_risk active",
+      "5d pullback not reclaimed",
+      "below MA20",
+      "below MA50",
+      "drawdown from 52w high <= -12%"
+    ],
+    "failed_rebound_samples_20d": 687,
+    "failed_rebound_valid_20d": true,
+    "failed_rebound_avg_return_pct": 2.39,
+    "failed_rebound_median_return_pct": 2.36,
+    "failed_rebound_worst_mae_pct": -30.87,
+    "ret_5d_pct": -8.0,
+    "ret_20d_pct": 2.06,
+    "drawdown_from_52w_high_pct": -13.08,
+    "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+  },
+  "chatgpt_final_review_required": true,
+  "default_human_action_before_chatgpt_review": "DO_NOT_ADD_RISK_BEFORE_REVIEW",
+  "portfolio_backtest_available": true,
+  "freshness": {
+    "source_report_generated_at_utc": "2026-07-08T09:43:37.180369+00:00",
+    "latest_price_date_max": "2026-07-07",
+    "latest_price_date_min": "2026-07-07",
+    "loaded_ticker_count": 48,
+    "configured_ticker_count": 94,
+    "fresh_request_count": 1,
+    "errors_count": 94
+  }
+}

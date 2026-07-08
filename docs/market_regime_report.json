@@ -1,0 +1,47 @@
+{
+  "generated_at_utc": "2026-07-08T09:44:19.153829+00:00",
+  "version": "market-regime-v2.5",
+  "purpose": "Show how often the model is in base/defensive/severe defensive mode and how strategy returns behaved in each regime.",
+  "regimes": [
+    {
+      "regime": "base",
+      "trading_days": 4284,
+      "share_of_history_pct": 79.19,
+      "avg_daily_return_pct": 0.0611,
+      "daily_win_rate_pct": 55.23,
+      "max_regime_drawdown_pct": -26.13,
+      "avg_cash_weight_pct": 14.87,
+      "avg_tech_ai_concentration_pct": 75.13
+    },
+    {
+      "regime": "severe_defensive",
+      "trading_days": 800,
+      "share_of_history_pct": 14.79,
+      "avg_daily_return_pct": 0.0315,
+      "daily_win_rate_pct": 50.62,
+      "max_regime_drawdown_pct": -24.91,
+      "avg_cash_weight_pct": 60.11,
+      "avg_tech_ai_concentration_pct": 29.92
+    },
+    {
+      "regime": "warmup_base",
+      "trading_days": 200,
+      "share_of_history_pct": 3.7,
+      "avg_daily_return_pct": -0.0011,
+      "daily_win_rate_pct": 52.26,
+      "max_regime_drawdown_pct": -7.78,
+      "avg_cash_weight_pct": 15.04,
+      "avg_tech_ai_concentration_pct": 74.97
+    },
+    {
+      "regime": "defensive",
+      "trading_days": 126,
+      "share_of_history_pct": 2.33,
+      "avg_daily_return_pct": 0.0441,
+      "daily_win_rate_pct": 54.76,
+      "max_regime_drawdown_pct": -12.51,
+      "avg_cash_weight_pct": 39.92,
+      "avg_tech_ai_concentration_pct": 46.09
+    }
+  ]
+}

@@ -1,0 +1,302 @@
+{
+  "generated_at_utc": "2026-07-08T09:44:19.150361+00:00",
+  "version": "walk-forward-v2.5",
+  "purpose": "Check whether the portfolio model works across train/validation/test-style periods instead of only one lucky historical window.",
+  "important_limit": "This is not true machine-learning walk-forward optimization. It is a fixed-rule period stability check.",
+  "periods": [
+    {
+      "period": {
+        "name": "train_2005_2016",
+        "start": "2005-01-01",
+        "end": "2016-12-31",
+        "purpose": "training / long-cycle sanity check"
+      },
+      "available": true,
+      "strategy_metrics": {
+        "available": true,
+        "start_date": "2005-01-03",
+        "end_date": "2016-12-30",
+        "trading_days": 3021,
+        "years": 11.98,
+        "total_return_pct": 149.94,
+        "cagr_pct": 7.94,
+        "volatility_pct": 13.97,
+        "sharpe": 0.617,
+        "sortino": 0.871,
+        "calmar": 0.249,
+        "max_drawdown_pct": -31.94,
+        "daily_win_rate_pct": 52.65,
+        "final_value": 49966.25
+      },
+      "benchmark_metrics": {
+        "SPY": {
+          "available": true,
+          "start_date": "2005-01-03",
+          "end_date": "2016-12-30",
+          "trading_days": 3021,
+          "years": 11.98,
+          "total_return_pct": 137.13,
+          "cagr_pct": 7.47,
+          "volatility_pct": 19.48,
+          "sharpe": 0.467,
+          "sortino": 0.577,
+          "calmar": 0.135,
+          "max_drawdown_pct": -55.2,
+          "daily_win_rate_pct": 54.87,
+          "final_value": 47425.97
+        },
+        "QQQ": {
+          "available": true,
+          "start_date": "2005-01-03",
+          "end_date": "2016-12-30",
+          "trading_days": 3021,
+          "years": 11.98,
+          "total_return_pct": 229.81,
+          "cagr_pct": 10.47,
+          "volatility_pct": 20.62,
+          "sharpe": 0.586,
+          "sortino": 0.777,
+          "calmar": 0.196,
+          "max_drawdown_pct": -53.41,
+          "daily_win_rate_pct": 54.21,
+          "final_value": 65962.4
+        },
+        "SMH": {
+          "available": true,
+          "start_date": "2005-01-03",
+          "end_date": "2016-12-30",
+          "trading_days": 3021,
+          "years": 11.98,
+          "total_return_pct": 180.68,
+          "cagr_pct": 8.99,
+          "volatility_pct": 26.36,
+          "sharpe": 0.459,
+          "sortino": 0.657,
+          "calmar": 0.145,
+          "max_drawdown_pct": -62.05,
+          "daily_win_rate_pct": 51.23,
+          "final_value": 56137.0
+        }
+      },
+      "strategy_vs_benchmarks": [
+        {
+          "benchmark": "SPY",
+          "strategy_cagr_minus_benchmark_pct": 0.47,
+          "strategy_maxdd_minus_benchmark_pct": 23.26,
+          "strategy_sharpe_minus_benchmark": 0.15,
+          "strategy_final_minus_benchmark_dollars": 2540.28
+        },
+        {
+          "benchmark": "QQQ",
+          "strategy_cagr_minus_benchmark_pct": -2.53,
+          "strategy_maxdd_minus_benchmark_pct": 21.47,
+          "strategy_sharpe_minus_benchmark": 0.031,
+          "strategy_final_minus_benchmark_dollars": -15996.15
+        },
+        {
+          "benchmark": "SMH",
+          "strategy_cagr_minus_benchmark_pct": -1.05,
+          "strategy_maxdd_minus_benchmark_pct": 30.11,
+          "strategy_sharpe_minus_benchmark": 0.158,
+          "strategy_final_minus_benchmark_dollars": -6170.75
+        }
+      ]
+    },
+    {
+      "period": {
+        "name": "validation_2017_2021",
+        "start": "2017-01-01",
+        "end": "2021-12-31",
+        "purpose": "validation / bull-cycle and covid shock check"
+      },
+      "available": true,
+      "strategy_metrics": {
+        "available": true,
+        "start_date": "2017-01-03",
+        "end_date": "2021-12-31",
+        "trading_days": 1259,
+        "years": 4.99,
+        "total_return_pct": 207.47,
+        "cagr_pct": 25.23,
+        "volatility_pct": 17.83,
+        "sharpe": 1.352,
+        "sortino": 1.612,
+        "calmar": 1.107,
+        "max_drawdown_pct": -22.78,
+        "daily_win_rate_pct": 58.98,
+        "final_value": 154441.31
+      },
+      "benchmark_metrics": {
+        "SPY": {
+          "available": true,
+          "start_date": "2017-01-03",
+          "end_date": "2021-12-31",
+          "trading_days": 1259,
+          "years": 4.99,
+          "total_return_pct": 130.52,
+          "cagr_pct": 18.21,
+          "volatility_pct": 18.86,
+          "sharpe": 0.982,
+          "sortino": 1.077,
+          "calmar": 0.54,
+          "max_drawdown_pct": -33.7,
+          "daily_win_rate_pct": 57.0,
+          "final_value": 110163.74
+        },
+        "QQQ": {
+          "available": true,
+          "start_date": "2017-01-03",
+          "end_date": "2021-12-31",
+          "trading_days": 1259,
+          "years": 4.99,
+          "total_return_pct": 245.61,
+          "cagr_pct": 28.2,
+          "volatility_pct": 22.34,
+          "sharpe": 1.225,
+          "sortino": 1.428,
+          "calmar": 0.987,
+          "max_drawdown_pct": -28.56,
+          "daily_win_rate_pct": 59.06,
+          "final_value": 230010.42
+        },
+        "SMH": {
+          "available": true,
+          "start_date": "2017-01-03",
+          "end_date": "2021-12-31",
+          "trading_days": 1259,
+          "years": 4.99,
+          "total_return_pct": 357.05,
+          "cagr_pct": 35.58,
+          "volatility_pct": 30.29,
+          "sharpe": 1.158,
+          "sortino": 1.505,
+          "calmar": 1.058,
+          "max_drawdown_pct": -33.62,
+          "daily_win_rate_pct": 55.8,
+          "final_value": 257001.51
+        }
+      },
+      "strategy_vs_benchmarks": [
+        {
+          "benchmark": "SPY",
+          "strategy_cagr_minus_benchmark_pct": 7.02,
+          "strategy_maxdd_minus_benchmark_pct": 10.92,
+          "strategy_sharpe_minus_benchmark": 0.37,
+          "strategy_final_minus_benchmark_dollars": 44277.57
+        },
+        {
+          "benchmark": "QQQ",
+          "strategy_cagr_minus_benchmark_pct": -2.97,
+          "strategy_maxdd_minus_benchmark_pct": 5.78,
+          "strategy_sharpe_minus_benchmark": 0.127,
+          "strategy_final_minus_benchmark_dollars": -75569.11
+        },
+        {
+          "benchmark": "SMH",
+          "strategy_cagr_minus_benchmark_pct": -10.35,
+          "strategy_maxdd_minus_benchmark_pct": 10.84,
+          "strategy_sharpe_minus_benchmark": 0.194,
+          "strategy_final_minus_benchmark_dollars": -102560.2
+        }
+      ]
+    },
+    {
+      "period": {
+        "name": "test_2022_latest",
+        "start": "2022-01-01",
+        "end": null,
+        "purpose": "out-of-sample style test / inflation-rate-hike-AI cycle"
+      },
+      "available": true,
+      "strategy_metrics": {
+        "available": true,
+        "start_date": "2022-01-03",
+        "end_date": "2026-07-07",
+        "trading_days": 1130,
+        "years": 4.48,
+        "total_return_pct": 84.11,
+        "cagr_pct": 14.6,
+        "volatility_pct": 16.87,
+        "sharpe": 0.892,
+        "sortino": 1.303,
+        "calmar": 0.602,
+        "max_drawdown_pct": -24.26,
+        "daily_win_rate_pct": 54.03,
+        "final_value": 286637.87
+      },
+      "benchmark_metrics": {
+        "SPY": {
+          "available": true,
+          "start_date": "2022-01-03",
+          "end_date": "2026-07-07",
+          "trading_days": 1130,
+          "years": 4.48,
+          "total_return_pct": 66.37,
+          "cagr_pct": 12.03,
+          "volatility_pct": 17.61,
+          "sharpe": 0.733,
+          "sortino": 1.014,
+          "calmar": 0.491,
+          "max_drawdown_pct": -24.5,
+          "daily_win_rate_pct": 53.76,
+          "final_value": 184338.29
+        },
+        "QQQ": {
+          "available": true,
+          "start_date": "2022-01-03",
+          "end_date": "2026-07-07",
+          "trading_days": 1130,
+          "years": 4.48,
+          "total_return_pct": 81.53,
+          "cagr_pct": 14.24,
+          "volatility_pct": 23.43,
+          "sharpe": 0.685,
+          "sortino": 0.977,
+          "calmar": 0.409,
+          "max_drawdown_pct": -34.83,
+          "daily_win_rate_pct": 54.38,
+          "final_value": 421561.78
+        },
+        "SMH": {
+          "available": true,
+          "start_date": "2022-01-03",
+          "end_date": "2026-07-07",
+          "trading_days": 1130,
+          "years": 4.48,
+          "total_return_pct": 277.72,
+          "cagr_pct": 34.53,
+          "volatility_pct": 37.14,
+          "sharpe": 0.984,
+          "sortino": 1.462,
+          "calmar": 0.765,
+          "max_drawdown_pct": -45.14,
+          "daily_win_rate_pct": 53.76,
+          "final_value": 992161.46
+        }
+      },
+      "strategy_vs_benchmarks": [
+        {
+          "benchmark": "SPY",
+          "strategy_cagr_minus_benchmark_pct": 2.57,
+          "strategy_maxdd_minus_benchmark_pct": 0.24,
+          "strategy_sharpe_minus_benchmark": 0.159,
+          "strategy_final_minus_benchmark_dollars": 102299.58
+        },
+        {
+          "benchmark": "QQQ",
+          "strategy_cagr_minus_benchmark_pct": 0.36,
+          "strategy_maxdd_minus_benchmark_pct": 10.57,
+          "strategy_sharpe_minus_benchmark": 0.207,
+          "strategy_final_minus_benchmark_dollars": -134923.91
+        },
+        {
+          "benchmark": "SMH",
+          "strategy_cagr_minus_benchmark_pct": -19.93,
+          "strategy_maxdd_minus_benchmark_pct": 20.88,
+          "strategy_sharpe_minus_benchmark": -0.092,
+          "strategy_final_minus_benchmark_dollars": -705523.59
+        }
+      ]
+    }
+  ]
+}
