@@ -4,6 +4,15 @@ on:
   workflow_dispatch:
   schedule:
     - cron: "30 23 * * 1-5"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/main.yml"
+      - "scripts/**"
+      - "config.py"
+      - "requirements.txt"
+      - "README.md"
 
 concurrency:
   group: eason-quant-daily-main
