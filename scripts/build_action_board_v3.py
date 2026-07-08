@@ -17,6 +17,7 @@ FILES = {
     "trade_review": OUT / "trade_review.json",
     "actual_vs_backtest": OUT / "actual_vs_backtest.json",
     "vectorbt_validation": OUT / "vectorbt_validation.json",
+    "vectorbt_report": OUT / "vectorbt_report.json",
 }
 
 
@@ -72,21 +73,45 @@ def compact_walk_forward(walk: dict) -> dict:
     }
 
 
-def compact_vectorbt(vbt_report: dict) -> dict:
+def compact_vectorbt_validation(vbt_validation: dict) -> dict:
+    if not vbt_validation.get("available"):
+        return vbt_validation
+    return {
+        "available": True,
+        "version": vbt_validation.get("version"),
+        "vectorbt_version": vbt_validation.get("vectorbt_version"),
+        "purpose": vbt_validation.get("purpose"),
+        "data": vbt_validation.get("data", {}),
+        "assumptions": vbt_validation.get("assumptions", {}),
+        "top_by_sharpe": vbt_validation.get("top_by_sharpe", [])[:15],
+        "important_limit": vbt_validation.get("important_limit"),
+        "errors": vbt_validation.get("errors", {}),
+    }
+
+
+def compact_vectorbt_report(vbt_report: dict) -> dict:
     if not vbt_report.get("available"):
         return vbt_report
     return {
         "available": True,
         "version": vbt_report.get("version"),
-        "vectorbt_version": vbt_report.get("vectorbt_version"),
-        "data": vbt_report.get("data", {}),
-        "top_by_sharpe": vbt_report.get("top_by_sharpe", [])[:15],
+        "engine": vbt_report.get("engine"),
+        "loaded_ticker_count": vbt_report.get("loaded_ticker_count"),
+        "configured_ticker_count": vbt_report.get("configured_ticker_count"),
+        "minimum_valid_samples": vbt_report.get("minimum_valid_samples"),
+        "horizons_days": vbt_report.get("horizons_days", []),
+        "required_evidence_fields": vbt_report.get("required_evidence_fields", {}),
+        "top_strategy_results": vbt_report.get("top_strategy_results", [])[:15],
+        "top_entry_forward_evidence_20d": vbt_report.get("top_entry_forward_evidence_20d", [])[:15],
+        "top_risk_forward_evidence_20d": vbt_report.get("top_risk_forward_evidence_20d", [])[:15],
+        "latest_active_signals": vbt_report.get("latest_active_signals", {}),
+        "output_files": vbt_report.get("output_files", []),
+        "important_limits": vbt_report.get("important_limits", []),
         "errors": vbt_report.get("errors", {}),
-        "important_limit": vbt_report.get("important_limit"),
     }
 
 
-def final_gate(signal: dict, overfit: dict, trade_review: dict, vectorbt_report: dict) -> dict:
+def final_gate(signal: dict, overfit: dict, trade_review: dict, vectorbt_validation: dict, vectorbt_report: dict) -> dict:
     base = signal.get("final_action", "UNKNOWN")
     warnings = []
     gates = {
@@ -99,8 +124,17 @@ def final_gate(signal: dict, overfit: dict, trade_review: dict, vectorbt_report:
     if overfit_verdict in {"FAIL_OR_OVERFIT_RISK", "MIXED_NEEDS_CAUTION"}:
         warnings.append(f"overfitting_check={overfit_verdict}")
 
-    if vectorbt_report.get("available") and vectorbt_report.get("errors"):
+    if vectorbt_validation.get("available") and vectorbt_validation.get("errors"):
         warnings.append("vectorbt validation has rule-level errors; inspect vectorbt_validation.json")
+
+    if not vectorbt_report.get("available"):
+        warnings.append("vectorbt evidence layer unavailable; do not treat GitHub signal as fully vectorbt-validated")
+    else:
+        required = vectorbt_report.get("required_evidence_fields", {})
+        if required and not all(required.values()):
+            warnings.append("vectorbt required evidence fields incomplete")
+        if vectorbt_report.get("errors"):
+            warnings.append("vectorbt evidence layer has ticker-level errors; inspect vectorbt_report.json")
 
     actual = trade_review.get("actual_vs_backtest", {}) if isinstance(trade_review, dict) else {}
     if actual.get("available") and actual.get("actual_20d_win_rate_pct") is not None:
@@ -123,7 +157,7 @@ def final_gate(signal: dict, overfit: dict, trade_review: dict, vectorbt_report:
         {
             "recommended_default_action": recommended,
             "warnings": warnings,
-            "hard_rule": "GitHub evidence can create candidates only. ChatGPT live review + IBKR quote + human confirmation are required before any order.",
+            "hard_rule": "GitHub evidence can create candidates only. Vectorbt/backtest evidence + ChatGPT live review + IBKR quote + human confirmation are required before any order.",
         }
     )
     return gates
@@ -139,18 +173,19 @@ def main() -> None:
     overfit = loaded.get("overfitting_check", {})
     trade = loaded.get("trade_review", {})
     actual = loaded.get("actual_vs_backtest", {})
-    vectorbt_report = loaded.get("vectorbt_validation", {})
+    vectorbt_validation = loaded.get("vectorbt_validation", {})
+    vectorbt_report = loaded.get("vectorbt_report", {})
 
     master = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "eason-master-action-board-v3.5-vectorbt",
-        "purpose": "One compact file for ChatGPT to review GitHub quant evidence, vectorbt validation, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
+        "version": "eason-master-action-board-v3.6-vectorbt-evidence",
+        "purpose": "One compact file for ChatGPT to review GitHub quant evidence, vectorbt validation/evidence, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
         "roles": {
-            "github": "data, backtest, vectorbt validation, stability, risk, and trade-review evidence layer",
+            "github": "data, backtest, vectorbt validation/evidence, stability, risk, and trade-review evidence layer",
             "chatgpt": "live quote/news/macro/valuation/account-risk reviewer and execution planner",
             "human": "final broker confirmation and order execution",
         },
-        "final_gate": final_gate(signal, overfit, trade, vectorbt_report),
+        "final_gate": final_gate(signal, overfit, trade, vectorbt_validation, vectorbt_report),
         "base_action_board": board,
         "signal_summary": {
             "final_action": signal.get("final_action"),
@@ -159,7 +194,8 @@ def main() -> None:
             "top_risk": (signal.get("risk_candidates") or [None])[0],
             "freshness": signal.get("freshness"),
         },
-        "vectorbt_validation": compact_vectorbt(vectorbt_report),
+        "vectorbt_validation": compact_vectorbt_validation(vectorbt_validation),
+        "vectorbt_evidence": compact_vectorbt_report(vectorbt_report),
         "portfolio_backtest": compact_portfolio(portfolio),
         "walk_forward_report": compact_walk_forward(walk),
         "market_regime_report": regime,
@@ -183,7 +219,7 @@ def main() -> None:
     with open(OUT / "action_board.json", "w", encoding="utf-8") as f:
         json.dump(master, f, indent=2, ensure_ascii=False, allow_nan=False)
 
-    print("Saved docs/eason_master_status.json and enhanced docs/action_board.json")
+    print("Saved docs/eason_master_status.json and enhanced docs/action_board.json with vectorbt evidence")
 
 
 if __name__ == "__main__":
