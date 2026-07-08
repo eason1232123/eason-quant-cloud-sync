@@ -1,0 +1,171 @@
+from __future__ import annotations
+
+import json
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+OUT = Path("docs")
+
+FILES = {
+    "action_board": OUT / "action_board.json",
+    "eason_signal": OUT / "eason_signal.json",
+    "portfolio_backtest": OUT / "portfolio_backtest.json",
+    "walk_forward_report": OUT / "walk_forward_report.json",
+    "market_regime_report": OUT / "market_regime_report.json",
+    "overfitting_check": OUT / "overfitting_check.json",
+    "trade_review": OUT / "trade_review.json",
+    "actual_vs_backtest": OUT / "actual_vs_backtest.json",
+}
+
+
+def load_json(path: Path) -> dict[str, Any]:
+    if not path.exists():
+        return {"available": False, "reason": f"{path} not found"}
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        if isinstance(data, dict):
+            data.setdefault("available", True)
+            return data
+        return {"available": False, "reason": f"{path} did not contain a JSON object"}
+    except Exception as exc:
+        return {"available": False, "reason": str(exc)}
+
+
+def compact_portfolio(portfolio: dict) -> dict:
+    if not portfolio.get("available"):
+        return portfolio
+    return {
+        "available": True,
+        "version": portfolio.get("version"),
+        "latest_regime": portfolio.get("latest_regime"),
+        "strategy_metrics": portfolio.get("strategy_metrics", {}),
+        "strategy_vs_benchmarks": portfolio.get("strategy_vs_benchmarks", []),
+        "exposure_summary": portfolio.get("exposure_summary", {}),
+        "trade_metrics": portfolio.get("trade_metrics", {}),
+        "important_limits": portfolio.get("important_limits", []),
+    }
+
+
+def compact_walk_forward(walk: dict) -> dict:
+    if not walk.get("available"):
+        return walk
+    periods = []
+    for p in walk.get("periods", []):
+        periods.append(
+            {
+                "period": p.get("period", {}).get("name"),
+                "purpose": p.get("period", {}).get("purpose"),
+                "available": p.get("available"),
+                "strategy_metrics": p.get("strategy_metrics", {}),
+                "strategy_vs_benchmarks": p.get("strategy_vs_benchmarks", []),
+                "reason": p.get("reason"),
+            }
+        )
+    return {
+        "available": True,
+        "version": walk.get("version"),
+        "important_limit": walk.get("important_limit"),
+        "periods": periods,
+    }
+
+
+def final_gate(signal: dict, overfit: dict, trade_review: dict) -> dict:
+    base = signal.get("final_action", "UNKNOWN")
+    warnings = []
+    gates = {
+        "quant_signal": base,
+        "automatic_order_allowed": False,
+        "chatgpt_review_required": True,
+    }
+
+    overfit_verdict = overfit.get("verdict")
+    if overfit_verdict in {"FAIL_OR_OVERFIT_RISK", "MIXED_NEEDS_CAUTION"}:
+        warnings.append(f"overfitting_check={overfit_verdict}")
+
+    actual = trade_review.get("actual_vs_backtest", {}) if isinstance(trade_review, dict) else {}
+    if actual.get("available") and actual.get("actual_20d_win_rate_pct") is not None:
+        if float(actual.get("actual_20d_win_rate_pct", 0)) < 45:
+            warnings.append("actual 20d trade win rate <45%; reduce confidence until reviewed")
+
+    if base == "NO_TRADE":
+        recommended = "NO_TRADE_UNLESS_LIVE_RISK_OVERRIDE"
+    elif base == "RISK_REVIEW_REQUIRED":
+        recommended = "REVIEW_DEFENSE_FIRST"
+    elif base == "BUY_CANDIDATE_REVIEW_REQUIRED":
+        recommended = "WAIT_FOR_CHATGPT_LIVE_REVIEW"
+    else:
+        recommended = "WAIT_FOR_CHATGPT_LIVE_REVIEW"
+
+    if warnings and recommended.startswith("WAIT"):
+        recommended = "WAIT_OR_REDUCE_SIZE_AFTER_CHATGPT_REVIEW"
+
+    gates.update(
+        {
+            "recommended_default_action": recommended,
+            "warnings": warnings,
+            "hard_rule": "GitHub evidence can create candidates only. ChatGPT live review + IBKR quote + human confirmation are required before any order.",
+        }
+    )
+    return gates
+
+
+def main() -> None:
+    loaded = {name: load_json(path) for name, path in FILES.items()}
+    board = loaded.get("action_board", {})
+    signal = loaded.get("eason_signal", {})
+    portfolio = loaded.get("portfolio_backtest", {})
+    walk = loaded.get("walk_forward_report", {})
+    regime = loaded.get("market_regime_report", {})
+    overfit = loaded.get("overfitting_check", {})
+    trade = loaded.get("trade_review", {})
+    actual = loaded.get("actual_vs_backtest", {})
+
+    master = {
+        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
+        "version": "eason-master-action-board-v3.0",
+        "purpose": "One compact file for ChatGPT to review GitHub quant evidence, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
+        "roles": {
+            "github": "data, backtest, stability, risk, and trade-review evidence layer",
+            "chatgpt": "live quote/news/macro/valuation/account-risk reviewer and execution planner",
+            "human": "final broker confirmation and order execution",
+        },
+        "final_gate": final_gate(signal, overfit, trade),
+        "base_action_board": board,
+        "signal_summary": {
+            "final_action": signal.get("final_action"),
+            "reason": signal.get("reason"),
+            "top_actionable_buy": (signal.get("actionable_buy_candidates") or [None])[0],
+            "top_risk": (signal.get("risk_candidates") or [None])[0],
+            "freshness": signal.get("freshness"),
+        },
+        "portfolio_backtest": compact_portfolio(portfolio),
+        "walk_forward_report": compact_walk_forward(walk),
+        "market_regime_report": regime,
+        "overfitting_check": overfit,
+        "trade_review": trade,
+        "actual_vs_backtest": actual,
+        "required_live_checks_before_order": [
+            "IBKR bid/ask/last or two public quote sources",
+            "current price vs tested signal area",
+            "same-day SPY/QQQ/VIX/10Y/breadth/regime",
+            "fresh company/sector/macro news",
+            "earnings/guidance/valuation check",
+            "real account cash, position size, QQQ+SMH+MSFT concentration, semiconductor exposure, MSFT exposure",
+            "exact limit price, invalidation level, and cancel condition",
+        ],
+    }
+
+    with open(OUT / "eason_master_status.json", "w", encoding="utf-8") as f:
+        json.dump(master, f, indent=2, ensure_ascii=False, allow_nan=False)
+
+    # Also enhance action_board.json so ChatGPT can load one primary file.
+    with open(OUT / "action_board.json", "w", encoding="utf-8") as f:
+        json.dump(master, f, indent=2, ensure_ascii=False, allow_nan=False)
+
+    print("Saved docs/eason_master_status.json and enhanced docs/action_board.json")
+
+
+if __name__ == "__main__":
+    main()
