@@ -1,28 +1,35 @@
-# Eason Data Hub 48
-# GitHub only acts as the data pipe / evidence warehouse.
-# Final trading decisions remain outside GitHub and should be made using the full Eason 9.6/10 framework.
+# Eason Quant large universe, cache-safe mode.
+# Keep many stocks in the universe, but scripts/build_report.py only refreshes a capped number per run
+# so the free Tiingo API is less likely to hit HTTP 429.
 
 TICKERS = [
-    # Core / existing strategy anchors
-    "QQQ", "SMH", "SOXX", "SPY", "MSFT", "SGOV",
+    # Market / regime anchors
+    "SPY", "QQQ", "SMH", "SOXX", "VGT", "XLK", "IYW", "IGV", "IGM", "SGOV",
 
-    # Semiconductor / AI hardware tactical layer
-    "NVDA", "AVGO", "AMD", "ASML", "TSM", "MU", "LRCX", "AMAT", "KLAC", "ARM",
+    # Magnificent 7 / AI concentration
+    "MSFT", "NVDA", "AAPL", "GOOGL", "AMZN", "META", "AVGO", "TSLA",
 
-    # Software / AI application layer
-    "IGV", "CRWD", "PLTR", "SNOW", "DDOG", "NET", "NOW", "PANW", "MDB", "ORCL",
+    # Semiconductor / AI hardware
+    "AMD", "ASML", "TSM", "ARM", "MU", "LRCX", "AMAT", "KLAC", "INTC",
+    "MRVL", "QCOM", "ON", "ADI", "TXN", "NXPI", "MCHP", "MPWR",
 
-    # AI infrastructure / power / data-center layer
-    "VRT", "ETN", "PWR", "CEG", "NRG", "GRID",
+    # AI software / cloud / cybersecurity
+    "ORCL", "PLTR", "CRM", "ADBE", "SNOW", "DDOG", "NET", "NOW", "PANW",
+    "CRWD", "ZS", "OKTA", "MDB", "TEAM", "SHOP", "CFLT", "ESTC", "GTLB", "PATH",
 
-    # Defensive / low-correlation layer
-    "GLD", "TLT", "IEF", "XLV", "XLP", "XLU", "USMV",
+    # AI infrastructure / power / data-center
+    "VRT", "ETN", "PWR", "CEG", "NRG", "GRID", "SMR", "GE", "VST", "DLR",
+    "EQIX", "ANET", "CSCO",
 
-    # High-volatility satellite layer
-    "TSLA", "COIN", "ARKK", "XBI", "IBB",
+    # Defensive / low-correlation / macro
+    "GLD", "TLT", "IEF", "SHY", "XLV", "XLP", "XLU", "USMV", "VYM",
 
-    # Large-cap quality / opportunity-cost comparison layer
-    "AAPL", "GOOGL", "AMZN", "META",
+    # High-volatility satellite / innovation
+    "COIN", "MSTR", "ARKK", "SOFI", "RBLX", "UBER", "ABNB", "HOOD", "RDDT",
+    "RKLB", "ASTS", "HIMS", "APP",
+
+    # Quality / opportunity-cost comparisons
+    "COST", "LLY", "JPM", "XLF", "XLE",
 ]
 
 START_DATE = "2005-01-01"
