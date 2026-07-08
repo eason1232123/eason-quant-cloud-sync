@@ -33,6 +33,9 @@ jobs:
           TIINGO_REQUEST_SLEEP_SECONDS: "0.9"
         run: python scripts/build_report.py
 
+      - name: Build vectorbt validation
+        run: python scripts/build_vectorbt_validation.py
+
       - name: Build portfolio backtest
         run: python scripts/build_portfolio_backtest.py
 
