@@ -2,16 +2,12 @@ name: Eason Quant Daily
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
-    paths:
-      - "config.py"
-      - "scripts/**"
-      - ".github/workflows/main.yml"
-      - "requirements.txt"
   schedule:
     - cron: "30 23 * * 1-5"
+
+concurrency:
+  group: eason-quant-daily-main
+  cancel-in-progress: true
 
 permissions:
   contents: write
