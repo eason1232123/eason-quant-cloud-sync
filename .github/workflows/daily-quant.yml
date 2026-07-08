@@ -25,34 +25,57 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Build market report cache-safe
+      - name: Build market report cache-safe append-only
+        timeout-minutes: 8
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
-          MAX_TIINGO_REQUESTS_PER_RUN: "6"
-          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "2"
-          TIINGO_REQUEST_SLEEP_SECONDS: "2.5"
-        run: python scripts/build_report_safe.py
+          PYTHONUNBUFFERED: "1"
+          MAX_TIINGO_REQUESTS_PER_RUN: "4"
+          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "1"
+          TIINGO_REQUEST_SLEEP_SECONDS: "1.5"
+        run: python -u scripts/build_report_safe.py
 
       - name: Build vectorbt validation
-        run: python scripts/build_vectorbt_validation.py
+        timeout-minutes: 6
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_vectorbt_validation.py
 
       - name: Build vectorbt evidence layer
-        run: python scripts/build_vectorbt_backtest.py
+        timeout-minutes: 6
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_vectorbt_backtest.py
 
       - name: Build portfolio backtest
-        run: python scripts/build_portfolio_backtest.py
+        timeout-minutes: 6
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_portfolio_backtest.py
 
       - name: Build walk-forward and overfitting reports
-        run: python scripts/build_walk_forward_report.py
+        timeout-minutes: 6
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_walk_forward_report.py
 
       - name: Build trade review
-        run: python scripts/build_trade_review.py
+        timeout-minutes: 4
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_trade_review.py
 
       - name: Build decision report
-        run: python scripts/build_decision_report.py
+        timeout-minutes: 4
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_decision_report.py
 
       - name: Build v3 master action board
-        run: python scripts/build_action_board_v3.py
+        timeout-minutes: 4
+        env:
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_action_board_v3.py
 
       - name: Commit updated docs
         run: |
