@@ -1,14 +1,14 @@
 {
-  "generated_at_utc": "2026-07-09T01:22:52.978298+00:00",
+  "generated_at_utc": "2026-07-09T17:34:43.351981+00:00",
   "version": "market-regime-v2.5",
   "purpose": "Show how often the model is in base/defensive/severe defensive mode and how strategy returns behaved in each regime.",
   "regimes": [
     {
       "regime": "base",
-      "trading_days": 4284,
+      "trading_days": 4285,
       "share_of_history_pct": 79.19,
-      "avg_daily_return_pct": 0.0611,
-      "daily_win_rate_pct": 55.23,
+      "avg_daily_return_pct": 0.0612,
+      "daily_win_rate_pct": 55.24,
       "max_regime_drawdown_pct": -26.13,
       "avg_cash_weight_pct": 14.87,
       "avg_tech_ai_concentration_pct": 75.13
@@ -16,7 +16,7 @@
     {
       "regime": "severe_defensive",
       "trading_days": 800,
-      "share_of_history_pct": 14.79,
+      "share_of_history_pct": 14.78,
       "avg_daily_return_pct": 0.0315,
       "daily_win_rate_pct": 50.62,
       "max_regime_drawdown_pct": -24.91,
