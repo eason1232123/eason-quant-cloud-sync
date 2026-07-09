@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-08T10:23:01.158762+00:00",
+  "generated_at_utc": "2026-07-09T01:22:53.636747+00:00",
   "summary_type": "decision",
   "source_file": "eason_signal.json",
   "summary_file_version": "v4.4-latest-decision-summary-no-name-conflict",
@@ -7,7 +7,7 @@
   "reason": "At least one ticker has high technical/rule risk. Review defense before adding risk.",
   "actionable_buy_count": 0,
   "risk_candidate_count": 38,
-  "high_risk_count": 13,
+  "high_risk_count": 14,
   "top_actionable_buy": null,
   "top_risk": {
     "ticker": "SMH",
@@ -35,12 +35,12 @@
   "default_human_action_before_chatgpt_review": "DO_NOT_ADD_RISK_BEFORE_REVIEW",
   "portfolio_backtest_available": true,
   "freshness": {
-    "source_report_generated_at_utc": "2026-07-08T10:21:57.511217+00:00",
-    "latest_price_date_max": "2026-07-07",
+    "source_report_generated_at_utc": "2026-07-09T01:21:58.172085+00:00",
+    "latest_price_date_max": "2026-07-08",
     "latest_price_date_min": "2026-07-07",
     "loaded_ticker_count": 51,
     "configured_ticker_count": 94,
-    "fresh_request_count": 3,
+    "fresh_request_count": 10,
     "errors_count": 0
   }
 }

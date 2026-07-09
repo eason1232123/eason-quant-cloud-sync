@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-08T10:21:57.511217+00:00",
+  "generated_at_utc": "2026-07-09T01:21:58.172085+00:00",
   "source_file": "market_report.json",
   "summary_file_version": "v4.4-latest-market-summary-no-name-conflict",
   "summary_type": "market",
@@ -10,13 +10,13 @@
   "universe": {
     "configured_ticker_count": 94,
     "loaded_ticker_count": 51,
-    "fresh_request_count": 3,
-    "skipped_fresh_enough_no_request": 48,
-    "skipped_by_tier_rotation": 33,
-    "rows_appended_total": 13858,
+    "fresh_request_count": 10,
+    "skipped_fresh_enough_no_request": 0,
+    "skipped_by_tier_rotation": 60,
+    "rows_appended_total": 10,
     "append_only_mode": true,
     "historical_rows_overwritten": 0,
-    "expected_latest_market_date": "2026-07-07",
+    "expected_latest_market_date": "2026-07-08",
     "refresh_policy": {
       "core_daily": [
         "AAPL",
@@ -82,7 +82,7 @@
     "max_new_full_downloads_per_run": 3,
     "tiingo_circuit_open": false,
     "tiingo_circuit_reason": "",
-    "warnings_count": 0,
+    "warnings_count": 14,
     "coverage_gaps_count": 43,
     "errors_count": 0,
     "note": "coverage_gaps are tickers without usable cache yet; errors are true processing/fetch failures not classified as rotation/rate-limit coverage gaps."
@@ -163,22 +163,22 @@
   "ticker_count": 51,
   "latest_technicals": {
     "AAPL": {
-      "latest_date": "2026-07-07",
-      "ret_1d": -0.0064,
-      "ret_5d": 0.1026,
-      "ret_10d": 0.046,
-      "ret_20d": 0.0108,
-      "ret_60d": 0.1937,
-      "rsi14": 60.67,
+      "latest_date": "2026-07-08",
+      "ret_1d": 0.0088,
+      "ret_5d": 0.083,
+      "ret_10d": 0.0649,
+      "ret_20d": 0.0393,
+      "ret_60d": 0.2042,
+      "rsi14": 62.25,
       "above_ma5": true,
       "above_ma20": true,
       "above_ma50": true,
       "above_ma200": true,
-      "drawdown_from_52w_high": -0.0144,
-      "volatility_20d": 0.385,
-      "volatility_60d": 0.2849,
-      "relative_20d": -0.0056,
-      "relative_60d": 0.0912,
+      "drawdown_from_52w_high": -0.0057,
+      "volatility_20d": 0.3787,
+      "volatility_60d": 0.2851,
+      "relative_20d": null,
+      "relative_60d": null,
       "relative_benchmark": "SPY",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -191,22 +191,22 @@
       }
     },
     "AMZN": {
-      "latest_date": "2026-07-07",
-      "ret_1d": 0.0075,
-      "ret_5d": 0.0243,
-      "ret_10d": 0.0567,
-      "ret_20d": -0.0002,
-      "ret_60d": 0.0528,
-      "rsi14": 51.72,
-      "above_ma5": true,
+      "latest_date": "2026-07-08",
+      "ret_1d": -0.0096,
+      "ret_5d": 0.0222,
+      "ret_10d": 0.0406,
+      "ret_20d": -0.0065,
+      "ret_60d": 0.022,
+      "rsi14": 49.41,
+      "above_ma5": false,
       "above_ma20": true,
       "above_ma50": false,
       "above_ma200": true,
-      "drawdown_from_52w_high": -0.1055,
-      "volatility_20d": 0.3515,
-      "volatility_60d": 0.2935,
-      "relative_20d": -0.0166,
-      "relative_60d": -0.0498,
+      "drawdown_from_52w_high": -0.1141,
+      "volatility_20d": 0.353,
+      "volatility_60d": 0.2916,
+      "relative_20d": null,
+      "relative_60d": null,
       "relative_benchmark": "SPY",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -219,22 +219,22 @@
       }
     },
     "AVGO": {
-      "latest_date": "2026-07-07",
-      "ret_1d": -0.0083,
-      "ret_5d": -0.0045,
-      "ret_10d": -0.0544,
-      "ret_20d": -0.0372,
-      "ret_60d": 0.0464,
-      "rsi14": 43.89,
+      "latest_date": "2026-07-08",
+      "ret_1d": 0.0483,
+      "ret_5d": 0.029,
+      "ret_10d": 0.0225,
+      "ret_20d": -0.0183,
+      "ret_60d": 0.0479,
+      "rsi14": 50.26,
       "above_ma5": true,
-      "above_ma20": false,
+      "above_ma20": true,
       "above_ma50": false,
       "above_ma200": true,
-      "drawdown_from_52w_high": -0.2288,
-      "volatility_20d": 0.507,
-      "volatility_60d": 0.5369,
-      "relative_20d": -0.0578,
-      "relative_60d": -0.3048,
+      "drawdown_from_52w_high": -0.1915,
+      "volatility_20d": 0.5272,
+      "volatility_60d": 0.5374,
+      "relative_20d": null,
+      "relative_60d": null,
       "relative_benchmark": "SMH",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -247,26 +247,26 @@
       }
     },
     "GLD": {
-      "latest_date": "2026-07-07",
-      "ret_1d": -0.0121,
-      "ret_5d": 0.0242,
-      "ret_10d": -0.0185,
-      "ret_20d": -0.0473,
-      "ret_60d": -0.138,
-      "rsi14": 42.32,
-      "above_ma5": true,
+      "latest_date": "2026-07-08",
+      "ret_1d": -0.0081,
+      "ret_5d": 0.0165,
+      "ret_10d": -0.0076,
+      "ret_20d": -0.0574,
+      "ret_60d": -0.1434,
+      "rsi14": 40.44,
+      "above_ma5": false,
       "above_ma20": false,
       "above_ma50": false,
       "above_ma200": false,
-      "drawdown_from_52w_high": -0.2388,
-      "volatility_20d": 0.2938,
-      "volatility_60d": 0.242,
-      "relative_20d": -0.0637,
-      "relative_60d": -0.2405,
+      "drawdown_from_52w_high": -0.2449,
+      "volatility_20d": 0.2939,
+      "volatility_60d": 0.2423,
+      "relative_20d": null,
+      "relative_60d": null,
       "relative_benchmark": "SPY",
       "active_signals": {
         "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": true,
+        "rsi_oversold_reclaim_40": false,
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
         "relative_strength_rebound": false,
@@ -275,22 +275,22 @@
       }
     },
     "GOOGL": {
-      "latest_date": "2026-07-07",
-      "ret_1d": 0.0016,
-      "ret_5d": 0.0378,
-      "ret_10d": 0.0496,
-      "ret_20d": -0.0035,
-      "ret_60d": 0.1531,
-      "rsi14": 54.04,
-      "above_ma5": true,
+      "latest_date": "2026-07-08",
+      "ret_1d": -0.0139,
+      "ret_5d": 0.0127,
+      "ret_10d": 0.0456,
+      "ret_20d": -0.0038,
+      "ret_60d": 0.1415,
+      "rsi14": 50.33,
+      "above_ma5": false,
       "above_ma20": true,
       "above_ma50": false,
       "above_ma200": true,
-      "drawdown_from_52w_high": -0.0878,
-      "volatility_20d": 0.3291,
-      "volatility_60d": 0.3533,
-      "relative_20d": -0.0198,
-      "relative_60d": 0.0506,
+      "drawdown_from_52w_high": -0.1005,
+      "volatility_20d": 0.3293,
+      "volatility_60d": 0.3547,
+      "relative_20d": null,
+      "relative_60d": null,
       "relative_benchmark": "SPY",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -303,22 +303,22 @@
       }
     },
     "IEF": {
-      "latest_date": "2026-07-07",
-      "ret_1d": -0.0051,
-      "ret_5d": -0.011,
-      "ret_10d": 0.0001,
-      "ret_20d": 0.0042,
-      "ret_60d": -0.0083,
-      "rsi14": 45.37,
+      "latest_date": "2026-07-08",
+      "ret_1d": -0.002,
+      "ret_5d": -0.0079,
+      "ret_10d": -0.0032,
+      "ret_20d": 0.0032,
+      "ret_60d": -0.0087,
+      "rsi14": 42.88,
       "above_ma5": false,
       "above_ma20": false,
       "above_ma50": false,
       "above_ma200": false,
-      "drawdown_from_52w_high": -0.0282,
-      "volatility_20d": 0.0556,
-      "volatility_60d": 0.0514,
-      "relative_20d": -0.0122,
-      "relative_60d": -0.1108,
+      "drawdown_from_52w_high": -0.0301,
+      "volatility_20d": 0.056,
+      "volatility_60d": 0.0515,
+      "relative_20d": null,
+      "relative_60d": null,
       "relative_benchmark": "SPY",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -327,26 +327,26 @@
         "ma50_reclaim_bullish": false,
         "relative_strength_rebound": false,
         "momentum_leader": false,
-        "failed_rebound_risk": false
+        "failed_rebound_risk": true
       }
     },
     "META": {
-      "latest_date": "2026-07-07",
-      "ret_1d": 0.0255,
-      "ret_5d": 0.0942,
-      "ret_10d": 0.0917,
-      "ret_20d": 0.039,
-      "ret_60d": -0.0195,
-      "rsi14": 57.47,
+      "latest_date": "2026-07-08",
+      "ret_1d": -0.0202,
+      "ret_5d": 0.0707,
+      "ret_10d": 0.0728,
+      "ret_20d": 0.0312,
+      "ret_60d": -0.0416,
+      "rsi14": 53.9,
       "above_ma5": true,
       "above_ma20": true,
       "above_ma50": true,
       "above_ma200": false,
-      "drawdown_from_52w_high": -0.2183,
-      "volatility_20d": 0.5146,
-      "volatility_60d": 0.4262,
-      "relative_20d": 0.0226,
-      "relative_60d": -0.122,
+      "drawdown_from_52w_high": -0.2341,
+      "volatility_20d": 0.5181,
+      "volatility_60d": 0.4282,
+      "relative_20d": null,
+      "relative_60d": null,
       "relative_benchmark": "SPY",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -359,22 +359,22 @@
       }
     },
     "MSFT": {
-      "latest_date": "2026-07-07",
-      "ret_1d": 0.0054,
-      "ret_5d": 0.055,
-      "ret_10d": 0.0585,
-      "ret_20d": -0.0668,
-      "ret_60d": 0.0445,
-      "rsi14": 49.2,
-      "above_ma5": true,
+      "latest_date": "2026-07-08",
+      "ret_1d": -0.0141,
+      "ret_5d": 0.0277,
+      "ret_10d": 0.0251,
+      "ret_20d": -0.069,
+      "ret_60d": 0.0359,
+      "rsi14": 46.57,
+      "above_ma5": false,
       "above_ma20": true,
       "above_ma50": false,
       "above_ma200": false,
-      "drawdown_from_52w_high": -0.2781,
-      "volatility_20d": 0.3812,
-      "volatility_60d": 0.3626,
-      "relative_20d": -0.0832,
-      "relative_60d": -0.058,
+      "drawdown_from_52w_high": -0.2883,
+      "volatility_20d": 0.382,
+      "volatility_60d": 0.3637,
+      "relative_20d": null,
+      "relative_60d": null,
       "relative_benchmark": "SPY",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -387,22 +387,22 @@
       }
     },
     "NVDA": {
-      "latest_date": "2026-07-07",
-      "ret_1d": 0.0071,
-      "ret_5d": 0.0101,
-      "ret_10d": -0.0562,
-      "ret_20d": -0.0398,
-      "ret_60d": 0.072,
-      "rsi14": 43.58,
-      "above_ma5": false,
-      "above_ma20": false,
+      "latest_date": "2026-07-08",
+      "ret_1d": 0.0365,
+      "ret_5d": 0.0201,
+      "ret_10d": 0.0204,
+      "ret_20d": -0.0217,
+      "ret_60d": 0.0834,
+      "rsi14": 51.03,
+      "above_ma5": true,
+      "above_ma20": true,
       "above_ma50": false,
       "above_ma200": true,
-      "drawdown_from_52w_high": -0.1637,
-      "volatility_20d": 0.338,
-      "volatility_60d": 0.4011,
-      "relative_20d": -0.0605,
-      "relative_60d": -0.2792,
+      "drawdown_from_52w_high": -0.1331,
+      "volatility_20d": 0.3587,
+      "volatility_60d": 0.4045,
+      "relative_20d": null,
+      "relative_60d": null,
       "relative_benchmark": "SMH",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -415,22 +415,22 @@
       }
     },
     "QQQ": {
-      "latest_date": "2026-07-07",
-      "ret_1d": -0.0185,
-      "ret_5d": -0.0202,
-      "ret_10d": -0.0386,
-      "ret_20d": 0.0073,
-      "ret_60d": 0.1639,
-      "rsi14": 47.25,
+      "latest_date": "2026-07-08",
+      "ret_1d": 0.0028,
+      "ret_5d": -0.0339,
+      "ret_10d": -0.0031,
+      "ret_20d": -0.0054,
+      "ret_60d": 0.1655,
+      "rsi14": 47.98,
       "above_ma5": false,
       "above_ma20": false,
       "above_ma50": false,
       "above_ma200": true,
-      "drawdown_from_52w_high": -0.0482,
-      "volatility_20d": 0.3128,
+      "drawdown_from_52w_high": -0.0455,
+      "volatility_20d": 0.3078,
       "volatility_60d": 0.2408,
-      "relative_20d": -0.0091,
-      "relative_60d": 0.0614,
+      "relative_20d": null,
+      "relative_60d": null,
       "relative_benchmark": "SPY",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -582,6 +582,34 @@
         "failed_rebound_risk": true
       }
     },
+    "ADI": {
+      "latest_date": "2026-07-07",
+      "ret_1d": -0.0252,
+      "ret_5d": -0.0325,
+      "ret_10d": -0.1492,
+      "ret_20d": -0.0557,
+      "ret_60d": 0.0816,
+      "rsi14": 42.15,
+      "above_ma5": false,
+      "above_ma20": false,
+      "above_ma50": false,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.1492,
+      "volatility_20d": 0.5669,
+      "volatility_60d": 0.4823,
+      "relative_20d": -0.0763,
+      "relative_60d": -0.2697,
+      "relative_benchmark": "SMH",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
+      }
+    },
     "AMAT": {
       "latest_date": "2026-07-07",
       "ret_1d": -0.0646,
@@ -636,6 +664,34 @@
         "relative_strength_rebound": false,
         "momentum_leader": false,
         "failed_rebound_risk": true
+      }
+    },
+    "ANET": {
+      "latest_date": "2026-07-07",
+      "ret_1d": -0.0394,
+      "ret_5d": 0.0144,
+      "ret_10d": -0.0464,
+      "ret_20d": 0.079,
+      "ret_60d": 0.1397,
+      "rsi14": 52.37,
+      "above_ma5": false,
+      "above_ma20": true,
+      "above_ma50": true,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.0634,
+      "volatility_20d": 0.6076,
+      "volatility_60d": 0.606,
+      "relative_20d": 0.0627,
+      "relative_60d": 0.0372,
+      "relative_benchmark": "SPY",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": true,
+        "failed_rebound_risk": false
       }
     },
     "ARM": {
@@ -804,6 +860,34 @@
         "relative_strength_rebound": false,
         "momentum_leader": false,
         "failed_rebound_risk": true
+      }
+    },
+    "IGM": {
+      "latest_date": "2026-07-07",
+      "ret_1d": -0.0188,
+      "ret_5d": -0.0203,
+      "ret_10d": -0.0456,
+      "ret_20d": 0.0005,
+      "ret_60d": 0.2323,
+      "rsi14": 47.51,
+      "above_ma5": false,
+      "above_ma20": false,
+      "above_ma50": true,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.0835,
+      "volatility_20d": 0.3578,
+      "volatility_60d": 0.3008,
+      "relative_20d": -0.0158,
+      "relative_60d": 0.1298,
+      "relative_benchmark": "SPY",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
       }
     },
     "IGV": {
@@ -1282,90 +1366,6 @@
         "failed_rebound_risk": true
       }
     },
-    "ADI": {
-      "latest_date": "2026-07-07",
-      "ret_1d": -0.0252,
-      "ret_5d": -0.0325,
-      "ret_10d": -0.1492,
-      "ret_20d": -0.0557,
-      "ret_60d": 0.0816,
-      "rsi14": 42.15,
-      "above_ma5": false,
-      "above_ma20": false,
-      "above_ma50": false,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.1492,
-      "volatility_20d": 0.5669,
-      "volatility_60d": 0.4823,
-      "relative_20d": -0.0763,
-      "relative_60d": -0.2697,
-      "relative_benchmark": "SMH",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
-    "ANET": {
-      "latest_date": "2026-07-07",
-      "ret_1d": -0.0394,
-      "ret_5d": 0.0144,
-      "ret_10d": -0.0464,
-      "ret_20d": 0.079,
-      "ret_60d": 0.1397,
-      "rsi14": 52.37,
-      "above_ma5": false,
-      "above_ma20": true,
-      "above_ma50": true,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.0634,
-      "volatility_20d": 0.6076,
-      "volatility_60d": 0.606,
-      "relative_20d": 0.0627,
-      "relative_60d": 0.0372,
-      "relative_benchmark": "SPY",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": true,
-        "failed_rebound_risk": false
-      }
-    },
-    "IGM": {
-      "latest_date": "2026-07-07",
-      "ret_1d": -0.0188,
-      "ret_5d": -0.0203,
-      "ret_10d": -0.0456,
-      "ret_20d": 0.0005,
-      "ret_60d": 0.2323,
-      "rsi14": 47.51,
-      "above_ma5": false,
-      "above_ma20": false,
-      "above_ma50": true,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.0835,
-      "volatility_20d": 0.3578,
-      "volatility_60d": 0.3008,
-      "relative_20d": -0.0158,
-      "relative_60d": 0.1298,
-      "relative_benchmark": "SPY",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
     "ARKK": {
       "latest_date": "2026-07-07",
       "ret_1d": -0.0289,
@@ -1593,16 +1593,16 @@
   },
   "active_signals": [
     {
-      "ticker": "GLD",
+      "ticker": "IEF",
       "field": "active_signals",
       "value": {
         "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": true,
+        "rsi_oversold_reclaim_40": false,
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
         "relative_strength_rebound": false,
         "momentum_leader": false,
-        "failed_rebound_risk": false
+        "failed_rebound_risk": true
       }
     },
     {
@@ -1668,6 +1668,19 @@
         "relative_strength_rebound": false,
         "momentum_leader": false,
         "failed_rebound_risk": true
+      }
+    },
+    {
+      "ticker": "ANET",
+      "field": "active_signals",
+      "value": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": true,
+        "failed_rebound_risk": false
       }
     },
     {
@@ -1840,19 +1853,6 @@
       }
     },
     {
-      "ticker": "ANET",
-      "field": "active_signals",
-      "value": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": true,
-        "failed_rebound_risk": false
-      }
-    },
-    {
       "ticker": "ARKK",
       "field": "active_signals",
       "value": {
@@ -1894,504 +1894,504 @@
   ],
   "top_rule_evidence": [
     {
-      "ticker": "NVDA",
+      "win_rate": 0.6412,
       "valid": true,
       "samples": 1820,
+      "evidence_score_0_100": 56.7,
       "median_return": 0.0403,
       "rule": "momentum_leader",
-      "win_rate": 0.6412,
       "worst_mae": -0.5112,
-      "evidence_score_0_100": 56.7
+      "ticker": "NVDA"
     },
     {
-      "ticker": "AAPL",
+      "win_rate": 0.6627,
       "valid": true,
       "samples": 1746,
+      "evidence_score_0_100": 56.9,
       "median_return": 0.0341,
       "rule": "momentum_leader",
-      "win_rate": 0.6627,
       "worst_mae": -0.3688,
-      "evidence_score_0_100": 56.9
+      "ticker": "AAPL"
     },
     {
-      "ticker": "PWR",
+      "win_rate": 0.6019,
       "valid": true,
       "samples": 1723,
+      "evidence_score_0_100": 46.0,
       "median_return": 0.0187,
       "rule": "momentum_leader",
-      "win_rate": 0.6019,
       "worst_mae": -0.3107,
-      "evidence_score_0_100": 46.0
+      "ticker": "PWR"
     },
     {
-      "ticker": "AMZN",
+      "win_rate": 0.5726,
       "valid": true,
       "samples": 1694,
+      "evidence_score_0_100": 42.8,
       "median_return": 0.0177,
       "rule": "momentum_leader",
-      "win_rate": 0.5726,
       "worst_mae": -0.3307,
-      "evidence_score_0_100": 42.8
+      "ticker": "AMZN"
     },
     {
-      "ticker": "ETN",
+      "win_rate": 0.5639,
       "valid": true,
       "samples": 1605,
+      "evidence_score_0_100": 40.6,
       "median_return": 0.0134,
       "rule": "momentum_leader",
-      "win_rate": 0.5639,
       "worst_mae": -0.4359,
-      "evidence_score_0_100": 40.6
+      "ticker": "ETN"
     },
     {
-      "ticker": "MU",
+      "win_rate": 0.5889,
       "valid": true,
       "samples": 1591,
+      "evidence_score_0_100": 47.8,
       "median_return": 0.0284,
       "rule": "momentum_leader",
-      "win_rate": 0.5889,
       "worst_mae": -0.6807,
-      "evidence_score_0_100": 47.8
+      "ticker": "MU"
     },
     {
-      "ticker": "AMD",
+      "win_rate": 0.5466,
       "valid": true,
       "samples": 1577,
+      "evidence_score_0_100": 41.3,
       "median_return": 0.0212,
       "rule": "momentum_leader",
-      "win_rate": 0.5466,
       "worst_mae": -0.4822,
-      "evidence_score_0_100": 41.3
+      "ticker": "AMD"
     },
     {
-      "ticker": "LRCX",
+      "win_rate": 0.5272,
       "valid": true,
       "samples": 1565,
+      "evidence_score_0_100": 34.6,
       "median_return": 0.0061,
       "rule": "momentum_leader",
-      "win_rate": 0.5272,
       "worst_mae": -0.4567,
-      "evidence_score_0_100": 34.6
+      "ticker": "LRCX"
     },
     {
-      "ticker": "NRG",
+      "win_rate": 0.5687,
       "valid": true,
       "samples": 1491,
+      "evidence_score_0_100": 42.2,
       "median_return": 0.0172,
       "rule": "momentum_leader",
-      "win_rate": 0.5687,
       "worst_mae": -0.3606,
-      "evidence_score_0_100": 42.2
+      "ticker": "NRG"
     },
     {
-      "ticker": "ASML",
+      "win_rate": 0.6007,
       "valid": true,
       "samples": 1440,
+      "evidence_score_0_100": 46.5,
       "median_return": 0.0207,
       "rule": "momentum_leader",
-      "win_rate": 0.6007,
       "worst_mae": -0.3974,
-      "evidence_score_0_100": 46.5
+      "ticker": "ASML"
     },
     {
-      "ticker": "GOOGL",
+      "win_rate": 0.607,
       "valid": true,
       "samples": 1430,
+      "evidence_score_0_100": 47.6,
       "median_return": 0.022,
       "rule": "momentum_leader",
-      "win_rate": 0.607,
       "worst_mae": -0.2701,
-      "evidence_score_0_100": 47.6
+      "ticker": "GOOGL"
     },
     {
-      "ticker": "KLAC",
+      "win_rate": 0.5893,
       "valid": true,
       "samples": 1366,
+      "evidence_score_0_100": 45.1,
       "median_return": 0.0197,
       "rule": "momentum_leader",
-      "win_rate": 0.5893,
       "worst_mae": -0.2738,
-      "evidence_score_0_100": 45.1
+      "ticker": "KLAC"
     },
     {
-      "ticker": "AMAT",
+      "win_rate": 0.5581,
       "valid": true,
       "samples": 1360,
+      "evidence_score_0_100": 41.0,
       "median_return": 0.0165,
       "rule": "momentum_leader",
-      "win_rate": 0.5581,
       "worst_mae": -0.6627,
-      "evidence_score_0_100": 41.0
+      "ticker": "AMAT"
     },
     {
-      "ticker": "TSLA",
+      "win_rate": 0.5968,
       "valid": true,
       "samples": 1312,
+      "evidence_score_0_100": 50.1,
       "median_return": 0.0334,
       "rule": "momentum_leader",
-      "win_rate": 0.5968,
       "worst_mae": -0.6179,
-      "evidence_score_0_100": 50.1
+      "ticker": "TSLA"
     },
     {
-      "ticker": "TSM",
+      "win_rate": 0.6111,
       "valid": true,
       "samples": 1229,
+      "evidence_score_0_100": 47.0,
       "median_return": 0.0189,
       "rule": "momentum_leader",
-      "win_rate": 0.6111,
       "worst_mae": -0.3009,
-      "evidence_score_0_100": 47.0
+      "ticker": "TSM"
     },
     {
-      "ticker": "ORCL",
+      "win_rate": 0.537,
       "valid": true,
       "samples": 1188,
+      "evidence_score_0_100": 35.5,
       "median_return": 0.0059,
       "rule": "momentum_leader",
-      "win_rate": 0.537,
       "worst_mae": -0.414,
-      "evidence_score_0_100": 35.5
+      "ticker": "ORCL"
     },
     {
-      "ticker": "AVGO",
+      "win_rate": 0.5942,
       "valid": true,
       "samples": 1178,
+      "evidence_score_0_100": 45.6,
       "median_return": 0.0198,
       "rule": "momentum_leader",
-      "win_rate": 0.5942,
       "worst_mae": -0.3791,
-      "evidence_score_0_100": 45.6
+      "ticker": "AVGO"
     },
     {
-      "ticker": "MSFT",
+      "win_rate": 0.6003,
       "valid": true,
       "samples": 1176,
+      "evidence_score_0_100": 45.2,
       "median_return": 0.0165,
       "rule": "momentum_leader",
-      "win_rate": 0.6003,
       "worst_mae": -0.2792,
-      "evidence_score_0_100": 45.2
+      "ticker": "MSFT"
     },
     {
-      "ticker": "PANW",
+      "win_rate": 0.5945,
       "valid": true,
       "samples": 1132,
+      "evidence_score_0_100": 45.6,
       "median_return": 0.0196,
       "rule": "momentum_leader",
-      "win_rate": 0.5945,
       "worst_mae": -0.3008,
-      "evidence_score_0_100": 45.6
+      "ticker": "PANW"
     },
     {
-      "ticker": "VGT",
+      "win_rate": 0.669,
       "valid": true,
       "samples": 1124,
+      "evidence_score_0_100": 53.3,
       "median_return": 0.0205,
       "rule": "momentum_leader",
-      "win_rate": 0.669,
       "worst_mae": -0.3277,
-      "evidence_score_0_100": 53.3
+      "ticker": "VGT"
     },
     {
-      "ticker": "IGM",
+      "win_rate": 0.6694,
       "valid": true,
       "samples": 1110,
+      "evidence_score_0_100": 54.2,
       "median_return": 0.0231,
       "rule": "momentum_leader",
-      "win_rate": 0.6694,
       "worst_mae": -0.3558,
-      "evidence_score_0_100": 54.2
+      "ticker": "IGM"
     },
     {
-      "ticker": "NOW",
+      "win_rate": 0.5434,
       "valid": true,
       "samples": 1106,
+      "evidence_score_0_100": 37.3,
       "median_return": 0.0095,
       "rule": "momentum_leader",
-      "win_rate": 0.5434,
       "worst_mae": -0.3321,
-      "evidence_score_0_100": 37.3
+      "ticker": "NOW"
     },
     {
-      "ticker": "ANET",
+      "win_rate": 0.6112,
       "valid": true,
       "samples": 1093,
+      "evidence_score_0_100": 49.6,
       "median_return": 0.0271,
       "rule": "momentum_leader",
-      "win_rate": 0.6112,
       "worst_mae": -0.3679,
-      "evidence_score_0_100": 49.6
+      "ticker": "ANET"
     },
     {
-      "ticker": "META",
+      "win_rate": 0.6531,
       "valid": true,
       "samples": 1058,
+      "evidence_score_0_100": 54.9,
       "median_return": 0.0306,
       "rule": "momentum_leader",
-      "win_rate": 0.6531,
       "worst_mae": -0.2774,
-      "evidence_score_0_100": 54.9
+      "ticker": "META"
     },
     {
-      "ticker": "QQQ",
+      "win_rate": 0.6426,
       "valid": true,
       "samples": 1027,
+      "evidence_score_0_100": 50.2,
       "median_return": 0.019,
       "rule": "momentum_leader",
-      "win_rate": 0.6426,
       "worst_mae": -0.2961,
-      "evidence_score_0_100": 50.2
+      "ticker": "QQQ"
     },
     {
-      "ticker": "ADI",
+      "win_rate": 0.5095,
       "valid": true,
       "samples": 997,
+      "evidence_score_0_100": 31.6,
       "median_return": 0.0022,
       "rule": "momentum_leader",
-      "win_rate": 0.5095,
       "worst_mae": -0.2733,
-      "evidence_score_0_100": 31.6
+      "ticker": "ADI"
     },
     {
-      "ticker": "XLK",
+      "win_rate": 0.6761,
       "valid": true,
       "samples": 985,
+      "evidence_score_0_100": 54.0,
       "median_return": 0.0206,
       "rule": "momentum_leader",
-      "win_rate": 0.6761,
       "worst_mae": -0.3164,
-      "evidence_score_0_100": 54.0
+      "ticker": "XLK"
     },
     {
-      "ticker": "SOXX",
+      "win_rate": 0.6183,
       "valid": true,
       "samples": 917,
+      "evidence_score_0_100": 47.5,
       "median_return": 0.018,
       "rule": "momentum_leader",
-      "win_rate": 0.6183,
       "worst_mae": -0.7897,
-      "evidence_score_0_100": 47.5
+      "ticker": "SOXX"
     },
     {
-      "ticker": "IGV",
+      "win_rate": 0.5932,
       "valid": true,
       "samples": 917,
+      "evidence_score_0_100": 43.3,
       "median_return": 0.0128,
       "rule": "momentum_leader",
-      "win_rate": 0.5932,
       "worst_mae": -0.3391,
-      "evidence_score_0_100": 43.3
+      "ticker": "IGV"
     },
     {
-      "ticker": "ARKK",
+      "win_rate": 0.6296,
       "valid": true,
       "samples": 891,
+      "evidence_score_0_100": 51.3,
       "median_return": 0.0268,
       "rule": "momentum_leader",
-      "win_rate": 0.6296,
       "worst_mae": -0.4534,
-      "evidence_score_0_100": 51.3
+      "ticker": "ARKK"
     },
     {
-      "ticker": "GRID",
+      "win_rate": 0.5488,
       "valid": true,
       "samples": 860,
+      "evidence_score_0_100": 37.0,
       "median_return": 0.0069,
       "rule": "momentum_leader",
-      "win_rate": 0.5488,
       "worst_mae": -0.4163,
-      "evidence_score_0_100": 37.0
+      "ticker": "GRID"
     },
     {
-      "ticker": "AMD",
+      "win_rate": 0.4988,
       "valid": true,
       "samples": 846,
+      "evidence_score_0_100": 30.0,
       "median_return": 0.0,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.4988,
       "worst_mae": -0.4653,
-      "evidence_score_0_100": 30.0
+      "ticker": "AMD"
     },
     {
-      "ticker": "MU",
+      "win_rate": 0.5275,
       "valid": true,
       "samples": 836,
+      "evidence_score_0_100": 36.9,
       "median_return": 0.0134,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5275,
       "worst_mae": -0.5737,
-      "evidence_score_0_100": 36.9
+      "ticker": "MU"
     },
     {
-      "ticker": "GLD",
+      "win_rate": 0.5351,
       "valid": true,
       "samples": 826,
+      "evidence_score_0_100": 34.7,
       "median_return": 0.0037,
       "rule": "momentum_leader",
-      "win_rate": 0.5351,
       "worst_mae": -0.2659,
-      "evidence_score_0_100": 34.7
+      "ticker": "GLD"
     },
     {
-      "ticker": "TLT",
+      "win_rate": 0.5236,
       "valid": true,
       "samples": 825,
+      "evidence_score_0_100": 41.2,
       "median_return": 0.0019,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5236,
       "worst_mae": -0.112,
-      "evidence_score_0_100": 41.2
+      "ticker": "TLT"
     },
     {
-      "ticker": "NRG",
+      "win_rate": 0.5513,
       "valid": true,
       "samples": 809,
+      "evidence_score_0_100": 39.8,
       "median_return": 0.0149,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5513,
       "worst_mae": -0.5158,
-      "evidence_score_0_100": 39.8
+      "ticker": "NRG"
     },
     {
-      "ticker": "IEF",
+      "win_rate": 0.5592,
       "valid": true,
-      "samples": 793,
-      "median_return": 0.0026,
+      "samples": 794,
+      "evidence_score_0_100": 47.8,
+      "median_return": 0.0027,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5586,
       "worst_mae": -0.0662,
-      "evidence_score_0_100": 47.7
+      "ticker": "IEF"
     },
     {
-      "ticker": "AMAT",
+      "win_rate": 0.5487,
       "valid": true,
       "samples": 780,
+      "evidence_score_0_100": 38.4,
       "median_return": 0.0114,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5487,
       "worst_mae": -0.6601,
-      "evidence_score_0_100": 38.4
+      "ticker": "AMAT"
     },
     {
-      "ticker": "ORCL",
+      "win_rate": 0.591,
       "valid": true,
       "samples": 753,
+      "evidence_score_0_100": 43.3,
       "median_return": 0.0136,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.591,
       "worst_mae": -0.3274,
-      "evidence_score_0_100": 43.3
+      "ticker": "ORCL"
     },
     {
-      "ticker": "AMZN",
+      "win_rate": 0.6027,
       "valid": true,
-      "samples": 749,
-      "median_return": 0.0235,
+      "samples": 750,
+      "evidence_score_0_100": 47.6,
+      "median_return": 0.0234,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.6035,
       "worst_mae": -0.3798,
-      "evidence_score_0_100": 47.7
+      "ticker": "AMZN"
     },
     {
-      "ticker": "GOOGL",
+      "win_rate": 0.6176,
       "valid": true,
       "samples": 748,
+      "evidence_score_0_100": 48.9,
       "median_return": 0.0227,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.6176,
       "worst_mae": -0.2895,
-      "evidence_score_0_100": 48.9
+      "ticker": "GOOGL"
     },
     {
-      "ticker": "ETN",
+      "win_rate": 0.5572,
       "valid": true,
       "samples": 743,
+      "evidence_score_0_100": 39.3,
       "median_return": 0.0114,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5572,
       "worst_mae": -0.4396,
-      "evidence_score_0_100": 39.3
+      "ticker": "ETN"
     },
     {
-      "ticker": "LRCX",
+      "win_rate": 0.5989,
       "valid": true,
       "samples": 743,
+      "evidence_score_0_100": 48.2,
       "median_return": 0.0265,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5989,
       "worst_mae": -0.3963,
-      "evidence_score_0_100": 48.2
+      "ticker": "LRCX"
     },
     {
-      "ticker": "ASML",
+      "win_rate": 0.637,
       "valid": true,
       "samples": 730,
+      "evidence_score_0_100": 53.2,
       "median_return": 0.0305,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.637,
       "worst_mae": -0.3414,
-      "evidence_score_0_100": 53.2
+      "ticker": "ASML"
     },
     {
-      "ticker": "TSM",
+      "win_rate": 0.5658,
       "valid": true,
       "samples": 730,
+      "evidence_score_0_100": 41.7,
       "median_return": 0.0163,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5658,
       "worst_mae": -0.2862,
-      "evidence_score_0_100": 41.7
+      "ticker": "TSM"
     },
     {
-      "ticker": "GLD",
+      "win_rate": 0.6085,
       "valid": true,
       "samples": 728,
+      "evidence_score_0_100": 47.2,
       "median_return": 0.0103,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.6085,
       "worst_mae": -0.1983,
-      "evidence_score_0_100": 47.2
+      "ticker": "GLD"
     },
     {
-      "ticker": "ADI",
+      "win_rate": 0.595,
       "valid": true,
       "samples": 726,
+      "evidence_score_0_100": 45.4,
       "median_return": 0.0188,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.595,
       "worst_mae": -0.2866,
-      "evidence_score_0_100": 45.4
+      "ticker": "ADI"
     },
     {
-      "ticker": "MDB",
+      "win_rate": 0.4917,
       "valid": true,
       "samples": 726,
+      "evidence_score_0_100": 30.0,
       "median_return": -0.0018,
       "rule": "momentum_leader",
-      "win_rate": 0.4917,
       "worst_mae": -0.4798,
-      "evidence_score_0_100": 30.0
+      "ticker": "MDB"
     },
     {
-      "ticker": "MSFT",
+      "win_rate": 0.5898,
       "valid": true,
-      "samples": 723,
-      "median_return": 0.0146,
+      "samples": 724,
+      "evidence_score_0_100": 43.9,
+      "median_return": 0.0145,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5906,
       "worst_mae": -0.2441,
-      "evidence_score_0_100": 44.0
+      "ticker": "MSFT"
     },
     {
-      "ticker": "NVDA",
+      "win_rate": 0.5726,
       "valid": true,
       "samples": 723,
+      "evidence_score_0_100": 43.0,
       "median_return": 0.0184,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5726,
       "worst_mae": -0.491,
-      "evidence_score_0_100": 43.0
+      "ticker": "NVDA"
     }
   ],
   "note": "Market-only summary for ChatGPT reading. Decision summary is latest_decision_summary.json."

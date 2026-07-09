@@ -1,6 +1,6 @@
 Eason Quant Latest MARKET Summary
 ========================================
-generated_at_utc: 2026-07-08T10:21:57.511217+00:00
+generated_at_utc: 2026-07-09T01:21:58.172085+00:00
 strategy_version: Eason Master US Market Monitor Cloud Sync v4.5.2 tiered-cache-coverage-gaps
 privacy_mode: sanitized_public_report_no_cash_no_shares_no_account_value
 ticker_count: 51
@@ -10,12 +10,13 @@ Tickers:
 AAPL, ADI, AMAT, AMD, AMZN, ANET, ARKK, ARM, ASML, AVGO, CEG, COIN, CRWD, DDOG, ETN, GLD, GOOGL, GRID, IEF, IGM, IGV, KLAC, LRCX, MDB, META, MSFT, MU, NET, NOW, NRG, NVDA, ORCL, PANW, PLTR, PWR, QQQ, SGOV, SMH, SNOW, SOXX, SPY, TLT, TSLA, TSM, USMV, VGT, VRT, XLK, XLP, XLU, XLV
 
 Active signals (23):
-- {"field": "active_signals", "ticker": "GLD", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": true}}
+- {"field": "active_signals", "ticker": "IEF", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "SMH", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "SOXX", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "TLT", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "AMAT", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "AMD", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
+- {"field": "active_signals", "ticker": "ANET", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "ARM", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "ASML", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "CRWD", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
@@ -29,7 +30,6 @@ Active signals (23):
 - {"field": "active_signals", "ticker": "PWR", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "SNOW", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "XLK", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
-- {"field": "active_signals", "ticker": "ANET", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 
 Top rule evidence (50 shown):
 - NVDA | momentum_leader | d | valid=True | samples=1820 | win_rate=0.6412 | avg_return= | alpha_vs_QQQ=

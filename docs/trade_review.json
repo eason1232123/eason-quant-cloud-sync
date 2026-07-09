@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-08T10:23:00.775297+00:00",
+  "generated_at_utc": "2026-07-09T01:22:53.298745+00:00",
   "version": "trade-review-v3.0",
   "purpose": "Review actual logged trades at 3/10/20 trading-day horizons and compare real execution with expected thesis.",
   "privacy_warning": "This repo may be public. Do not log sensitive account details unless you accept they may be public.",
