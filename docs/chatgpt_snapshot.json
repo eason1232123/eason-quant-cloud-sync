@@ -1,0 +1,49 @@
+{
+  "generated_at_utc": "2026-07-09T00:00:00+00:00",
+  "version": "chatgpt-compact-snapshot-v1.0-initial",
+  "purpose": "Small connector-friendly evidence file for ChatGPT. The daily workflow now regenerates this file from market_report.json/action_board inputs to avoid large JSON connector empty-content issues.",
+  "read_priority_for_chatgpt": [
+    "docs/chatgpt_snapshot.json",
+    "docs/eason_master_status.json",
+    "docs/action_board.json",
+    "docs/market_report.json"
+  ],
+  "github_data_quality": {
+    "grade": "Medium-Low",
+    "configured_ticker_count": 94,
+    "loaded_ticker_count": 51,
+    "coverage_ratio": 0.5426,
+    "fresh_request_count": 3,
+    "coverage_gaps_count": 43,
+    "errors_count": 0,
+    "tiingo_circuit_open": false,
+    "latest_price_date_max": "2026-07-07",
+    "expected_latest_market_date": "2026-07-07",
+    "reasons": [
+      "initial snapshot created by ChatGPT from latest commit diff",
+      "coverage_gaps=43",
+      "coverage_ratio=54% below 70%"
+    ],
+    "usage_rule": "Use High/Medium as evidence; Medium-Low only as auxiliary evidence; Low/Unusable cannot justify trades by itself. This initial file should be replaced by the next workflow-generated snapshot."
+  },
+  "market_report_status": {
+    "available": true,
+    "generated_at_utc": "2026-07-08T10:21:57.511217+00:00",
+    "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.2 tiered-cache-coverage-gaps",
+    "errors_count": 0
+  },
+  "connector_issue_fixed_by": {
+    "problem": "GitHub connector fetch_file returned empty content for large docs/market_report.json even though the report exists and commits update it.",
+    "fix": "scripts/build_action_board_v3.py now writes docs/chatgpt_snapshot.json and docs/chatgpt_snapshot.txt as compact read targets.",
+    "script_commit": "6edac4fecd55b13ad981da8a76e46b9464212175"
+  },
+  "required_live_checks_before_order": [
+    "IBKR bid/ask/last or two public quote sources",
+    "current price vs tested signal area",
+    "same-day SPY/QQQ/VIX/10Y/breadth/regime",
+    "fresh company/sector/macro news",
+    "earnings/guidance/valuation check",
+    "real account cash, position size, QQQ+SMH+MSFT concentration, semiconductor exposure, MSFT exposure",
+    "exact limit price, invalidation level, and cancel condition"
+  ]
+}
