@@ -38,14 +38,14 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Build market report tiered cache-safe append-only
-        timeout-minutes: 12
+        timeout-minutes: 20
         env:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
-          MAX_TIINGO_REQUESTS_PER_RUN: "10"
-          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "3"
-          TIINGO_REQUEST_SLEEP_SECONDS: "2.0"
+          MAX_TIINGO_REQUESTS_PER_RUN: "20"
+          MAX_NEW_FULL_DOWNLOADS_PER_RUN: "10"
+          TIINGO_REQUEST_SLEEP_SECONDS: "4.0"
         run: python -u scripts/build_report_safe.py
 
       - name: Build ChatGPT market summary text
