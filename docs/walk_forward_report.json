@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-10T03:39:35.228060+00:00",
+  "generated_at_utc": "2026-07-10T04:20:35.127828+00:00",
   "version": "walk-forward-v2.5",
   "purpose": "Check whether the portfolio model works across train/validation/test-style periods instead of only one lucky historical window.",
   "important_limit": "This is not true machine-learning walk-forward optimization. It is a fixed-rule period stability check.",

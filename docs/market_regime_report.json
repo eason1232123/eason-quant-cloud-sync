@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-10T03:39:35.232481+00:00",
+  "generated_at_utc": "2026-07-10T04:20:35.132417+00:00",
   "version": "market-regime-v2.5",
   "purpose": "Show how often the model is in base/defensive/severe defensive mode and how strategy returns behaved in each regime.",
   "regimes": [
