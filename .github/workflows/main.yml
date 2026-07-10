@@ -74,14 +74,24 @@ jobs:
           test -s docs/market_universe_summary.json
           test -s docs/dynamic_candidates.csv
           test -s docs/dynamic_candidates.json
+          test -s docs/promotion_queue.csv
+          test -s docs/promotion_queue.json
           python - <<'PY'
           import json
           from pathlib import Path
           universe = json.loads(Path('docs/market_universe_summary.json').read_text())
           candidates = json.loads(Path('docs/dynamic_candidates.json').read_text())
+          promotion = json.loads(Path('docs/promotion_queue.json').read_text())
           assert universe['eligible_ticker_count'] > 1000, universe
+          assert candidates['version'] == 'dynamic-candidates-v2-promotion-gates', candidates['version']
           assert candidates['coverage']['configured_core_count'] == 94, candidates['coverage']
           assert candidates['coverage']['cached_tickers_scored'] > 0, candidates['coverage']
+          assert candidates['coverage']['deep_pool_count'] >= 94, candidates['coverage']
+          assert promotion['count'] == candidates['coverage']['promotion_queue_count']
+          for row in promotion['candidates']:
+              assert row['promotion_eligible'] is True, row
+              assert row['is_core_94'] is False, row
+              assert row['gate_reasons'] == [], row
           print({'universe': universe['eligible_ticker_count'], **candidates['coverage']})
           PY
 
@@ -120,7 +130,7 @@ jobs:
           TIINGO_REQUEST_SLEEP_SECONDS: "5.0"
         run: python -u scripts/build_report_safe.py
 
-      - name: Build dynamic candidate ranking
+      - name: Build dynamic candidate ranking and promotion queue
         timeout-minutes: 4
         env:
           PYTHONPATH: ${{ github.workspace }}
