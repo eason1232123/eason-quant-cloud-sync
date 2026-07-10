@@ -37,6 +37,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Build broad US market universe
+        timeout-minutes: 3
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_market_universe.py
+
       - name: Build market report tiered cache-safe append-only
         timeout-minutes: 35
         env:
@@ -48,6 +55,13 @@ jobs:
           MAX_NEW_FULL_DOWNLOADS_PER_RUN: "40"
           TIINGO_REQUEST_SLEEP_SECONDS: "5.0"
         run: python -u scripts/build_report_safe.py
+
+      - name: Build dynamic candidate ranking
+        timeout-minutes: 4
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_dynamic_candidates.py
 
       - name: Build ChatGPT market summary text
         timeout-minutes: 4
