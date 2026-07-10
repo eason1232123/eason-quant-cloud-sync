@@ -12,9 +12,10 @@ from scripts import build_report as br
 
 
 APPEND_ONLY_MODE = True
+COVERAGE_GAPS_FIRST = True
 
-# API-saving refresh tiers. Existing cached data is always loaded into the report;
-# these tiers only decide whether we spend a fresh Tiingo request today.
+# API-saving refresh tiers. Existing cached data is always loaded into the report.
+# Important: no-cache tickers bypass tier rotation so coverage can move toward 94/94.
 CORE_DAILY_REFRESH = {
     "SPY", "QQQ", "SMH", "MSFT", "SGOV", "NVDA",
     "SOXX", "AVGO", "AAPL", "GOOGL", "AMZN", "META",
@@ -40,6 +41,7 @@ COVERAGE_GAP_STATUSES = {
     "deferred_new_ticker_rotation",
     "deferred_no_cache",
     "fetch_failed_no_cache_rate_limit",
+    "fetch_failed_no_cache",
 }
 
 
@@ -85,13 +87,13 @@ def tier_due_today(ticker: str, now_utc: datetime | None = None) -> bool:
 
 
 def request_order_key(ticker: str) -> tuple:
-    """Prioritize fresh requests according to the new tier policy, not legacy br.CORE_ALWAYS_REFRESH."""
+    """Close coverage gaps first: no-cache tickers outrank tier rotation."""
     ticker = ticker.upper()
-    tier_rank = {"core_daily": 0, "watch_every_3d": 1, "long_tail_weekly": 2}[refresh_tier(ticker)]
     last = br.cached_latest_date(ticker)
-    has_cache_rank = 0 if last is not None else 1
+    no_cache_rank = 0 if last is None else 1
+    tier_rank = {"core_daily": 0, "watch_every_3d": 1, "long_tail_weekly": 2}[refresh_tier(ticker)]
     last_for_sort = last if last is not None else datetime(1900, 1, 1).date()
-    return (tier_rank, has_cache_rank, last_for_sort, ticker)
+    return (no_cache_rank, tier_rank, last_for_sort, ticker)
 
 
 def is_tiingo_rate_limit_error(error: Exception) -> bool:
@@ -190,6 +192,7 @@ def use_cache_or_defer(
             "reason": reason,
             "refresh_tier": refresh_tier(ticker),
             "append_only_mode": APPEND_ONLY_MODE,
+            "coverage_gaps_first": COVERAGE_GAPS_FIRST,
             "latest_date": latest_date,
             "total_rows_loaded": int(len(existing)),
             "tiingo_request_spent": False,
@@ -203,6 +206,7 @@ def use_cache_or_defer(
             "reason": reason,
             "refresh_tier": refresh_tier(ticker),
             "append_only_mode": APPEND_ONLY_MODE,
+            "coverage_gaps_first": COVERAGE_GAPS_FIRST,
             "tiingo_request_spent": False,
         }
         record_warning_error_or_gap(ticker, effective_status, reason, warnings, errors, coverage_gaps, has_cache=False)
@@ -213,15 +217,13 @@ def should_fetch_today(ticker: str, existing: pd.DataFrame, expected_date, now_u
     """Return should_fetch, reason, status_if_skipped."""
     has_cache = existing is not None and not existing.empty
 
-    if has_cache:
-        latest = pd.to_datetime(existing["date"]).max().date()
-        if latest >= expected_date:
-            return False, f"cache already covers expected latest market date {expected_date}", "cache_fresh_enough_no_request"
-
+    # Critical coverage fix: any no-cache ticker is eligible immediately, regardless of tier rotation.
     if not has_cache:
-        if refresh_tier(ticker) != "core_daily" and not tier_due_today(ticker, now_utc):
-            return False, "new ticker full download deferred by tier rotation", "deferred_new_ticker_rotation"
-        return True, "no cache; eligible for full history download", "fetch"
+        return True, "no cache; coverage gap priority full history download", "fetch"
+
+    latest = pd.to_datetime(existing["date"]).max().date()
+    if latest >= expected_date:
+        return False, f"cache already covers expected latest market date {expected_date}", "cache_fresh_enough_no_request"
 
     if not tier_due_today(ticker, now_utc):
         return False, f"not due today by {refresh_tier(ticker)} rotation", "cache_only_tier_rotation"
@@ -290,6 +292,7 @@ def main() -> None:
             update_log[ticker] = {
                 "status": "fresh_from_tiingo_append_only" if appended_rows else "fresh_checked_no_new_rows_append_only",
                 "refresh_tier": refresh_tier(ticker),
+                "coverage_gaps_first": COVERAGE_GAPS_FIRST,
                 "fetch_start": fetch_start,
                 "downloaded_rows": downloaded_rows,
                 "new_rows_appended": appended_rows,
@@ -318,6 +321,7 @@ def main() -> None:
                 update_log[ticker] = {
                     "status": "cache_after_fetch_error_append_only",
                     "refresh_tier": refresh_tier(ticker),
+                    "coverage_gaps_first": COVERAGE_GAPS_FIRST,
                     "fetch_error": str(e),
                     "append_only_mode": APPEND_ONLY_MODE,
                     "historical_rows_overwritten": 0,
@@ -333,6 +337,7 @@ def main() -> None:
                 update_log[ticker] = {
                     "status": status,
                     "refresh_tier": refresh_tier(ticker),
+                    "coverage_gaps_first": COVERAGE_GAPS_FIRST,
                     "fetch_error": str(e),
                     "expected_latest_market_date": expected_date.isoformat(),
                     "tiingo_request_spent": True,
@@ -367,11 +372,11 @@ def main() -> None:
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
         "update_mode": (
-            "large universe with tiered API-saving refresh: core daily, watchlist every 3 days, long tail weekly; "
-            "cached data is always loaded; Tiingo requests are only spent when cache is stale and ticker is due; "
+            "large universe with coverage-gaps-first hydration: no-cache tickers are downloaded before tier rotation; "
+            "cached data is always loaded; stale cached data still follows tier rotation; "
             "existing historical CSV rows are not overwritten, only new dates are appended"
         ),
-        "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.2 tiered-cache-coverage-gaps",
+        "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.3 coverage-gaps-first",
         "privacy_mode": "sanitized_public_report_no_cash_no_shares_no_account_value",
         "universe": {
             "configured_ticker_count": len(br.TICKERS),
@@ -381,12 +386,13 @@ def main() -> None:
             "skipped_by_tier_rotation": skipped_by_rotation,
             "rows_appended_total": rows_appended_total,
             "append_only_mode": APPEND_ONLY_MODE,
+            "coverage_gaps_first": COVERAGE_GAPS_FIRST,
             "historical_rows_overwritten": 0,
             "expected_latest_market_date": expected_date.isoformat(),
             "refresh_policy": {
                 "core_daily": sorted(CORE_DAILY_REFRESH),
                 "watch_every_3d": sorted(WATCH_EVERY_3D_REFRESH),
-                "long_tail_weekly": "all other tickers, deterministic weekday rotation",
+                "long_tail_weekly": "cached stale tickers still use deterministic weekday rotation; no-cache tickers bypass rotation",
             },
             "max_tiingo_requests_per_run": br.MAX_TIINGO_REQUESTS_PER_RUN,
             "max_new_full_downloads_per_run": br.MAX_NEW_FULL_DOWNLOADS_PER_RUN,
@@ -450,7 +456,7 @@ def main() -> None:
             "backtest_summary.csv, or rule_evidence_ranking.csv.</p>"
         )
 
-    print("Saved tiered-cache docs/market_report.json, docs/backtest_summary.csv, docs/rule_evidence_ranking.csv")
+    print("Saved coverage-gaps-first docs/market_report.json, docs/backtest_summary.csv, docs/rule_evidence_ranking.csv")
 
 
 if __name__ == "__main__":
