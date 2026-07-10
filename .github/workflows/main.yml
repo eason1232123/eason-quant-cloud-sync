@@ -17,12 +17,14 @@ on:
   push:
     branches:
       - main
+      - feature/three-tier-market-universe
     paths:
       - ".github/workflows/main.yml"
       - "scripts/**"
       - "config.py"
       - "requirements.txt"
       - "README.md"
+      - "THREE_TIER_UNIVERSE.md"
 
 concurrency:
   group: eason-quant-${{ github.workflow }}-${{ github.ref }}
@@ -33,13 +35,13 @@ permissions:
 
 jobs:
   pr-smoke-test:
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.ref == 'refs/heads/feature/three-tier-market-universe'
     runs-on: ubuntu-latest
     permissions:
       contents: read
 
     steps:
-      - name: Checkout pull request
+      - name: Checkout test branch
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -85,7 +87,7 @@ jobs:
           PY
 
   build-report:
-    if: github.event_name != 'pull_request'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
