@@ -1,6 +1,6 @@
 {
   "available": true,
-  "generated_at_utc": "2026-07-09T17:34:42.881342+00:00",
+  "generated_at_utc": "2026-07-10T01:20:31.487724+00:00",
   "version": "portfolio-backtest-v2.1-next-bar-regime-execution",
   "purpose": "Model-level portfolio backtest for Eason strategy. This is not live execution and not personalized account truth.",
   "important_limits": [
@@ -42,96 +42,96 @@
   },
   "strategy_metrics": {
     "start_date": "2005-01-03",
-    "end_date": "2026-07-08",
-    "trading_days": 5411,
+    "end_date": "2026-07-09",
+    "trading_days": 5412,
     "years": 21.47,
-    "total_return_pct": 1337.2,
-    "cagr_pct": 13.22,
+    "total_return_pct": 1355.08,
+    "cagr_pct": 13.28,
     "volatility_pct": 15.57,
-    "sharpe": 0.876,
-    "sortino": 1.18,
-    "calmar": 0.414,
+    "sharpe": 0.879,
+    "sortino": 1.184,
+    "calmar": 0.416,
     "max_drawdown_pct": -31.94,
     "daily_win_rate_pct": 54.44,
-    "avg_daily_return_pct": 0.0541,
+    "avg_daily_return_pct": 0.0543,
     "best_day_pct": 5.67,
     "worst_day_pct": -8.26,
-    "final_value": 287318.47
+    "final_value": 290892.4
   },
   "benchmark_metrics": {
     "SPY": {
       "start_date": "2005-01-03",
-      "end_date": "2026-07-08",
-      "trading_days": 5411,
+      "end_date": "2026-07-09",
+      "trading_days": 5412,
       "years": 21.47,
-      "total_return_pct": 818.84,
-      "cagr_pct": 10.88,
+      "total_return_pct": 826.62,
+      "cagr_pct": 10.93,
       "volatility_pct": 18.95,
-      "sharpe": 0.64,
-      "sortino": 0.782,
-      "calmar": 0.197,
+      "sharpe": 0.642,
+      "sortino": 0.785,
+      "calmar": 0.198,
       "max_drawdown_pct": -55.2,
-      "daily_win_rate_pct": 55.14,
-      "avg_daily_return_pct": 0.0481,
+      "daily_win_rate_pct": 55.15,
+      "avg_daily_return_pct": 0.0483,
       "best_day_pct": 14.52,
       "worst_day_pct": -10.94,
-      "final_value": 183768.78
+      "final_value": 185324.43
     },
     "QQQ": {
       "start_date": "2005-01-03",
-      "end_date": "2026-07-08",
-      "trading_days": 5411,
+      "end_date": "2026-07-09",
+      "trading_days": 5412,
       "years": 21.47,
-      "total_return_pct": 2013.78,
-      "cagr_pct": 15.27,
+      "total_return_pct": 2048.96,
+      "cagr_pct": 15.36,
       "volatility_pct": 21.63,
-      "sharpe": 0.765,
-      "sortino": 0.997,
-      "calmar": 0.286,
+      "sharpe": 0.769,
+      "sortino": 1.002,
+      "calmar": 0.288,
       "max_drawdown_pct": -53.41,
-      "daily_win_rate_pct": 55.4,
-      "avg_daily_return_pct": 0.0657,
+      "daily_win_rate_pct": 55.41,
+      "avg_daily_return_pct": 0.066,
       "best_day_pct": 12.16,
       "worst_day_pct": -11.98,
-      "final_value": 422756.17
+      "final_value": 429791.81
     },
     "SMH": {
       "start_date": "2005-01-03",
-      "end_date": "2026-07-08",
-      "trading_days": 5411,
+      "end_date": "2026-07-09",
+      "trading_days": 5412,
       "years": 21.47,
-      "total_return_pct": 4959.35,
-      "cagr_pct": 20.05,
+      "total_return_pct": 5085.02,
+      "cagr_pct": 20.19,
       "volatility_pct": 29.83,
-      "sharpe": 0.762,
-      "sortino": 1.068,
-      "calmar": 0.323,
+      "sharpe": 0.766,
+      "sortino": 1.073,
+      "calmar": 0.325,
       "max_drawdown_pct": -62.05,
-      "daily_win_rate_pct": 52.85,
-      "avg_daily_return_pct": 0.0902,
+      "daily_win_rate_pct": 52.86,
+      "avg_daily_return_pct": 0.0907,
       "best_day_pct": 17.16,
       "worst_day_pct": -14.41,
-      "final_value": 1011869.88
+      "final_value": 1037004.53
     }
   },
   "strategy_vs_benchmarks": [
     {
       "benchmark": "SPY",
-      "strategy_cagr_minus_benchmark_pct": 2.34,
+      "strategy_cagr_minus_benchmark_pct": 2.35,
       "strategy_maxdd_minus_benchmark_pct": 23.26,
-      "strategy_final_minus_benchmark_dollars": 103549.69
+      "strategy_final_minus_benchmark_dollars": 105567.97
     },
     {
       "benchmark": "QQQ",
-      "strategy_cagr_minus_benchmark_pct": -2.05,
+      "strategy_cagr_minus_benchmark_pct": -2.08,
       "strategy_maxdd_minus_benchmark_pct": 21.47,
-      "strategy_final_minus_benchmark_dollars": -135437.7
+      "strategy_final_minus_benchmark_dollars": -138899.41
     },
     {
       "benchmark": "SMH",
-      "strategy_cagr_minus_benchmark_pct": -6.83,
+      "strategy_cagr_minus_benchmark_pct": -6.91,
       "strategy_maxdd_minus_benchmark_pct": 30.11,
-      "strategy_final_minus_benchmark_dollars": -724551.41
+      "strategy_final_minus_benchmark_dollars": -746112.13
     }
   ],
   "trade_metrics": {
@@ -148,14 +148,14 @@
     "max_trade_dollars": 40301.15
   },
   "exposure_summary": {
-    "latest_cash_weight_pct": 15.27,
-    "latest_QQQ_weight_pct": 29.95,
-    "latest_SMH_weight_pct": 24.31,
-    "latest_MSFT_weight_pct": 20.3,
-    "latest_SPY_weight_pct": 10.17,
-    "latest_tech_ai_concentration_pct": 74.56,
-    "latest_semiconductor_exposure_pct": 24.31,
-    "latest_MSFT_exposure_pct": 20.3,
+    "latest_cash_weight_pct": 15.09,
+    "latest_QQQ_weight_pct": 30.07,
+    "latest_SMH_weight_pct": 24.61,
+    "latest_MSFT_weight_pct": 20.1,
+    "latest_SPY_weight_pct": 10.13,
+    "latest_tech_ai_concentration_pct": 74.78,
+    "latest_semiconductor_exposure_pct": 24.61,
+    "latest_MSFT_exposure_pct": 20.1,
     "avg_cash_weight_pct": 22.15,
     "max_tech_ai_concentration_pct": 77.51,
     "max_semiconductor_exposure_pct": 28.18,
@@ -163,5 +163,5 @@
   },
   "latest_regime": "base",
   "latest_raw_regime_signal_same_day": "base",
-  "latest_strategy_value": 287318.47
+  "latest_strategy_value": 290892.4
 }

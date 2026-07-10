@@ -5410,3 +5410,4 @@ date,strategy_value,regime,raw_regime_signal_same_day,execution_assumption,cash,
 2026-07-06,290760.5173,base,base,"previous-day regime signal, current-day close execution",43869.5358,0.150879,0.300657,0.24481,0.202365,0.101289,0.747833,0.24481,0.202365
 2026-07-07,286637.8668,base,base,"previous-day regime signal, current-day close execution",43878.2712,0.153079,0.299332,0.238941,0.20639,0.102257,0.744664,0.238941,0.20639
 2026-07-08,287318.4746,base,base,"previous-day regime signal, current-day close execution",43882.639,0.152732,0.299469,0.24311,0.202989,0.1017,0.745568,0.24311,0.202989
+2026-07-09,290892.401,base,base,"previous-day regime signal, current-day close execution",43887.0067,0.15087,0.300712,0.246088,0.201028,0.101301,0.747829,0.246088,0.201028

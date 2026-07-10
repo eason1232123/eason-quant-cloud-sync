@@ -1,13 +1,13 @@
 {
-  "generated_at_utc": "2026-07-09T17:34:44.095473+00:00",
+  "generated_at_utc": "2026-07-10T01:20:32.693684+00:00",
   "summary_type": "decision",
   "source_file": "eason_signal.json",
   "summary_file_version": "v4.4-latest-decision-summary-no-name-conflict",
   "final_action": "RISK_REVIEW_REQUIRED",
   "reason": "At least one ticker has high technical/rule risk. Review defense before adding risk.",
   "actionable_buy_count": 0,
-  "risk_candidate_count": 43,
-  "high_risk_count": 7,
+  "risk_candidate_count": 40,
+  "high_risk_count": 5,
   "top_actionable_buy": null,
   "top_risk": {
     "ticker": "ARM",
@@ -35,8 +35,8 @@
   "default_human_action_before_chatgpt_review": "DO_NOT_ADD_RISK_BEFORE_REVIEW",
   "portfolio_backtest_available": true,
   "freshness": {
-    "source_report_generated_at_utc": "2026-07-09T17:33:46.860661+00:00",
-    "latest_price_date_max": "2026-07-08",
+    "source_report_generated_at_utc": "2026-07-10T01:19:32.791033+00:00",
+    "latest_price_date_max": "2026-07-09",
     "latest_price_date_min": "2026-07-07",
     "loaded_ticker_count": 56,
     "configured_ticker_count": 94,

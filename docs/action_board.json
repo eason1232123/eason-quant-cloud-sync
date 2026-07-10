@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-09T17:34:44.211605+00:00",
+  "generated_at_utc": "2026-07-10T01:20:32.811001+00:00",
   "version": "eason-master-action-board-v3.8-chatgpt-snapshot",
   "purpose": "One compact file for ChatGPT to review GitHub quant evidence, vectorbt validation/evidence, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
   "roles": {
@@ -45,8 +45,8 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     "freshness": {
-      "source_report_generated_at_utc": "2026-07-09T17:33:46.860661+00:00",
-      "latest_price_date_max": "2026-07-08",
+      "source_report_generated_at_utc": "2026-07-10T01:19:32.791033+00:00",
+      "latest_price_date_max": "2026-07-09",
       "latest_price_date_min": "2026-07-07",
       "loaded_ticker_count": 56,
       "configured_ticker_count": 94,
@@ -57,18 +57,18 @@
   },
   "market_report_status": {
     "available": true,
-    "generated_at_utc": "2026-07-09T17:33:46.860661+00:00",
+    "generated_at_utc": "2026-07-10T01:19:32.791033+00:00",
     "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.2 tiered-cache-coverage-gaps",
     "universe": {
       "configured_ticker_count": 94,
       "loaded_ticker_count": 56,
       "fresh_request_count": 20,
-      "skipped_fresh_enough_no_request": 10,
+      "skipped_fresh_enough_no_request": 0,
       "skipped_by_tier_rotation": 60,
-      "rows_appended_total": 19435,
+      "rows_appended_total": 20,
       "append_only_mode": true,
       "historical_rows_overwritten": 0,
-      "expected_latest_market_date": "2026-07-08",
+      "expected_latest_market_date": "2026-07-09",
       "refresh_policy": {
         "core_daily": [
           "AAPL",
@@ -134,7 +134,7 @@
       "max_new_full_downloads_per_run": 10,
       "tiingo_circuit_open": false,
       "tiingo_circuit_reason": "",
-      "warnings_count": 0,
+      "warnings_count": 10,
       "coverage_gaps_count": 38,
       "errors_count": 0,
       "note": "coverage_gaps are tickers without usable cache yet; errors are true processing/fetch failures not classified as rotation/rate-limit coverage gaps."
@@ -172,8 +172,8 @@
         "SGOV"
       ],
       "start_date": "2005-01-03",
-      "end_date": "2026-07-08",
-      "rows": 5411
+      "end_date": "2026-07-09",
+      "rows": 5412
     },
     "assumptions": {
       "init_cash_per_column": 10000.0,
@@ -189,10 +189,10 @@
         "rule": "ma20_reclaim_bullish",
         "engine": "vectorbt",
         "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-        "vectorbt_total_return_pct": 1067.47,
+        "vectorbt_total_return_pct": 1078.02,
         "vectorbt_max_drawdown_pct": -33.73,
-        "vectorbt_sharpe": 0.94,
-        "vectorbt_final_value": 116747.33,
+        "vectorbt_sharpe": 0.943,
+        "vectorbt_final_value": 117801.59,
         "vectorbt_trade_count": 177.0,
         "raw_entry_signal_count": 177,
         "executed_entry_count": 177,
@@ -234,10 +234,10 @@
         "rule": "ma20_reclaim_bullish",
         "engine": "vectorbt",
         "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-        "vectorbt_total_return_pct": 3.24,
+        "vectorbt_total_return_pct": 3.25,
         "vectorbt_max_drawdown_pct": -13.39,
-        "vectorbt_sharpe": 0.6,
-        "vectorbt_final_value": 10323.89,
+        "vectorbt_sharpe": 0.601,
+        "vectorbt_final_value": 10324.92,
         "vectorbt_trade_count": 73.0,
         "raw_entry_signal_count": 73,
         "executed_entry_count": 73,
@@ -271,8 +271,8 @@
         "vectorbt_trade_count": 174.0,
         "raw_entry_signal_count": 174,
         "executed_entry_count": 174,
-        "raw_exit_signal_count": 2168,
-        "executed_exit_count": 2167
+        "raw_exit_signal_count": 2169,
+        "executed_exit_count": 2168
       },
       {
         "ticker": "GLD",
@@ -286,8 +286,8 @@
         "vectorbt_trade_count": 188.0,
         "raw_entry_signal_count": 188,
         "executed_entry_count": 188,
-        "raw_exit_signal_count": 2376,
-        "executed_exit_count": 2375
+        "raw_exit_signal_count": 2377,
+        "executed_exit_count": 2376
       },
       {
         "ticker": "AVGO",
@@ -316,8 +316,8 @@
         "vectorbt_trade_count": 196.0,
         "raw_entry_signal_count": 196,
         "executed_entry_count": 196,
-        "raw_exit_signal_count": 2181,
-        "executed_exit_count": 2180
+        "raw_exit_signal_count": 2182,
+        "executed_exit_count": 2181
       },
       {
         "ticker": "VRT",
@@ -371,13 +371,13 @@
         "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
         "vectorbt_total_return_pct": 57.17,
         "vectorbt_max_drawdown_pct": -81.27,
-        "vectorbt_sharpe": 0.256,
+        "vectorbt_sharpe": 0.255,
         "vectorbt_final_value": 15716.86,
         "vectorbt_trade_count": 141.0,
-        "raw_entry_signal_count": 141,
+        "raw_entry_signal_count": 142,
         "executed_entry_count": 141,
         "raw_exit_signal_count": 2527,
-        "executed_exit_count": 2526
+        "executed_exit_count": 2527
       },
       {
         "ticker": "CEG",
@@ -391,8 +391,8 @@
         "vectorbt_trade_count": 36.0,
         "raw_entry_signal_count": 36,
         "executed_entry_count": 36,
-        "raw_exit_signal_count": 440,
-        "executed_exit_count": 439
+        "raw_exit_signal_count": 441,
+        "executed_exit_count": 440
       },
       {
         "ticker": "SOXX",
@@ -406,8 +406,8 @@
         "vectorbt_trade_count": 227.0,
         "raw_entry_signal_count": 227,
         "executed_entry_count": 227,
-        "raw_exit_signal_count": 2130,
-        "executed_exit_count": 2129
+        "raw_exit_signal_count": 2131,
+        "executed_exit_count": 2130
       }
     ],
     "important_limit": "Vectorbt results are a fast validation/audit layer. Final trade decisions still require portfolio-level backtest, walk-forward stability, live market/news checks, real account constraints, and human confirmation.",
@@ -686,25 +686,25 @@
         "sample_count": 36,
         "executed_entry_count": 36,
         "lookback_start": "2020-05-28",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "forward_horizon": "signal_to_shifted_exit_or_latest_close",
         "valid": true,
         "min_sample_required": 20,
         "description": "Price reclaims the 50-day moving average while above the 200-day average.",
-        "strategy_total_return": 0.1116,
+        "strategy_total_return": 0.1117,
         "strategy_cagr": 0.0175,
-        "strategy_sharpe": 4.0256,
+        "strategy_sharpe": 4.0281,
         "strategy_max_drawdown": -0.0687,
         "strategy_worst_day": -0.0011,
         "strategy_best_day": 0.0007,
-        "buy_hold_return_same_window": 0.1947,
+        "buy_hold_return_same_window": 0.1948,
         "alpha_vs_buy_hold": -0.0831,
         "trade_count": 36.0,
         "trade_win_rate": 0.3056,
         "avg_trade_return": 0.0054,
         "median_trade_return": 0.0,
         "worst_trade_return": -0.0001,
-        "best_trade_return": 0.1937,
+        "best_trade_return": 0.1938,
         "latest_entry_signal_active": false,
         "latest_exit_signal_active": false,
         "latest_position_active": true,
@@ -720,25 +720,25 @@
         "sample_count": 73,
         "executed_entry_count": 73,
         "lookback_start": "2020-05-28",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "forward_horizon": "signal_to_shifted_exit_or_latest_close",
         "valid": true,
         "min_sample_required": 20,
         "description": "Price reclaims the 20-day moving average while above the 50-day average.",
-        "strategy_total_return": 0.0324,
+        "strategy_total_return": 0.0325,
         "strategy_cagr": 0.0053,
-        "strategy_sharpe": 0.9368,
+        "strategy_sharpe": 0.9394,
         "strategy_max_drawdown": -0.1339,
         "strategy_worst_day": -0.0011,
         "strategy_best_day": 0.0007,
-        "buy_hold_return_same_window": 0.1947,
+        "buy_hold_return_same_window": 0.1948,
         "alpha_vs_buy_hold": -0.1623,
         "trade_count": 73.0,
         "trade_win_rate": 0.3699,
         "avg_trade_return": 0.0026,
         "median_trade_return": 0.0,
         "worst_trade_return": -0.0001,
-        "best_trade_return": 0.192,
+        "best_trade_return": 0.1921,
         "latest_entry_signal_active": false,
         "latest_exit_signal_active": false,
         "latest_position_active": true,
@@ -924,7 +924,7 @@
         "sample_count": 132,
         "executed_entry_count": 132,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "forward_horizon": "signal_to_shifted_exit_or_latest_close",
         "valid": true,
         "min_sample_required": 20,
@@ -935,8 +935,8 @@
         "strategy_max_drawdown": -0.1356,
         "strategy_worst_day": -0.0251,
         "strategy_best_day": 0.0264,
-        "buy_hold_return_same_window": 0.9576,
-        "alpha_vs_buy_hold": -0.8678,
+        "buy_hold_return_same_window": 0.9618,
+        "alpha_vs_buy_hold": -0.872,
         "trade_count": 132.0,
         "trade_win_rate": 0.3939,
         "avg_trade_return": 0.0028,
@@ -1014,7 +1014,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": "Above 20/50/200-day averages with positive 20-day momentum and non-overheated RSI.",
         "win_rate": 0.6658,
@@ -1068,7 +1068,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": "Price reclaims the 50-day moving average while above the 200-day average.",
         "win_rate": 0.7413,
@@ -1176,7 +1176,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2009-08-06",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": "Price reclaims the 50-day moving average while above the 200-day average.",
         "win_rate": 0.6689,
@@ -1284,7 +1284,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": "Price reclaims the 50-day moving average while above the 200-day average.",
         "win_rate": 0.7035,
@@ -1502,7 +1502,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": "Price breaks below the 50-day moving average after being above it.",
         "win_rate": 0.4702,
@@ -1556,7 +1556,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": "Failed rebound: price loses the 5-day average and undercuts the prior 10-day low.",
         "win_rate": 0.4988,
@@ -1606,26 +1606,26 @@
         "rule_type": "risk",
         "tested_rule": "break_ma20",
         "horizon_days": 20,
-        "sample_count": 283,
+        "sample_count": 284,
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": "Price breaks below the 20-day moving average after being above it.",
-        "win_rate": 0.5053,
-        "avoidance_rate": 0.4912,
-        "avg_forward_return": 0.0205,
-        "median_forward_return": 0.0024,
+        "win_rate": 0.507,
+        "avoidance_rate": 0.4894,
+        "avg_forward_return": 0.021,
+        "median_forward_return": 0.0037,
         "worst_forward_return": -0.4141,
         "best_forward_return": 0.6487,
-        "avg_mae": -0.1041,
+        "avg_mae": -0.1039,
         "worst_mae": -0.5437,
         "benchmark": "QQQ",
         "avg_benchmark_same_dates": 0.011,
-        "alpha_vs_benchmark_same_dates": 0.0095,
+        "alpha_vs_benchmark_same_dates": 0.0099,
         "reason": null,
-        "evidence_score_0_100": 82.2
+        "evidence_score_0_100": 82.1
       },
       {
         "ticker": "TSLA",
@@ -1745,7 +1745,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-08",
+        "lookback_end": "2026-07-09",
         "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": "Price breaks below the 50-day moving average after being above it.",
         "win_rate": 0.5215,
@@ -1765,8 +1765,8 @@
     ],
     "latest_active_signals": {
       "SPY": {
-        "latest_date": "2026-07-08",
-        "latest_price": 745.4,
+        "latest_date": "2026-07-09",
+        "latest_price": 751.71,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1780,8 +1780,23 @@
         }
       },
       "QQQ": {
-        "latest_date": "2026-07-08",
-        "latest_price": 711.44,
+        "latest_date": "2026-07-09",
+        "latest_price": 723.28,
+        "entries": {
+          "ma20_reclaim_bullish": true,
+          "ma50_reclaim_bullish": true,
+          "momentum_leader": false,
+          "pullback_reclaim_5dma": false
+        },
+        "risks": {
+          "risk_break_ma20": false,
+          "risk_break_ma50": false,
+          "risk_failed_rebound": false
+        }
+      },
+      "SMH": {
+        "latest_date": "2026-07-09",
+        "latest_price": 607.73,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1794,24 +1809,9 @@
           "risk_failed_rebound": false
         }
       },
-      "SMH": {
-        "latest_date": "2026-07-08",
-        "latest_price": 593.0,
-        "entries": {
-          "ma20_reclaim_bullish": false,
-          "ma50_reclaim_bullish": true,
-          "momentum_leader": false,
-          "pullback_reclaim_5dma": false
-        },
-        "risks": {
-          "risk_break_ma20": false,
-          "risk_break_ma50": false,
-          "risk_failed_rebound": false
-        }
-      },
       "SOXX": {
-        "latest_date": "2026-07-08",
-        "latest_price": 562.03,
+        "latest_date": "2026-07-09",
+        "latest_price": 581.7,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1855,10 +1855,10 @@
         }
       },
       "IYW": {
-        "latest_date": "2026-07-08",
-        "latest_price": 245.1,
+        "latest_date": "2026-07-09",
+        "latest_price": 249.28,
         "entries": {
-          "ma20_reclaim_bullish": false,
+          "ma20_reclaim_bullish": true,
           "ma50_reclaim_bullish": false,
           "momentum_leader": false,
           "pullback_reclaim_5dma": false
@@ -1900,8 +1900,8 @@
         }
       },
       "SGOV": {
-        "latest_date": "2026-07-08",
-        "latest_price": 100.47,
+        "latest_date": "2026-07-09",
+        "latest_price": 100.48,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1915,8 +1915,8 @@
         }
       },
       "MSFT": {
-        "latest_date": "2026-07-08",
-        "latest_price": 383.34,
+        "latest_date": "2026-07-09",
+        "latest_price": 384.36,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1930,8 +1930,8 @@
         }
       },
       "NVDA": {
-        "latest_date": "2026-07-08",
-        "latest_price": 204.12,
+        "latest_date": "2026-07-09",
+        "latest_price": 202.78,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1945,12 +1945,12 @@
         }
       },
       "AAPL": {
-        "latest_date": "2026-07-08",
-        "latest_price": 313.39,
+        "latest_date": "2026-07-09",
+        "latest_price": 316.22,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
-          "momentum_leader": false,
+          "momentum_leader": true,
           "pullback_reclaim_5dma": false
         },
         "risks": {
@@ -1960,8 +1960,8 @@
         }
       },
       "GOOGL": {
-        "latest_date": "2026-07-08",
-        "latest_price": 361.92,
+        "latest_date": "2026-07-09",
+        "latest_price": 358.89,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1975,8 +1975,8 @@
         }
       },
       "AMZN": {
-        "latest_date": "2026-07-08",
-        "latest_price": 243.62,
+        "latest_date": "2026-07-09",
+        "latest_price": 247.04,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1990,8 +1990,8 @@
         }
       },
       "META": {
-        "latest_date": "2026-07-08",
-        "latest_price": 603.12,
+        "latest_date": "2026-07-09",
+        "latest_price": 631.48,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -2005,8 +2005,8 @@
         }
       },
       "AVGO": {
-        "latest_date": "2026-07-08",
-        "latest_price": 388.69,
+        "latest_date": "2026-07-09",
+        "latest_price": 401.11,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -2035,12 +2035,12 @@
         }
       },
       "AMD": {
-        "latest_date": "2026-07-08",
-        "latest_price": 517.405,
+        "latest_date": "2026-07-09",
+        "latest_price": 546.72,
         "entries": {
-          "ma20_reclaim_bullish": false,
+          "ma20_reclaim_bullish": true,
           "ma50_reclaim_bullish": false,
-          "momentum_leader": false,
+          "momentum_leader": true,
           "pullback_reclaim_5dma": false
         },
         "risks": {
@@ -2125,13 +2125,13 @@
         }
       },
       "AMAT": {
-        "latest_date": "2026-07-08",
-        "latest_price": 570.5,
+        "latest_date": "2026-07-09",
+        "latest_price": 588.66,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
           "momentum_leader": false,
-          "pullback_reclaim_5dma": false
+          "pullback_reclaim_5dma": true
         },
         "risks": {
           "risk_break_ma20": false,
@@ -2350,11 +2350,11 @@
         }
       },
       "ETN": {
-        "latest_date": "2026-07-08",
-        "latest_price": 399.56,
+        "latest_date": "2026-07-09",
+        "latest_price": 405.83,
         "entries": {
           "ma20_reclaim_bullish": false,
-          "ma50_reclaim_bullish": false,
+          "ma50_reclaim_bullish": true,
           "momentum_leader": false,
           "pullback_reclaim_5dma": false
         },
@@ -2380,8 +2380,8 @@
         }
       },
       "CEG": {
-        "latest_date": "2026-07-08",
-        "latest_price": 244.52,
+        "latest_date": "2026-07-09",
+        "latest_price": 250.74,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -2440,8 +2440,8 @@
         }
       },
       "GLD": {
-        "latest_date": "2026-07-08",
-        "latest_price": 374.45,
+        "latest_date": "2026-07-09",
+        "latest_price": 378.18,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -2455,8 +2455,8 @@
         }
       },
       "TLT": {
-        "latest_date": "2026-07-08",
-        "latest_price": 84.36,
+        "latest_date": "2026-07-09",
+        "latest_price": 84.49,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -2466,12 +2466,12 @@
         "risks": {
           "risk_break_ma20": false,
           "risk_break_ma50": false,
-          "risk_failed_rebound": true
+          "risk_failed_rebound": false
         }
       },
       "IEF": {
-        "latest_date": "2026-07-08",
-        "latest_price": 93.51,
+        "latest_date": "2026-07-09",
+        "latest_price": 93.71,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -2481,7 +2481,7 @@
         "risks": {
           "risk_break_ma20": false,
           "risk_break_ma50": false,
-          "risk_failed_rebound": true
+          "risk_failed_rebound": false
         }
       },
       "XLV": {
@@ -2624,51 +2624,51 @@
     "latest_regime": "base",
     "strategy_metrics": {
       "start_date": "2005-01-03",
-      "end_date": "2026-07-08",
-      "trading_days": 5411,
+      "end_date": "2026-07-09",
+      "trading_days": 5412,
       "years": 21.47,
-      "total_return_pct": 1337.2,
-      "cagr_pct": 13.22,
+      "total_return_pct": 1355.08,
+      "cagr_pct": 13.28,
       "volatility_pct": 15.57,
-      "sharpe": 0.876,
-      "sortino": 1.18,
-      "calmar": 0.414,
+      "sharpe": 0.879,
+      "sortino": 1.184,
+      "calmar": 0.416,
       "max_drawdown_pct": -31.94,
       "daily_win_rate_pct": 54.44,
-      "avg_daily_return_pct": 0.0541,
+      "avg_daily_return_pct": 0.0543,
       "best_day_pct": 5.67,
       "worst_day_pct": -8.26,
-      "final_value": 287318.47
+      "final_value": 290892.4
     },
     "strategy_vs_benchmarks": [
       {
         "benchmark": "SPY",
-        "strategy_cagr_minus_benchmark_pct": 2.34,
+        "strategy_cagr_minus_benchmark_pct": 2.35,
         "strategy_maxdd_minus_benchmark_pct": 23.26,
-        "strategy_final_minus_benchmark_dollars": 103549.69
+        "strategy_final_minus_benchmark_dollars": 105567.97
       },
       {
         "benchmark": "QQQ",
-        "strategy_cagr_minus_benchmark_pct": -2.05,
+        "strategy_cagr_minus_benchmark_pct": -2.08,
         "strategy_maxdd_minus_benchmark_pct": 21.47,
-        "strategy_final_minus_benchmark_dollars": -135437.7
+        "strategy_final_minus_benchmark_dollars": -138899.41
       },
       {
         "benchmark": "SMH",
-        "strategy_cagr_minus_benchmark_pct": -6.83,
+        "strategy_cagr_minus_benchmark_pct": -6.91,
         "strategy_maxdd_minus_benchmark_pct": 30.11,
-        "strategy_final_minus_benchmark_dollars": -724551.41
+        "strategy_final_minus_benchmark_dollars": -746112.13
       }
     ],
     "exposure_summary": {
-      "latest_cash_weight_pct": 15.27,
-      "latest_QQQ_weight_pct": 29.95,
-      "latest_SMH_weight_pct": 24.31,
-      "latest_MSFT_weight_pct": 20.3,
-      "latest_SPY_weight_pct": 10.17,
-      "latest_tech_ai_concentration_pct": 74.56,
-      "latest_semiconductor_exposure_pct": 24.31,
-      "latest_MSFT_exposure_pct": 20.3,
+      "latest_cash_weight_pct": 15.09,
+      "latest_QQQ_weight_pct": 30.07,
+      "latest_SMH_weight_pct": 24.61,
+      "latest_MSFT_weight_pct": 20.1,
+      "latest_SPY_weight_pct": 10.13,
+      "latest_tech_ai_concentration_pct": 74.78,
+      "latest_semiconductor_exposure_pct": 24.61,
+      "latest_MSFT_exposure_pct": 20.1,
       "avg_cash_weight_pct": 22.15,
       "max_tech_ai_concentration_pct": 77.51,
       "max_semiconductor_exposure_pct": 28.18,
@@ -2798,40 +2798,40 @@
         "strategy_metrics": {
           "available": true,
           "start_date": "2022-01-03",
-          "end_date": "2026-07-08",
-          "trading_days": 1131,
-          "years": 4.48,
-          "total_return_pct": 84.55,
-          "cagr_pct": 14.64,
-          "volatility_pct": 16.86,
-          "sharpe": 0.895,
-          "sortino": 1.306,
-          "calmar": 0.603,
+          "end_date": "2026-07-09",
+          "trading_days": 1132,
+          "years": 4.49,
+          "total_return_pct": 86.85,
+          "cagr_pct": 14.94,
+          "volatility_pct": 16.87,
+          "sharpe": 0.91,
+          "sortino": 1.329,
+          "calmar": 0.616,
           "max_drawdown_pct": -24.26,
-          "daily_win_rate_pct": 54.07,
-          "final_value": 287318.47
+          "daily_win_rate_pct": 54.11,
+          "final_value": 290892.4
         },
         "strategy_vs_benchmarks": [
           {
             "benchmark": "SPY",
-            "strategy_cagr_minus_benchmark_pct": 2.7,
+            "strategy_cagr_minus_benchmark_pct": 2.8,
             "strategy_maxdd_minus_benchmark_pct": 0.24,
-            "strategy_sharpe_minus_benchmark": 0.166,
-            "strategy_final_minus_benchmark_dollars": 103549.69
+            "strategy_sharpe_minus_benchmark": 0.171,
+            "strategy_final_minus_benchmark_dollars": 105567.97
           },
           {
             "benchmark": "QQQ",
-            "strategy_cagr_minus_benchmark_pct": 0.35,
+            "strategy_cagr_minus_benchmark_pct": 0.24,
             "strategy_maxdd_minus_benchmark_pct": 10.57,
-            "strategy_sharpe_minus_benchmark": 0.208,
-            "strategy_final_minus_benchmark_dollars": -135437.7
+            "strategy_sharpe_minus_benchmark": 0.207,
+            "strategy_final_minus_benchmark_dollars": -138899.41
           },
           {
             "benchmark": "SMH",
-            "strategy_cagr_minus_benchmark_pct": -20.45,
+            "strategy_cagr_minus_benchmark_pct": -20.85,
             "strategy_maxdd_minus_benchmark_pct": 20.88,
-            "strategy_sharpe_minus_benchmark": -0.101,
-            "strategy_final_minus_benchmark_dollars": -724551.41
+            "strategy_sharpe_minus_benchmark": -0.1,
+            "strategy_final_minus_benchmark_dollars": -746112.13
           }
         ],
         "reason": null
@@ -2839,16 +2839,16 @@
     ]
   },
   "market_regime_report": {
-    "generated_at_utc": "2026-07-09T17:34:43.351981+00:00",
+    "generated_at_utc": "2026-07-10T01:20:31.972411+00:00",
     "version": "market-regime-v2.5",
     "purpose": "Show how often the model is in base/defensive/severe defensive mode and how strategy returns behaved in each regime.",
     "regimes": [
       {
         "regime": "base",
-        "trading_days": 4285,
+        "trading_days": 4286,
         "share_of_history_pct": 79.19,
-        "avg_daily_return_pct": 0.0612,
-        "daily_win_rate_pct": 55.24,
+        "avg_daily_return_pct": 0.0615,
+        "daily_win_rate_pct": 55.25,
         "max_regime_drawdown_pct": -26.13,
         "avg_cash_weight_pct": 14.87,
         "avg_tech_ai_concentration_pct": 75.13
@@ -2887,7 +2887,7 @@
     "available": true
   },
   "overfitting_check": {
-    "generated_at_utc": "2026-07-09T17:34:43.352156+00:00",
+    "generated_at_utc": "2026-07-10T01:20:31.972571+00:00",
     "version": "overfitting-check-v2.5",
     "purpose": "Flag whether the model only works in one historical window or remains acceptable across multiple periods.",
     "verdict": "PASS_STABILITY_CHECK",
@@ -2897,7 +2897,7 @@
     "available": true
   },
   "trade_review": {
-    "generated_at_utc": "2026-07-09T17:34:43.709935+00:00",
+    "generated_at_utc": "2026-07-10T01:20:32.324228+00:00",
     "version": "trade-review-v3.0",
     "purpose": "Review actual logged trades at 3/10/20 trading-day horizons and compare real execution with expected thesis.",
     "privacy_warning": "This repo may be public. Do not log sensitive account details unless you accept they may be public.",
