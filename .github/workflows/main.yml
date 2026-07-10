@@ -2,6 +2,16 @@ name: Eason Quant Daily
 
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/main.yml"
+      - "scripts/**"
+      - "config.py"
+      - "requirements.txt"
+      - "README.md"
+      - "THREE_TIER_UNIVERSE.md"
   schedule:
     - cron: "30 23 * * 1-5"
   push:
@@ -13,16 +23,70 @@ on:
       - "config.py"
       - "requirements.txt"
       - "README.md"
+      - "THREE_TIER_UNIVERSE.md"
 
 concurrency:
-  group: eason-quant-daily-main
+  group: eason-quant-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: write
 
 jobs:
+  pr-smoke-test:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout pull request
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Compile Python sources
+        run: python -m compileall -q scripts config.py
+
+      - name: Build broad US market universe
+        timeout-minutes: 3
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_market_universe.py
+
+      - name: Build dynamic candidate ranking from repository caches
+        timeout-minutes: 4
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_dynamic_candidates.py
+
+      - name: Verify expected outputs
+        run: |
+          test -s docs/market_universe.csv
+          test -s docs/market_universe_summary.json
+          test -s docs/dynamic_candidates.csv
+          test -s docs/dynamic_candidates.json
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          universe = json.loads(Path('docs/market_universe_summary.json').read_text())
+          candidates = json.loads(Path('docs/dynamic_candidates.json').read_text())
+          assert universe['eligible_ticker_count'] > 1000, universe
+          assert candidates['coverage']['configured_core_count'] == 94, candidates['coverage']
+          assert candidates['coverage']['cached_tickers_scored'] > 0, candidates['coverage']
+          print({'universe': universe['eligible_ticker_count'], **candidates['coverage']})
+          PY
+
   build-report:
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
 
     steps:
@@ -37,6 +101,13 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Build broad US market universe
+        timeout-minutes: 3
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_market_universe.py
+
       - name: Build market report tiered cache-safe append-only
         timeout-minutes: 35
         env:
@@ -48,6 +119,13 @@ jobs:
           MAX_NEW_FULL_DOWNLOADS_PER_RUN: "40"
           TIINGO_REQUEST_SLEEP_SECONDS: "5.0"
         run: python -u scripts/build_report_safe.py
+
+      - name: Build dynamic candidate ranking
+        timeout-minutes: 4
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_dynamic_candidates.py
 
       - name: Build ChatGPT market summary text
         timeout-minutes: 4
