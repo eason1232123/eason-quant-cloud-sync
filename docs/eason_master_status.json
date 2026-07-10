@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-10T04:20:35.964919+00:00",
+  "generated_at_utc": "2026-07-10T05:34:27.953785+00:00",
   "version": "eason-master-action-board-v3.8-chatgpt-snapshot",
   "purpose": "One compact file for ChatGPT to review GitHub quant evidence, vectorbt validation/evidence, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
   "roles": {
@@ -65,27 +65,27 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     "freshness": {
-      "source_report_generated_at_utc": "2026-07-10T04:19:31.162646+00:00",
+      "source_report_generated_at_utc": "2026-07-10T05:33:43.595280+00:00",
       "latest_price_date_max": "2026-07-09",
       "latest_price_date_min": "2026-03-17",
       "loaded_ticker_count": 94,
       "configured_ticker_count": 94,
-      "fresh_request_count": 48,
+      "fresh_request_count": 0,
       "errors_count": 0
     },
     "universe": null
   },
   "market_report_status": {
     "available": true,
-    "generated_at_utc": "2026-07-10T04:19:31.162646+00:00",
+    "generated_at_utc": "2026-07-10T05:33:43.595280+00:00",
     "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.3 coverage-gaps-first",
     "universe": {
       "configured_ticker_count": 94,
       "loaded_ticker_count": 94,
-      "fresh_request_count": 48,
-      "skipped_fresh_enough_no_request": 34,
-      "skipped_by_tier_rotation": 12,
-      "rows_appended_total": 123965,
+      "fresh_request_count": 0,
+      "skipped_fresh_enough_no_request": 81,
+      "skipped_by_tier_rotation": 13,
+      "rows_appended_total": 0,
       "append_only_mode": true,
       "coverage_gaps_first": true,
       "historical_rows_overwritten": 0,
@@ -3430,7 +3430,7 @@
     ]
   },
   "market_regime_report": {
-    "generated_at_utc": "2026-07-10T04:20:35.132417+00:00",
+    "generated_at_utc": "2026-07-10T05:34:27.353492+00:00",
     "version": "market-regime-v2.5",
     "purpose": "Show how often the model is in base/defensive/severe defensive mode and how strategy returns behaved in each regime.",
     "regimes": [
@@ -3478,7 +3478,7 @@
     "available": true
   },
   "overfitting_check": {
-    "generated_at_utc": "2026-07-10T04:20:35.132594+00:00",
+    "generated_at_utc": "2026-07-10T05:34:27.353600+00:00",
     "version": "overfitting-check-v2.5",
     "purpose": "Flag whether the model only works in one historical window or remains acceptable across multiple periods.",
     "verdict": "PASS_STABILITY_CHECK",
@@ -3488,7 +3488,7 @@
     "available": true
   },
   "trade_review": {
-    "generated_at_utc": "2026-07-10T04:20:35.482504+00:00",
+    "generated_at_utc": "2026-07-10T05:34:27.597302+00:00",
     "version": "trade-review-v3.0",
     "purpose": "Review actual logged trades at 3/10/20 trading-day horizons and compare real execution with expected thesis.",
     "privacy_warning": "This repo may be public. Do not log sensitive account details unless you accept they may be public.",

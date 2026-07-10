@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-10T04:20:35.845802+00:00",
+  "generated_at_utc": "2026-07-10T05:34:27.860507+00:00",
   "source": "Derived from market_report.json, backtest_summary.csv, and portfolio_backtest.json when available.",
   "decision_policy": {
     "github_role": "quantitative evidence filter and portfolio-model backtest only",
@@ -25,12 +25,12 @@
     "important_limit": "This is an evidence report, not an automatic trading bot. Final orders require live quote, news, macro, portfolio, and human confirmation."
   },
   "freshness": {
-    "source_report_generated_at_utc": "2026-07-10T04:19:31.162646+00:00",
+    "source_report_generated_at_utc": "2026-07-10T05:33:43.595280+00:00",
     "latest_price_date_max": "2026-07-09",
     "latest_price_date_min": "2026-03-17",
     "loaded_ticker_count": 94,
     "configured_ticker_count": 94,
-    "fresh_request_count": 48,
+    "fresh_request_count": 0,
     "errors_count": 0
   },
   "portfolio_backtest": {
@@ -1383,6 +1383,68 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
+      "ticker": "GLD",
+      "severity_0_100": 60,
+      "latest_date": "2026-07-09",
+      "latest_price": 378.18,
+      "reasons": [
+        "below MA20",
+        "below MA50",
+        "below MA200",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 729,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 1.23,
+      "failed_rebound_median_return_pct": 1.02,
+      "failed_rebound_worst_mae_pct": -19.83,
+      "ret_5d_pct": 2.05,
+      "ret_20d_pct": -3.22,
+      "drawdown_from_52w_high_pct": -23.74,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "XLK",
+      "severity_0_100": 60,
+      "latest_date": "2026-07-07",
+      "latest_price": 179.18,
+      "reasons": [
+        "failed_rebound_risk active",
+        "below MA20",
+        "below MA50"
+      ],
+      "failed_rebound_samples_20d": 640,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 1.65,
+      "failed_rebound_median_return_pct": 2.0,
+      "failed_rebound_worst_mae_pct": -29.33,
+      "ret_5d_pct": -3.36,
+      "ret_20d_pct": -0.5,
+      "drawdown_from_52w_high_pct": -9.49,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "CEG",
+      "severity_0_100": 60,
+      "latest_date": "2026-07-09",
+      "latest_price": 250.74,
+      "reasons": [
+        "below MA20",
+        "below MA50",
+        "below MA200",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 152,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 6.69,
+      "failed_rebound_median_return_pct": 4.88,
+      "failed_rebound_worst_mae_pct": -36.68,
+      "ret_5d_pct": 6.02,
+      "ret_20d_pct": -0.36,
+      "drawdown_from_52w_high_pct": -37.68,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
       "ticker": "INTC",
       "severity_0_100": 60,
       "latest_date": "2026-07-09",
@@ -1401,6 +1463,27 @@
       "ret_5d_pct": -11.4,
       "ret_20d_pct": 4.28,
       "drawdown_from_52w_high_pct": -20.15,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "ORCL",
+      "severity_0_100": 60,
+      "latest_date": "2026-07-09",
+      "latest_price": 144.22,
+      "reasons": [
+        "below MA20",
+        "below MA50",
+        "below MA200",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 753,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 2.16,
+      "failed_rebound_median_return_pct": 1.36,
+      "failed_rebound_worst_mae_pct": -32.74,
+      "ret_5d_pct": 1.21,
+      "ret_20d_pct": -29.53,
+      "drawdown_from_52w_high_pct": -55.48,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
@@ -1446,89 +1529,6 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
-      "ticker": "GLD",
-      "severity_0_100": 60,
-      "latest_date": "2026-07-09",
-      "latest_price": 378.18,
-      "reasons": [
-        "below MA20",
-        "below MA50",
-        "below MA200",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 729,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 1.23,
-      "failed_rebound_median_return_pct": 1.02,
-      "failed_rebound_worst_mae_pct": -19.83,
-      "ret_5d_pct": 2.05,
-      "ret_20d_pct": -3.22,
-      "drawdown_from_52w_high_pct": -23.74,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
-      "ticker": "ORCL",
-      "severity_0_100": 60,
-      "latest_date": "2026-07-09",
-      "latest_price": 144.22,
-      "reasons": [
-        "below MA20",
-        "below MA50",
-        "below MA200",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 753,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 2.16,
-      "failed_rebound_median_return_pct": 1.36,
-      "failed_rebound_worst_mae_pct": -32.74,
-      "ret_5d_pct": 1.21,
-      "ret_20d_pct": -29.53,
-      "drawdown_from_52w_high_pct": -55.48,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
-      "ticker": "XLK",
-      "severity_0_100": 60,
-      "latest_date": "2026-07-07",
-      "latest_price": 179.18,
-      "reasons": [
-        "failed_rebound_risk active",
-        "below MA20",
-        "below MA50"
-      ],
-      "failed_rebound_samples_20d": 640,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 1.65,
-      "failed_rebound_median_return_pct": 2.0,
-      "failed_rebound_worst_mae_pct": -29.33,
-      "ret_5d_pct": -3.36,
-      "ret_20d_pct": -0.5,
-      "drawdown_from_52w_high_pct": -9.49,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
-      "ticker": "CEG",
-      "severity_0_100": 60,
-      "latest_date": "2026-07-09",
-      "latest_price": 250.74,
-      "reasons": [
-        "below MA20",
-        "below MA50",
-        "below MA200",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 152,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 6.69,
-      "failed_rebound_median_return_pct": 4.88,
-      "failed_rebound_worst_mae_pct": -36.68,
-      "ret_5d_pct": 6.02,
-      "ret_20d_pct": -0.36,
-      "drawdown_from_52w_high_pct": -37.68,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
       "ticker": "APP",
       "severity_0_100": 55,
       "latest_date": "2026-07-09",
@@ -1546,6 +1546,46 @@
       "ret_5d_pct": -7.82,
       "ret_20d_pct": -0.08,
       "drawdown_from_52w_high_pct": -29.06,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "MSFT",
+      "severity_0_100": 50,
+      "latest_date": "2026-07-09",
+      "latest_price": 384.36,
+      "reasons": [
+        "below MA50",
+        "below MA200",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 725,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 1.55,
+      "failed_rebound_median_return_pct": 1.44,
+      "failed_rebound_worst_mae_pct": -24.41,
+      "ret_5d_pct": 0.02,
+      "ret_20d_pct": -4.72,
+      "drawdown_from_52w_high_pct": -28.64,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "TSLA",
+      "severity_0_100": 50,
+      "latest_date": "2026-07-07",
+      "latest_price": 402.9,
+      "reasons": [
+        "below MA50",
+        "below MA200",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 591,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 2.84,
+      "failed_rebound_median_return_pct": 1.27,
+      "failed_rebound_worst_mae_pct": -48.38,
+      "ret_5d_pct": -2.17,
+      "ret_20d_pct": 3.04,
+      "drawdown_from_52w_high_pct": -17.76,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
@@ -1589,26 +1629,6 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
-      "ticker": "MSFT",
-      "severity_0_100": 50,
-      "latest_date": "2026-07-09",
-      "latest_price": 384.36,
-      "reasons": [
-        "below MA50",
-        "below MA200",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 725,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 1.55,
-      "failed_rebound_median_return_pct": 1.44,
-      "failed_rebound_worst_mae_pct": -24.41,
-      "ret_5d_pct": 0.02,
-      "ret_20d_pct": -4.72,
-      "drawdown_from_52w_high_pct": -28.64,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
       "ticker": "PLTR",
       "severity_0_100": 50,
       "latest_date": "2026-07-09",
@@ -1626,26 +1646,6 @@
       "ret_5d_pct": 2.63,
       "ret_20d_pct": -2.29,
       "drawdown_from_52w_high_pct": -37.72,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
-      "ticker": "TSLA",
-      "severity_0_100": 50,
-      "latest_date": "2026-07-07",
-      "latest_price": 402.9,
-      "reasons": [
-        "below MA50",
-        "below MA200",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 591,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 2.84,
-      "failed_rebound_median_return_pct": 1.27,
-      "failed_rebound_worst_mae_pct": -48.38,
-      "ret_5d_pct": -2.17,
-      "ret_20d_pct": 3.04,
-      "drawdown_from_52w_high_pct": -17.76,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
@@ -1706,6 +1706,26 @@
       "ret_5d_pct": -1.2,
       "ret_20d_pct": -0.37,
       "drawdown_from_52w_high_pct": -5.22,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "ADI",
+      "severity_0_100": 40,
+      "latest_date": "2026-07-07",
+      "latest_price": 379.03,
+      "reasons": [
+        "below MA20",
+        "below MA50",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 726,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 2.17,
+      "failed_rebound_median_return_pct": 1.88,
+      "failed_rebound_worst_mae_pct": -28.66,
+      "ret_5d_pct": -3.25,
+      "ret_20d_pct": -5.57,
+      "drawdown_from_52w_high_pct": -14.92,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
@@ -1789,6 +1809,26 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
+      "ticker": "PWR",
+      "severity_0_100": 40,
+      "latest_date": "2026-07-09",
+      "latest_price": 668.17,
+      "reasons": [
+        "below MA20",
+        "below MA50",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 709,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 3.87,
+      "failed_rebound_median_return_pct": 2.96,
+      "failed_rebound_worst_mae_pct": -41.56,
+      "ret_5d_pct": -3.36,
+      "ret_20d_pct": -3.42,
+      "drawdown_from_52w_high_pct": -14.9,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
       "ticker": "QCOM",
       "severity_0_100": 40,
       "latest_date": "2026-07-09",
@@ -1809,43 +1849,98 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
-      "ticker": "ADI",
-      "severity_0_100": 40,
-      "latest_date": "2026-07-07",
-      "latest_price": 379.03,
+      "ticker": "META",
+      "severity_0_100": 35,
+      "latest_date": "2026-07-09",
+      "latest_price": 631.48,
       "reasons": [
-        "below MA20",
-        "below MA50",
+        "below MA200",
         "drawdown from 52w high <= -12%"
       ],
-      "failed_rebound_samples_20d": 726,
+      "failed_rebound_samples_20d": 471,
       "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 2.17,
-      "failed_rebound_median_return_pct": 1.88,
-      "failed_rebound_worst_mae_pct": -28.66,
-      "ret_5d_pct": -3.25,
-      "ret_20d_pct": -5.57,
-      "drawdown_from_52w_high_pct": -14.92,
+      "failed_rebound_avg_return_pct": 2.26,
+      "failed_rebound_median_return_pct": 2.59,
+      "failed_rebound_worst_mae_pct": -35.48,
+      "ret_5d_pct": 3.03,
+      "ret_20d_pct": 8.12,
+      "drawdown_from_52w_high_pct": -19.81,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
-      "ticker": "PWR",
-      "severity_0_100": 40,
-      "latest_date": "2026-07-09",
-      "latest_price": 668.17,
+      "ticker": "IGV",
+      "severity_0_100": 35,
+      "latest_date": "2026-07-07",
+      "latest_price": 94.13,
       "reasons": [
-        "below MA20",
-        "below MA50",
+        "below MA200",
         "drawdown from 52w high <= -12%"
       ],
-      "failed_rebound_samples_20d": 709,
+      "failed_rebound_samples_20d": 720,
       "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 3.87,
-      "failed_rebound_median_return_pct": 2.96,
-      "failed_rebound_worst_mae_pct": -41.56,
-      "ret_5d_pct": -3.36,
-      "ret_20d_pct": -3.42,
-      "drawdown_from_52w_high_pct": -14.9,
+      "failed_rebound_avg_return_pct": 1.69,
+      "failed_rebound_median_return_pct": 2.04,
+      "failed_rebound_worst_mae_pct": -59.4,
+      "ret_5d_pct": 4.72,
+      "ret_20d_pct": -1.78,
+      "drawdown_from_52w_high_pct": -20.07,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "NOW",
+      "severity_0_100": 35,
+      "latest_date": "2026-07-09",
+      "latest_price": 108.84,
+      "reasons": [
+        "below MA200",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 455,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 2.0,
+      "failed_rebound_median_return_pct": 2.48,
+      "failed_rebound_worst_mae_pct": -41.12,
+      "ret_5d_pct": 2.87,
+      "ret_20d_pct": 1.75,
+      "drawdown_from_52w_high_pct": -46.32,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "NRG",
+      "severity_0_100": 35,
+      "latest_date": "2026-07-09",
+      "latest_price": 140.48,
+      "reasons": [
+        "below MA200",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 810,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 1.95,
+      "failed_rebound_median_return_pct": 1.53,
+      "failed_rebound_worst_mae_pct": -51.58,
+      "ret_5d_pct": -0.23,
+      "ret_20d_pct": 8.09,
+      "drawdown_from_52w_high_pct": -23.43,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "ESTC",
+      "severity_0_100": 35,
+      "latest_date": "2026-07-09",
+      "latest_price": 62.06,
+      "reasons": [
+        "below MA200",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 300,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 2.42,
+      "failed_rebound_median_return_pct": 2.48,
+      "failed_rebound_worst_mae_pct": -41.03,
+      "ret_5d_pct": 6.18,
+      "ret_20d_pct": 1.31,
+      "drawdown_from_52w_high_pct": -34.31,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
@@ -1982,101 +2077,6 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
-      "ticker": "META",
-      "severity_0_100": 35,
-      "latest_date": "2026-07-09",
-      "latest_price": 631.48,
-      "reasons": [
-        "below MA200",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 471,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 2.26,
-      "failed_rebound_median_return_pct": 2.59,
-      "failed_rebound_worst_mae_pct": -35.48,
-      "ret_5d_pct": 3.03,
-      "ret_20d_pct": 8.12,
-      "drawdown_from_52w_high_pct": -19.81,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
-      "ticker": "IGV",
-      "severity_0_100": 35,
-      "latest_date": "2026-07-07",
-      "latest_price": 94.13,
-      "reasons": [
-        "below MA200",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 720,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 1.69,
-      "failed_rebound_median_return_pct": 2.04,
-      "failed_rebound_worst_mae_pct": -59.4,
-      "ret_5d_pct": 4.72,
-      "ret_20d_pct": -1.78,
-      "drawdown_from_52w_high_pct": -20.07,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
-      "ticker": "NOW",
-      "severity_0_100": 35,
-      "latest_date": "2026-07-09",
-      "latest_price": 108.84,
-      "reasons": [
-        "below MA200",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 455,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 2.0,
-      "failed_rebound_median_return_pct": 2.48,
-      "failed_rebound_worst_mae_pct": -41.12,
-      "ret_5d_pct": 2.87,
-      "ret_20d_pct": 1.75,
-      "drawdown_from_52w_high_pct": -46.32,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
-      "ticker": "NRG",
-      "severity_0_100": 35,
-      "latest_date": "2026-07-09",
-      "latest_price": 140.48,
-      "reasons": [
-        "below MA200",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 810,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 1.95,
-      "failed_rebound_median_return_pct": 1.53,
-      "failed_rebound_worst_mae_pct": -51.58,
-      "ret_5d_pct": -0.23,
-      "ret_20d_pct": 8.09,
-      "drawdown_from_52w_high_pct": -23.43,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
-      "ticker": "ESTC",
-      "severity_0_100": 35,
-      "latest_date": "2026-07-09",
-      "latest_price": 62.06,
-      "reasons": [
-        "below MA200",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 300,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 2.42,
-      "failed_rebound_median_return_pct": 2.48,
-      "failed_rebound_worst_mae_pct": -41.03,
-      "ret_5d_pct": 6.18,
-      "ret_20d_pct": 1.31,
-      "drawdown_from_52w_high_pct": -34.31,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
       "ticker": "VST",
       "severity_0_100": 35,
       "latest_date": "2026-07-09",
@@ -2172,41 +2172,22 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
-      "ticker": "DLR",
+      "ticker": "AMAT",
       "severity_0_100": 25,
       "latest_date": "2026-07-09",
-      "latest_price": 179.33,
+      "latest_price": 588.66,
       "reasons": [
         "below MA20",
-        "below MA50"
+        "drawdown from 52w high <= -12%"
       ],
-      "failed_rebound_samples_20d": 702,
+      "failed_rebound_samples_20d": 780,
       "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 1.99,
-      "failed_rebound_median_return_pct": 2.34,
-      "failed_rebound_worst_mae_pct": -40.27,
-      "ret_5d_pct": 1.71,
-      "ret_20d_pct": -2.39,
-      "drawdown_from_52w_high_pct": -11.47,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
-      "ticker": "EQIX",
-      "severity_0_100": 25,
-      "latest_date": "2026-07-09",
-      "latest_price": 1034.87,
-      "reasons": [
-        "below MA20",
-        "below MA50"
-      ],
-      "failed_rebound_samples_20d": 707,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 2.48,
-      "failed_rebound_median_return_pct": 2.27,
-      "failed_rebound_worst_mae_pct": -37.37,
-      "ret_5d_pct": 2.1,
-      "ret_20d_pct": -2.36,
-      "drawdown_from_52w_high_pct": -7.26,
+      "failed_rebound_avg_return_pct": 2.57,
+      "failed_rebound_median_return_pct": 1.14,
+      "failed_rebound_worst_mae_pct": -66.01,
+      "ret_5d_pct": -9.56,
+      "ret_20d_pct": 17.92,
+      "drawdown_from_52w_high_pct": -18.58,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
@@ -2248,25 +2229,6 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     {
-      "ticker": "AMAT",
-      "severity_0_100": 25,
-      "latest_date": "2026-07-09",
-      "latest_price": 588.66,
-      "reasons": [
-        "below MA20",
-        "drawdown from 52w high <= -12%"
-      ],
-      "failed_rebound_samples_20d": 780,
-      "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 2.57,
-      "failed_rebound_median_return_pct": 1.14,
-      "failed_rebound_worst_mae_pct": -66.01,
-      "ret_5d_pct": -9.56,
-      "ret_20d_pct": 17.92,
-      "drawdown_from_52w_high_pct": -18.58,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
-    {
       "ticker": "MRVL",
       "severity_0_100": 25,
       "latest_date": "2026-07-09",
@@ -2283,6 +2245,44 @@
       "ret_5d_pct": -10.58,
       "ret_20d_pct": -8.85,
       "drawdown_from_52w_high_pct": -23.12,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "MU",
+      "severity_0_100": 25,
+      "latest_date": "2026-07-09",
+      "latest_price": 991.64,
+      "reasons": [
+        "below MA20",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 836,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 2.13,
+      "failed_rebound_median_return_pct": 1.34,
+      "failed_rebound_worst_mae_pct": -57.37,
+      "ret_5d_pct": -3.92,
+      "ret_20d_pct": 5.97,
+      "drawdown_from_52w_high_pct": -18.27,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    },
+    {
+      "ticker": "DLR",
+      "severity_0_100": 25,
+      "latest_date": "2026-07-09",
+      "latest_price": 179.33,
+      "reasons": [
+        "below MA20",
+        "below MA50"
+      ],
+      "failed_rebound_samples_20d": 702,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 1.99,
+      "failed_rebound_median_return_pct": 2.34,
+      "failed_rebound_worst_mae_pct": -40.27,
+      "ret_5d_pct": 1.71,
+      "ret_20d_pct": -2.39,
+      "drawdown_from_52w_high_pct": -11.47,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     }
   ],
