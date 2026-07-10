@@ -1,12 +1,12 @@
 Eason ChatGPT Compact Snapshot
-generated_at_utc: 2026-07-10T01:20:32.811039+00:00
+generated_at_utc: 2026-07-10T03:39:36.028849+00:00
 data_quality: Medium-Low
-coverage: 56/94 ratio=0.5957
+coverage: 60/94 ratio=0.6383
 latest_price_date: 2026-07-09
 tiingo_circuit_open: False
-coverage_gaps_count: 38
+coverage_gaps_count: 34
 errors_count: 0
-market_report_generated_at_utc: 2026-07-10T01:19:32.791033+00:00
+market_report_generated_at_utc: 2026-07-10T03:38:39.579526+00:00
 quant_signal: RISK_REVIEW_REQUIRED
 recommended_default_action: REVIEW_DEFENSE_FIRST
 signal_final_action: RISK_REVIEW_REQUIRED

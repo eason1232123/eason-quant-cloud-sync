@@ -1,6 +1,6 @@
 {
   "available": true,
-  "generated_at_utc": "2026-07-10T01:20:31.487724+00:00",
+  "generated_at_utc": "2026-07-10T03:39:34.769147+00:00",
   "version": "portfolio-backtest-v2.1-next-bar-regime-execution",
   "purpose": "Model-level portfolio backtest for Eason strategy. This is not live execution and not personalized account truth.",
   "important_limits": [
