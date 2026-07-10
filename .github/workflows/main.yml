@@ -43,7 +43,7 @@ jobs:
           TIINGO_API_KEY: ${{ secrets.TIINGO_API_KEY }}
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
-          HYDRATION_RUN_NOTE: "2026-07-10-cover-94-attempt-1"
+          HYDRATION_RUN_NOTE: "2026-07-10-coverage-gaps-first-attempt-2"
           MAX_TIINGO_REQUESTS_PER_RUN: "50"
           MAX_NEW_FULL_DOWNLOADS_PER_RUN: "40"
           TIINGO_REQUEST_SLEEP_SECONDS: "5.0"
