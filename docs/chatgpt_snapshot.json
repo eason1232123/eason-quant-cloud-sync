@@ -1,15 +1,432 @@
 {
-  "generated_at_utc": "2026-07-10T05:34:27.953816+00:00",
-  "version": "chatgpt-compact-snapshot-v1.0",
+  "generated_at_utc": "2026-07-11T14:45:19.362324+00:00",
+  "version": "chatgpt-compact-snapshot-v2.0-decision-contract",
   "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
   "read_priority_for_chatgpt": [
+    "docs/decision_packet.json",
     "docs/chatgpt_snapshot.json",
     "docs/eason_master_status.json",
     "docs/action_board.json",
     "docs/market_report.json"
   ],
+  "decision_contract": {
+    "schema_version": "decision-packet-v5.0",
+    "generated_at_utc": "2026-07-11T14:45:10.245240+00:00",
+    "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
+    "roles": {
+      "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",
+      "chatgpt": "live quote/news/macro/valuation and actual-account risk reconciliation",
+      "human": "final broker confirmation and execution"
+    },
+    "market_data": {
+      "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+      "market_timezone": "America/New_York",
+      "report_generated_at_utc": "2026-07-11T06:39:51.210836+00:00",
+      "data_timestamp": "2026-07-09",
+      "data_timestamp_granularity": "market_date",
+      "data_timestamp_status": "AVAILABLE",
+      "price_frequency": "end_of_day_daily",
+      "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+      "metadata_status": "COMPLETE"
+    },
+    "data_quality": {
+      "source_report_generated_at_utc": "2026-07-11T06:39:51.210836+00:00",
+      "data_quality_metadata_status": "COMPLETE",
+      "reported_expected_market_date": "2026-07-10",
+      "reference_market_date": "2026-07-10",
+      "reference_market_date_status": "ALIGNED",
+      "max_staleness_business_days": 0,
+      "max_expected_market_date_age_days": 0,
+      "latest_price_date_max": "2026-07-09",
+      "latest_price_date_min": "2026-03-17",
+      "data_status": "STALE_MODEL_PORTFOLIO_DATA",
+      "fresh_ticker_count": 0,
+      "stale_ticker_count": 94,
+      "stale_tickers_in_packet_count": 20,
+      "stale_tickers": [
+        {
+          "ticker": "AAPL",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ABNB",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ADBE",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ADI",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "AMAT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "AMD",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "AMZN",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ANET",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "APP",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ARKK",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ARM",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ASML",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ASTS",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "AVGO",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "CEG",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "CFLT",
+          "latest_date": "2026-03-17",
+          "staleness_business_days": 83,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "COIN",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "COST",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "CRM",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "CRWD",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        }
+      ],
+      "loaded_ticker_count": 94,
+      "configured_ticker_count": 94,
+      "fresh_request_count": 0,
+      "errors_count": 0
+    },
+    "portfolio_scope": {
+      "scope_type": "public_model_portfolio_symbols_only",
+      "source": "portfolio_backtest.assumptions.*_weights",
+      "tickers": [
+        "MSFT",
+        "QQQ",
+        "SMH",
+        "SPY"
+      ],
+      "portfolio_context_available": true,
+      "portfolio_context_reason": null,
+      "contains_private_shares_or_cash": false,
+      "actual_holdings_check_required_by_chatgpt": true
+    },
+    "market_context": {
+      "model_regime": "base",
+      "live_regime_check_required": true
+    },
+    "evidence_gate": {
+      "quant_signal": "DATA_REVIEW_REQUIRED",
+      "recommended_default_action": "REFRESH_DATA_BEFORE_DECISION",
+      "warnings": [
+        "model-portfolio data is stale or missing; refresh before any decision"
+      ],
+      "automatic_order_allowed": false
+    },
+    "decision": {
+      "final_action": "DATA_REVIEW_REQUIRED",
+      "reason": "Model-portfolio data is stale or missing; refresh it before using quant signals.",
+      "buy_permission": "BLOCKED_BY_MODEL_PORTFOLIO_DATA",
+      "automatic_order_allowed": false,
+      "chatgpt_review_required": true,
+      "default_human_action": "REFRESH_DATA_BEFORE_DECISION"
+    },
+    "candidates": {
+      "actionable_count": 0,
+      "top_actionable": []
+    },
+    "risks": {
+      "model_portfolio_high": [],
+      "watchlist_high_advisory": [],
+      "stale_excluded": [
+        {
+          "ticker": "ARM",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "COST",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "ASTS",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "SMR",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "XLK",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "GLD",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "CEG",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "INTC",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "ORCL",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "MSTR",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "RKLB",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "APP",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "MSFT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "model_portfolio"
+        },
+        {
+          "ticker": "TSLA",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "COIN",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "ADBE",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "CRM",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "PLTR",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "IEF",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "TLT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        }
+      ]
+    },
+    "execution_contract": {
+      "automatic_order_allowed": false,
+      "required_live_checks": [
+        "Read action_board.json, eason_signal.json, portfolio_backtest.json, and market_report.json freshness first.",
+        "Check current tradable bid/ask/last from IBKR if available; otherwise cross-check at least two public quote sources.",
+        "Check whether current price is still close to the tested signal entry area; do not chase if price already ran far away.",
+        "Check same-day regime: SPY/QQQ trend, VIX, 10Y yield, breadth, and semiconductor leadership.",
+        "Check fresh news, earnings, guidance, analyst changes, regulation, and macro events for the candidate and key leaders.",
+        "Check portfolio constraints: cash floor, offense cash, QQQ/SMH/MSFT concentration, semis max, MSFT max, and same-day repeat-buy rule.",
+        "Decide final action: buy/add, wait, pause, trim, sell, or no trade. GitHub evidence alone is never an automatic order."
+      ],
+      "required_final_inputs": [
+        "IBKR tradable quote",
+        "actual holdings and cash",
+        "fresh news and earnings context",
+        "same-day macro and market regime",
+        "explicit limit price, invalidation level, and cancel condition"
+      ]
+    }
+  },
+  "market_data": {
+    "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+    "market_timezone": "America/New_York",
+    "report_generated_at_utc": "2026-07-11T06:39:51.210836+00:00",
+    "data_timestamp": "2026-07-09",
+    "data_timestamp_granularity": "market_date",
+    "data_timestamp_status": "AVAILABLE",
+    "price_frequency": "end_of_day_daily",
+    "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+    "metadata_status": "COMPLETE"
+  },
   "github_data_quality": {
-    "grade": "Medium",
+    "grade": "Low",
     "configured_ticker_count": 94,
     "loaded_ticker_count": 94,
     "coverage_ratio": 1.0,
@@ -18,50 +435,55 @@
     "errors_count": 0,
     "tiingo_circuit_open": false,
     "latest_price_date_max": "2026-07-09",
-    "expected_latest_market_date": "2026-07-09",
-    "reasons": [],
+    "expected_latest_market_date": "2026-07-10",
+    "stale_ticker_count": 94,
+    "decision_data_status": "STALE_MODEL_PORTFOLIO_DATA",
+    "reasons": [
+      "stale_tickers=94",
+      "model-portfolio data stale"
+    ],
     "usage_rule": "Use High/Medium as evidence; Medium-Low only as auxiliary evidence; Low/Unusable cannot justify trades by itself."
   },
   "final_gate": {
-    "quant_signal": "RISK_REVIEW_REQUIRED",
+    "quant_signal": "DATA_REVIEW_REQUIRED",
     "automatic_order_allowed": false,
     "chatgpt_review_required": true,
-    "recommended_default_action": "REVIEW_DEFENSE_FIRST",
-    "warnings": [],
+    "recommended_default_action": "REFRESH_DATA_BEFORE_DECISION",
+    "warnings": [
+      "model-portfolio data is stale or missing; refresh before any decision"
+    ],
     "hard_rule": "GitHub evidence can create candidates only. Vectorbt/backtest evidence + ChatGPT live review + IBKR quote + human confirmation are required before any order."
   },
   "signal_summary": {
-    "final_action": "RISK_REVIEW_REQUIRED",
-    "reason": "At least one ticker has high technical/rule risk. Review defense before adding risk.",
-    "market_regime": null,
-    "buy_permission": null,
-    "data_status": null,
-    "top_actionable_buy": {
-      "ticker": "LRCX",
-      "rule": "relative_strength_rebound",
-      "status": "QUANT_PASS_NEEDS_CHATGPT_REVIEW",
-      "latest_date": "2026-07-09",
-      "latest_price": 353.17,
-      "horizon_days": 20,
-      "samples": 22,
-      "valid": true,
-      "win_rate_pct": 81.82,
-      "avg_return_pct": 7.97,
-      "median_return_pct": 8.71,
-      "worst_return_pct": -9.88,
-      "avg_mae_pct": -5.47,
-      "worst_mae_pct": -14.03,
-      "benchmark": "SMH",
-      "avg_alpha_vs_benchmark_pct": 0.74,
-      "evidence_score_0_100": 73.9,
-      "fail_reasons": [],
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+    "final_action": "DATA_REVIEW_REQUIRED",
+    "reason": "Model-portfolio data is stale or missing; refresh it before using quant signals.",
+    "market_regime": "base",
+    "buy_permission": "BLOCKED_BY_MODEL_PORTFOLIO_DATA",
+    "data_status": "STALE_MODEL_PORTFOLIO_DATA",
+    "portfolio_scope": {
+      "scope_type": "public_model_portfolio_symbols_only",
+      "source": "portfolio_backtest.assumptions.*_weights",
+      "tickers": [
+        "MSFT",
+        "QQQ",
+        "SMH",
+        "SPY"
+      ],
+      "portfolio_context_available": true,
+      "portfolio_context_reason": null,
+      "contains_private_shares_or_cash": false,
+      "actual_holdings_check_required_by_chatgpt": true
     },
+    "top_actionable_buy": null,
     "top_risk": {
       "ticker": "ARM",
       "severity_0_100": 95,
       "latest_date": "2026-07-07",
       "latest_price": 300.43,
+      "data_fresh": false,
+      "staleness_business_days": 3,
+      "decision_eligible": false,
+      "data_exclusion_reason": "stale_or_missing_market_data",
       "reasons": [
         "failed_rebound_risk active",
         "5d pullback not reclaimed",
@@ -77,34 +499,627 @@
       "ret_5d_pct": -12.56,
       "ret_20d_pct": -12.39,
       "drawdown_from_52w_high_pct": -31.64,
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+      "risk_scope": "watchlist_advisory"
     },
+    "top_model_portfolio_risk": null,
+    "top_watchlist_risk_advisory": null,
     "freshness": {
-      "source_report_generated_at_utc": "2026-07-10T05:33:43.595280+00:00",
+      "source_report_generated_at_utc": "2026-07-11T06:39:51.210836+00:00",
+      "market_data": {
+        "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+        "market_timezone": "America/New_York",
+        "report_generated_at_utc": "2026-07-11T06:39:51.210836+00:00",
+        "data_timestamp": "2026-07-09",
+        "data_timestamp_granularity": "market_date",
+        "data_timestamp_status": "AVAILABLE",
+        "price_frequency": "end_of_day_daily",
+        "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+        "metadata_status": "COMPLETE"
+      },
+      "data_quality_metadata_status": "COMPLETE",
+      "reported_expected_market_date": "2026-07-10",
+      "reference_market_date": "2026-07-10",
+      "reference_market_date_status": "ALIGNED",
+      "max_staleness_business_days": 0,
+      "max_expected_market_date_age_days": 0,
       "latest_price_date_max": "2026-07-09",
       "latest_price_date_min": "2026-03-17",
+      "data_status": "STALE_MODEL_PORTFOLIO_DATA",
+      "fresh_ticker_count": 0,
+      "stale_ticker_count": 94,
+      "stale_tickers": [
+        {
+          "ticker": "AAPL",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ABNB",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ADBE",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ADI",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "AMAT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "AMD",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "AMZN",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ANET",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "APP",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ARKK",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ARM",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ASML",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ASTS",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "AVGO",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "CEG",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "CFLT",
+          "latest_date": "2026-03-17",
+          "staleness_business_days": 83,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "COIN",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "COST",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "CRM",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "CRWD",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "CSCO",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "DDOG",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "DLR",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "EQIX",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ESTC",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ETN",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "GE",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "GLD",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "GOOGL",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "GRID",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "GTLB",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "HIMS",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "HOOD",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "IEF",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "IGM",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "IGV",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "INTC",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "IYW",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "JPM",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "KLAC",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "LLY",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "LRCX",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "MCHP",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "MDB",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "META",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "MPWR",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "MRVL",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "MSFT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "MSTR",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "MU",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "NET",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "NOW",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "NRG",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "NVDA",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "NXPI",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "OKTA",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ON",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ORCL",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "PANW",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "PATH",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "PLTR",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "PWR",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "QCOM",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "QQQ",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "RBLX",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "RDDT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "RKLB",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SGOV",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SHOP",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SHY",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SMH",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SMR",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SNOW",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SOFI",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SOXX",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SPY",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "TEAM",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "TLT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "TSLA",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "TSM",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "TXN",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "UBER",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "USMV",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "VGT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "VRT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "VST",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "VYM",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "XLE",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "XLF",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "XLK",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "XLP",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "XLU",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "XLV",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 3,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "ZS",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        }
+      ],
       "loaded_ticker_count": 94,
       "configured_ticker_count": 94,
       "fresh_request_count": 0,
       "errors_count": 0
     },
-    "universe": null
-  },
-  "market_report_status": {
-    "available": true,
-    "generated_at_utc": "2026-07-10T05:33:43.595280+00:00",
-    "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.3 coverage-gaps-first",
     "universe": {
       "configured_ticker_count": 94,
       "loaded_ticker_count": 94,
+      "tiingo_request_attempt_count": 0,
       "fresh_request_count": 0,
-      "skipped_fresh_enough_no_request": 81,
-      "skipped_by_tier_rotation": 13,
+      "exact_fresh_ticker_count": 0,
+      "lagging_ticker_count": 94,
+      "future_quarantine_ticker_count": 0,
+      "missing_ticker_count": 0,
+      "skipped_fresh_enough_no_request": 0,
+      "skipped_by_tier_rotation": 68,
+      "forced_refresh_due_count": 23,
+      "forced_refresh_requested_count": 0,
+      "forced_refresh_succeeded_count": 0,
+      "forced_refresh_deferred_count": 23,
+      "future_quarantine_event_count": 0,
       "rows_appended_total": 0,
       "append_only_mode": true,
       "coverage_gaps_first": true,
       "historical_rows_overwritten": 0,
-      "expected_latest_market_date": "2026-07-09",
+      "expected_latest_market_date": "2026-07-10",
       "refresh_policy": {
         "core_daily": [
           "AAPL",
@@ -164,13 +1179,121 @@
           "VRT",
           "XLK"
         ],
-        "long_tail_weekly": "cached stale tickers still use deterministic weekday rotation; no-cache tickers bypass rotation"
+        "long_tail_weekly": "deterministic weekday rotation; no-cache tickers bypass rotation",
+        "lag_basis": "weekday_business_days_not_exchange_sessions",
+        "force_refresh_watch_lag_business_days": 2,
+        "force_refresh_long_tail_lag_business_days": 5
       },
-      "max_tiingo_requests_per_run": 50,
-      "max_new_full_downloads_per_run": 40,
+      "max_tiingo_requests_per_run": 0,
+      "max_new_full_downloads_per_run": 0,
       "tiingo_circuit_open": false,
       "tiingo_circuit_reason": "",
-      "warnings_count": 0,
+      "warnings_count": 26,
+      "coverage_gaps_count": 0,
+      "errors_count": 0,
+      "note": "coverage_gaps are tickers without usable cache yet; errors are true processing/fetch failures not classified as rotation/rate-limit coverage gaps."
+    }
+  },
+  "market_report_status": {
+    "available": true,
+    "generated_at_utc": "2026-07-11T06:39:51.210836+00:00",
+    "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+    "market_timezone": "America/New_York",
+    "data_timestamp": "2026-07-09",
+    "data_timestamp_status": "AVAILABLE",
+    "price_frequency": "end_of_day_daily",
+    "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+    "strategy_version": "Eason Master US Market Monitor Cloud Sync v5 freshness-contract",
+    "universe": {
+      "configured_ticker_count": 94,
+      "loaded_ticker_count": 94,
+      "tiingo_request_attempt_count": 0,
+      "fresh_request_count": 0,
+      "exact_fresh_ticker_count": 0,
+      "lagging_ticker_count": 94,
+      "future_quarantine_ticker_count": 0,
+      "missing_ticker_count": 0,
+      "skipped_fresh_enough_no_request": 0,
+      "skipped_by_tier_rotation": 68,
+      "forced_refresh_due_count": 23,
+      "forced_refresh_requested_count": 0,
+      "forced_refresh_succeeded_count": 0,
+      "forced_refresh_deferred_count": 23,
+      "future_quarantine_event_count": 0,
+      "rows_appended_total": 0,
+      "append_only_mode": true,
+      "coverage_gaps_first": true,
+      "historical_rows_overwritten": 0,
+      "expected_latest_market_date": "2026-07-10",
+      "refresh_policy": {
+        "core_daily": [
+          "AAPL",
+          "AMZN",
+          "AVGO",
+          "GLD",
+          "GOOGL",
+          "IEF",
+          "META",
+          "MSFT",
+          "NVDA",
+          "QQQ",
+          "SGOV",
+          "SMH",
+          "SOXX",
+          "SPY",
+          "TLT"
+        ],
+        "watch_every_3d": [
+          "ADBE",
+          "ADI",
+          "AMAT",
+          "AMD",
+          "ANET",
+          "ARM",
+          "ASML",
+          "CEG",
+          "CRM",
+          "CRWD",
+          "DDOG",
+          "ETN",
+          "IGM",
+          "IGV",
+          "INTC",
+          "IYW",
+          "KLAC",
+          "LRCX",
+          "MCHP",
+          "MPWR",
+          "MRVL",
+          "MU",
+          "NET",
+          "NOW",
+          "NRG",
+          "NXPI",
+          "ON",
+          "ORCL",
+          "PANW",
+          "PLTR",
+          "PWR",
+          "QCOM",
+          "SNOW",
+          "TSLA",
+          "TSM",
+          "TXN",
+          "VGT",
+          "VRT",
+          "XLK"
+        ],
+        "long_tail_weekly": "deterministic weekday rotation; no-cache tickers bypass rotation",
+        "lag_basis": "weekday_business_days_not_exchange_sessions",
+        "force_refresh_watch_lag_business_days": 2,
+        "force_refresh_long_tail_lag_business_days": 5
+      },
+      "max_tiingo_requests_per_run": 0,
+      "max_new_full_downloads_per_run": 0,
+      "tiingo_circuit_open": false,
+      "tiingo_circuit_reason": "",
+      "warnings_count": 26,
       "coverage_gaps_count": 0,
       "errors_count": 0,
       "note": "coverage_gaps are tickers without usable cache yet; errors are true processing/fetch failures not classified as rotation/rate-limit coverage gaps."

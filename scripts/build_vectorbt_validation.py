@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -8,6 +9,12 @@ from typing import Any
 import numpy as np
 import pandas as pd
 import vectorbt as vbt
+
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.market_data_contract import read_checked_daily_csv
 
 OUT = Path("docs")
 INITIAL_CASH = 10000.0
@@ -45,7 +52,7 @@ def load_price(ticker: str) -> pd.DataFrame:
     path = csv_path(ticker)
     if not path.exists():
         return pd.DataFrame()
-    df = pd.read_csv(path)
+    df = read_checked_daily_csv(ticker, OUT)
     if df.empty:
         return df
     df["date"] = pd.to_datetime(df["date"]).dt.tz_localize(None)

@@ -1,6 +1,17 @@
 {
-  "generated_at_utc": "2026-07-10T05:33:45.139799+00:00",
-  "version": "dynamic-candidates-v2-promotion-gates",
+  "generated_at_utc": "2026-07-11T14:44:59.070214+00:00",
+  "version": "dynamic-candidates-v3-freshness-gates",
+  "market_data": {
+    "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+    "market_timezone": "America/New_York",
+    "report_generated_at_utc": "2026-07-11T06:39:51.210836+00:00",
+    "data_timestamp": "2026-07-09",
+    "data_timestamp_granularity": "market_date",
+    "data_timestamp_status": "AVAILABLE",
+    "price_frequency": "end_of_day_daily",
+    "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+    "market_data_metadata_status": "COMPLETE"
+  },
   "count": 0,
   "candidates": []
 }

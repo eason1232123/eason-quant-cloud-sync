@@ -10,6 +10,7 @@ import pandas as pd
 import vectorbt as vbt
 
 from config import TICKERS
+from scripts.market_data_contract import read_checked_daily_csv
 
 OUT = Path("docs")
 OUT.mkdir(exist_ok=True)
@@ -104,7 +105,7 @@ def load_price(ticker: str) -> pd.DataFrame:
     path = csv_path(ticker)
     if not path.exists():
         return pd.DataFrame()
-    df = pd.read_csv(path)
+    df = read_checked_daily_csv(ticker, OUT)
     if df.empty:
         return pd.DataFrame()
 

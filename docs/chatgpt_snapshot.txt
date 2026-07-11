@@ -1,15 +1,20 @@
 Eason ChatGPT Compact Snapshot
-generated_at_utc: 2026-07-10T05:34:27.953816+00:00
-data_quality: Medium
+generated_at_utc: 2026-07-11T14:45:19.362324+00:00
+data_quality: Low
 coverage: 94/94 ratio=1.0
 latest_price_date: 2026-07-09
 tiingo_circuit_open: False
 coverage_gaps_count: 0
 errors_count: 0
-market_report_generated_at_utc: 2026-07-10T05:33:43.595280+00:00
-quant_signal: RISK_REVIEW_REQUIRED
-recommended_default_action: REVIEW_DEFENSE_FIRST
-signal_final_action: RISK_REVIEW_REQUIRED
-signal_market_regime: None
+market_report_generated_at_utc: 2026-07-11T06:39:51.210836+00:00
+data_source: Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates
+market_timezone: America/New_York
+data_timestamp: 2026-07-09
+price_frequency: end_of_day_daily
+price_adjustment_policy: adjusted_ohlc_when_available_else_unadjusted
+quant_signal: DATA_REVIEW_REQUIRED
+recommended_default_action: REFRESH_DATA_BEFORE_DECISION
+signal_final_action: DATA_REVIEW_REQUIRED
+signal_market_regime: base
 vectorbt_available: True
 Use JSON for details. This TXT is only a quick health check.

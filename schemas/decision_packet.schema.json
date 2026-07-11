@@ -1,0 +1,885 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/eason1232123/eason-quant-cloud-sync/schemas/decision_packet.schema.json",
+  "title": "Eason Quant Decision Packet",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at_utc",
+    "purpose",
+    "roles",
+    "market_data",
+    "data_quality",
+    "portfolio_scope",
+    "market_context",
+    "evidence_gate",
+    "decision",
+    "candidates",
+    "risks",
+    "execution_contract"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "decision-packet-v5.0"
+    },
+    "generated_at_utc": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "purpose": {
+      "type": "string",
+      "minLength": 1
+    },
+    "roles": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["github", "chatgpt", "human"],
+      "properties": {
+        "github": {
+          "type": "string",
+          "minLength": 1
+        },
+        "chatgpt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "human": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "market_data": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "market_timezone",
+        "report_generated_at_utc",
+        "data_timestamp",
+        "data_timestamp_granularity",
+        "data_timestamp_status",
+        "price_frequency",
+        "price_adjustment_policy",
+        "metadata_status"
+      ],
+      "properties": {
+        "source": {
+          "type": ["string", "null"],
+          "minLength": 1
+        },
+        "market_timezone": {
+          "enum": [null, "America/New_York"]
+        },
+        "report_generated_at_utc": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "data_timestamp": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "data_timestamp_granularity": {
+          "enum": [null, "market_date"]
+        },
+        "data_timestamp_status": {
+          "enum": [null, "AVAILABLE", "MISSING"]
+        },
+        "price_frequency": {
+          "enum": [null, "end_of_day_daily"]
+        },
+        "price_adjustment_policy": {
+          "enum": [null, "adjusted_ohlc_when_available_else_unadjusted"]
+        },
+        "metadata_status": {
+          "enum": ["COMPLETE", "MISSING_OR_INVALID"]
+        }
+      }
+    },
+    "data_quality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_report_generated_at_utc",
+        "data_quality_metadata_status",
+        "reported_expected_market_date",
+        "reference_market_date",
+        "reference_market_date_status",
+        "max_staleness_business_days",
+        "max_expected_market_date_age_days",
+        "latest_price_date_max",
+        "latest_price_date_min",
+        "data_status",
+        "fresh_ticker_count",
+        "stale_ticker_count",
+        "stale_tickers_in_packet_count",
+        "stale_tickers",
+        "loaded_ticker_count",
+        "configured_ticker_count",
+        "fresh_request_count",
+        "errors_count"
+      ],
+      "properties": {
+        "source_report_generated_at_utc": {
+          "type": ["string", "null"],
+          "format": "date-time"
+        },
+        "data_quality_metadata_status": {
+          "enum": ["COMPLETE", "MISSING_OR_INVALID"]
+        },
+        "reported_expected_market_date": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "reference_market_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "reference_market_date_status": {
+          "enum": [
+            "ALIGNED",
+            "REPORTED_EXPECTED_DATE_MISSING",
+            "REPORTED_EXPECTED_DATE_MISMATCH"
+          ]
+        },
+        "max_staleness_business_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max_expected_market_date_age_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "latest_price_date_max": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "latest_price_date_min": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "data_status": {
+          "enum": [
+            "FRESH",
+            "PARTIAL_STALE_WATCHLIST",
+            "STALE_MODEL_PORTFOLIO_DATA",
+            "EXPECTED_MARKET_DATE_MISSING_OR_INVALID",
+            "MARKET_DATA_METADATA_MISSING",
+            "PORTFOLIO_CONTEXT_MISSING"
+          ]
+        },
+        "fresh_ticker_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stale_ticker_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "stale_tickers_in_packet_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 20
+        },
+        "stale_tickers": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/$defs/staleTicker"
+          }
+        },
+        "loaded_ticker_count": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "configured_ticker_count": {
+          "type": ["integer", "null"],
+          "minimum": 1
+        },
+        "fresh_request_count": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "errors_count": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        }
+      }
+    },
+    "portfolio_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope_type",
+        "source",
+        "tickers",
+        "portfolio_context_available",
+        "portfolio_context_reason",
+        "contains_private_shares_or_cash",
+        "actual_holdings_check_required_by_chatgpt"
+      ],
+      "properties": {
+        "scope_type": {
+          "const": "public_model_portfolio_symbols_only"
+        },
+        "source": {
+          "enum": [
+            "portfolio_backtest.assumptions.*_weights",
+            "decision_contract.default_model_scope"
+          ]
+        },
+        "tickers": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/ticker"
+          }
+        },
+        "portfolio_context_available": {
+          "type": "boolean"
+        },
+        "portfolio_context_reason": {
+          "type": ["string", "null"],
+          "enum": [
+            null,
+            "portfolio_backtest_missing",
+            "portfolio_backtest_load_error",
+            "portfolio_backtest_unavailable",
+            "portfolio_weights_missing_or_invalid",
+            "portfolio_regime_missing_or_invalid"
+          ]
+        },
+        "contains_private_shares_or_cash": {
+          "const": false
+        },
+        "actual_holdings_check_required_by_chatgpt": {
+          "const": true
+        }
+      }
+    },
+    "market_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["model_regime", "live_regime_check_required"],
+      "properties": {
+        "model_regime": {
+          "enum": [null, "base", "defensive", "severe_defensive"]
+        },
+        "live_regime_check_required": {
+          "const": true
+        }
+      }
+    },
+    "evidence_gate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "quant_signal",
+        "recommended_default_action",
+        "warnings",
+        "automatic_order_allowed"
+      ],
+      "properties": {
+        "quant_signal": {
+          "$ref": "#/$defs/finalAction"
+        },
+        "recommended_default_action": {
+          "$ref": "#/$defs/defaultHumanAction"
+        },
+        "warnings": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "automatic_order_allowed": {
+          "const": false
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "final_action",
+        "reason",
+        "buy_permission",
+        "automatic_order_allowed",
+        "chatgpt_review_required",
+        "default_human_action"
+      ],
+      "properties": {
+        "final_action": {
+          "$ref": "#/$defs/finalAction"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "buy_permission": {
+          "enum": [
+            "BLOCKED_BY_MODEL_PORTFOLIO_DATA",
+            "BLOCKED_BY_MODEL_PORTFOLIO_RISK",
+            "BLOCKED_BY_MARKET_DATE_CONTEXT",
+            "BLOCKED_BY_SOURCE_METADATA",
+            "BLOCKED_BY_PORTFOLIO_CONTEXT",
+            "CHATGPT_LIVE_REVIEW_REQUIRED",
+            "NO_QUANT_CANDIDATE"
+          ]
+        },
+        "automatic_order_allowed": {
+          "const": false
+        },
+        "chatgpt_review_required": {
+          "type": "boolean"
+        },
+        "default_human_action": {
+          "$ref": "#/$defs/defaultHumanAction"
+        }
+      }
+    },
+    "candidates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["actionable_count", "top_actionable"],
+      "properties": {
+        "actionable_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "top_actionable": {
+          "type": "array",
+          "maxItems": 5,
+          "items": {
+            "$ref": "#/$defs/actionableCandidate"
+          }
+        }
+      }
+    },
+    "risks": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_portfolio_high",
+        "watchlist_high_advisory",
+        "stale_excluded"
+      ],
+      "properties": {
+        "model_portfolio_high": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/riskCandidate"
+              },
+              {
+                "properties": {
+                  "severity_0_100": {
+                    "type": "integer",
+                    "minimum": 65,
+                    "maximum": 100
+                  },
+                  "data_fresh": {
+                    "const": true
+                  },
+                  "decision_eligible": {
+                    "const": true
+                  },
+                  "data_exclusion_reason": {
+                    "type": "null"
+                  },
+                  "risk_scope": {
+                    "const": "model_portfolio"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "watchlist_high_advisory": {
+          "type": "array",
+          "maxItems": 10,
+          "items": {
+            "allOf": [
+              {
+                "$ref": "#/$defs/riskCandidate"
+              },
+              {
+                "properties": {
+                  "severity_0_100": {
+                    "type": "integer",
+                    "minimum": 65,
+                    "maximum": 100
+                  },
+                  "data_fresh": {
+                    "const": true
+                  },
+                  "decision_eligible": {
+                    "const": true
+                  },
+                  "data_exclusion_reason": {
+                    "type": "null"
+                  },
+                  "risk_scope": {
+                    "const": "watchlist_advisory"
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "stale_excluded": {
+          "type": "array",
+          "maxItems": 20,
+          "items": {
+            "$ref": "#/$defs/staleRisk"
+          }
+        }
+      }
+    },
+    "execution_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "automatic_order_allowed",
+        "required_live_checks",
+        "required_final_inputs"
+      ],
+      "properties": {
+        "automatic_order_allowed": {
+          "const": false
+        },
+        "required_live_checks": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required_final_inputs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "portfolio_scope": {
+            "properties": {
+              "portfolio_context_available": {"const": true}
+            },
+            "required": ["portfolio_context_available"]
+          }
+        },
+        "required": ["portfolio_scope"]
+      },
+      "then": {
+        "properties": {
+          "market_context": {
+            "properties": {
+              "model_regime": {
+                "enum": ["base", "defensive", "severe_defensive"]
+              }
+            }
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "market_context": {
+            "properties": {
+              "model_regime": {"type": "null"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "market_data": {
+            "properties": {
+              "metadata_status": {"const": "COMPLETE"}
+            },
+            "required": ["metadata_status"]
+          }
+        },
+        "required": ["market_data"]
+      },
+      "then": {
+        "properties": {
+          "market_data": {
+            "properties": {
+              "source": {"type": "string", "minLength": 1},
+              "market_timezone": {"const": "America/New_York"},
+              "report_generated_at_utc": {"type": "string", "format": "date-time"},
+              "data_timestamp": {"type": "string", "format": "date"},
+              "data_timestamp_granularity": {"const": "market_date"},
+              "data_timestamp_status": {"const": "AVAILABLE"},
+              "price_frequency": {"const": "end_of_day_daily"},
+              "price_adjustment_policy": {"const": "adjusted_ohlc_when_available_else_unadjusted"}
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "data_quality": {
+            "properties": {
+              "data_quality_metadata_status": {"const": "COMPLETE"}
+            },
+            "required": ["data_quality_metadata_status"]
+          }
+        },
+        "required": ["data_quality"]
+      },
+      "then": {
+        "properties": {
+          "market_data": {
+            "properties": {
+              "metadata_status": {"const": "COMPLETE"}
+            }
+          },
+          "data_quality": {
+            "properties": {
+              "source_report_generated_at_utc": {"type": "string", "format": "date-time"},
+              "loaded_ticker_count": {"type": "integer", "minimum": 0},
+              "configured_ticker_count": {"type": "integer", "minimum": 1},
+              "fresh_request_count": {"type": "integer", "minimum": 0},
+              "errors_count": {"type": "integer", "minimum": 0}
+            }
+          }
+        }
+      }
+    }
+  ],
+  "$defs": {
+    "ticker": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9.-]{0,14}$"
+    },
+    "finalAction": {
+      "enum": [
+        "DATA_REVIEW_REQUIRED",
+        "RISK_REVIEW_REQUIRED",
+        "BUY_CANDIDATE_REVIEW_REQUIRED",
+        "NO_TRADE"
+      ]
+    },
+    "defaultHumanAction": {
+      "enum": [
+        "NO_TRADE_UNTIL_DATA_REFRESH",
+        "DO_NOT_ADD_RISK_BEFORE_REVIEW",
+        "WAIT_FOR_CHATGPT_FINAL_REVIEW",
+        "NO_TRADE",
+        "REFRESH_DATA_BEFORE_DECISION",
+        "NO_TRADE_UNLESS_LIVE_RISK_OVERRIDE",
+        "REVIEW_DEFENSE_FIRST",
+        "WAIT_FOR_CHATGPT_LIVE_REVIEW",
+        "WAIT_OR_REDUCE_SIZE_AFTER_CHATGPT_REVIEW",
+        "WAIT_OR_SMALL_ONLY_AFTER_CHATGPT_REVIEW"
+      ]
+    },
+    "staleTicker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ticker",
+        "latest_date",
+        "staleness_business_days",
+        "reason"
+      ],
+      "properties": {
+        "ticker": {
+          "$ref": "#/$defs/ticker"
+        },
+        "latest_date": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "staleness_business_days": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "reason": {
+          "const": "stale_or_missing_market_data"
+        }
+      }
+    },
+    "actionableCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ticker",
+        "rule",
+        "status",
+        "latest_date",
+        "latest_price",
+        "data_fresh",
+        "staleness_business_days",
+        "decision_eligible",
+        "horizon_days",
+        "samples",
+        "valid",
+        "win_rate_pct",
+        "avg_return_pct",
+        "median_return_pct",
+        "worst_return_pct",
+        "avg_mae_pct",
+        "worst_mae_pct",
+        "benchmark",
+        "avg_alpha_vs_benchmark_pct",
+        "evidence_score_0_100",
+        "fail_reasons",
+        "final_order_permission"
+      ],
+      "properties": {
+        "ticker": {
+          "$ref": "#/$defs/ticker"
+        },
+        "rule": {
+          "enum": [
+            "pullback_reclaim_5dma",
+            "rsi_oversold_reclaim_40",
+            "ma20_reclaim_bullish",
+            "ma50_reclaim_bullish",
+            "relative_strength_rebound",
+            "momentum_leader"
+          ]
+        },
+        "status": {
+          "const": "QUANT_PASS_NEEDS_CHATGPT_REVIEW"
+        },
+        "latest_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "latest_price": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "data_fresh": {
+          "const": true
+        },
+        "staleness_business_days": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "decision_eligible": {
+          "const": true
+        },
+        "horizon_days": {
+          "const": 20
+        },
+        "samples": {
+          "type": "integer",
+          "minimum": 20
+        },
+        "valid": {
+          "const": true
+        },
+        "win_rate_pct": {
+          "type": "number",
+          "minimum": 55,
+          "maximum": 100
+        },
+        "avg_return_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "median_return_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "worst_return_pct": {
+          "type": ["number", "null"]
+        },
+        "avg_mae_pct": {
+          "type": ["number", "null"]
+        },
+        "worst_mae_pct": {
+          "type": "number",
+          "minimum": -15
+        },
+        "benchmark": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ticker"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "avg_alpha_vs_benchmark_pct": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "evidence_score_0_100": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "fail_reasons": {
+          "type": "array",
+          "maxItems": 0
+        },
+        "final_order_permission": {
+          "const": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+        }
+      }
+    },
+    "riskCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ticker",
+        "severity_0_100",
+        "latest_date",
+        "latest_price",
+        "data_fresh",
+        "staleness_business_days",
+        "decision_eligible",
+        "data_exclusion_reason",
+        "reasons",
+        "failed_rebound_samples_20d",
+        "failed_rebound_valid_20d",
+        "failed_rebound_avg_return_pct",
+        "failed_rebound_median_return_pct",
+        "failed_rebound_worst_mae_pct",
+        "ret_5d_pct",
+        "ret_20d_pct",
+        "drawdown_from_52w_high_pct",
+        "final_order_permission",
+        "risk_scope"
+      ],
+      "properties": {
+        "ticker": {
+          "$ref": "#/$defs/ticker"
+        },
+        "severity_0_100": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "latest_date": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "latest_price": {
+          "type": ["number", "null"],
+          "exclusiveMinimum": 0
+        },
+        "data_fresh": {
+          "type": "boolean"
+        },
+        "staleness_business_days": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "decision_eligible": {
+          "type": "boolean"
+        },
+        "data_exclusion_reason": {
+          "type": ["string", "null"],
+          "minLength": 1
+        },
+        "reasons": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "failed_rebound_samples_20d": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "failed_rebound_valid_20d": {
+          "type": ["boolean", "null"]
+        },
+        "failed_rebound_avg_return_pct": {
+          "type": ["number", "null"]
+        },
+        "failed_rebound_median_return_pct": {
+          "type": ["number", "null"]
+        },
+        "failed_rebound_worst_mae_pct": {
+          "type": ["number", "null"]
+        },
+        "ret_5d_pct": {
+          "type": ["number", "null"]
+        },
+        "ret_20d_pct": {
+          "type": ["number", "null"]
+        },
+        "drawdown_from_52w_high_pct": {
+          "type": ["number", "null"]
+        },
+        "final_order_permission": {
+          "const": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
+        },
+        "risk_scope": {
+          "enum": ["model_portfolio", "watchlist_advisory"]
+        }
+      }
+    },
+    "staleRisk": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ticker",
+        "latest_date",
+        "staleness_business_days",
+        "data_fresh",
+        "decision_eligible",
+        "data_exclusion_reason",
+        "risk_scope"
+      ],
+      "properties": {
+        "ticker": {
+          "$ref": "#/$defs/ticker"
+        },
+        "latest_date": {
+          "type": ["string", "null"],
+          "format": "date"
+        },
+        "staleness_business_days": {
+          "type": ["integer", "null"],
+          "minimum": 0
+        },
+        "data_fresh": {
+          "const": false
+        },
+        "decision_eligible": {
+          "const": false
+        },
+        "data_exclusion_reason": {
+          "const": "stale_or_missing_market_data"
+        },
+        "risk_scope": {
+          "enum": ["model_portfolio", "watchlist_advisory"]
+        }
+      }
+    }
+  }
+}
