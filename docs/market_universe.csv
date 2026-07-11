@@ -1811,7 +1811,7 @@ EVRG,"Evergy, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 EVT,Eaton Vance Tax Advantaged Dividend Income Fund Common Shares of Beneficial Interest,NYSE,OTHER,eligible
 EVTC,"Evertec, Inc. Common Stock",NYSE,OTHER,eligible
 EVTL,Vertical Aerospace Ltd. Ordinary Shares,NYSE,OTHER,eligible
-EVTV,"Envirotech Vehicles, Inc. - Common stock",NASDAQ,NASDAQ,eligible
+EVTV,"Azio AI Holdings, Inc. - Common stock",NASDAQ,NASDAQ,eligible
 EVV,Eaton Vance Limited Duration Income Fund Common Shares of Beneficial Interest,NYSE American,OTHER,eligible
 EW,Edwards Lifesciences Corporation Common Stock,NYSE,OTHER,eligible
 EWBC,"East West Bancorp, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
@@ -2457,7 +2457,7 @@ HROW,"Harrow, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 HRTG,"Heritage Insurance Holdings, Inc. Common Stock",NYSE,OTHER,eligible
 HRTX,"Heron Therapeutics, Inc.   - Common Stock",NASDAQ,NASDAQ,eligible
 HRZN,Horizon Technology Finance Corporation - Common Stock,NASDAQ,NASDAQ,eligible
-HSAI,"Hesai Group - American Depositary Share, each ADS represents one Class B ordinary share",NASDAQ,NASDAQ,eligible
+HSAI,Hesai Group - American Depositary Share,NASDAQ,NASDAQ,eligible
 HSBC,"HSBC Holdings, plc. Common Stock",NYSE,OTHER,eligible
 HSCS,HeartSciences Inc. - Common Stock,NASDAQ,NASDAQ,eligible
 HSDT,Solana Company - Class A Common Stock,NASDAQ,NASDAQ,eligible
@@ -4615,6 +4615,7 @@ SJ,Scienjoy Holding Corporation - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
 SJM,The J.M. Smucker Company Common Stock,NYSE,OTHER,eligible
 SJT,San Juan Basin Royalty Trust Common Stock,NYSE,OTHER,eligible
 SKE,Skeena Resources Limited Common Shares,NYSE,OTHER,eligible
+SKHYV,SK hynix Inc. - American Depository Shares,NASDAQ,NASDAQ,eligible
 SKIL,Skillsoft Corp. Class A Common Stock,NYSE,OTHER,eligible
 SKIN,SkinHealth Systems Inc. - Class A Common Stock,NASDAQ,NASDAQ,eligible
 SKK,SKK Holdings Limited - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
@@ -4638,7 +4639,7 @@ SLDP,"Solid Power, Inc. - Class A Common Stock",NASDAQ,NASDAQ,eligible
 SLE,"Super League Enterprise, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 SLF,Sun Life Financial Inc. Common Stock,NYSE,OTHER,eligible
 SLG,SL Green Realty Corp Common Stock,NYSE,OTHER,eligible
-SLGB,Smart Logistics Global Limited - Ordinary Shares,NASDAQ,NASDAQ,eligible
+SLGB,Smart Logistics Global Limited - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
 SLGL,Sol-Gel Technologies Ltd. - Ordinary Shares,NASDAQ,NASDAQ,eligible
 SLGN,Silgan Holdings Inc. Common Stock,NYSE,OTHER,eligible
 SLI,Standard Lithium Ltd. Common Shares,NYSE American,OTHER,eligible
@@ -4906,7 +4907,6 @@ TBLA,Taboola.com Ltd. - Ordinary Shares,NASDAQ,NASDAQ,eligible
 TBLD,Thornburg Income Builder Opportunities Trust - Closed End Fund,NASDAQ,NASDAQ,eligible
 TBN,Tamboran Resources Corporation Common stock,NYSE,OTHER,eligible
 TBPH,"Theravance Biopharma, Inc. - Ordinary Shares",NASDAQ,NASDAQ,eligible
-TBRG,"TruBridge, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 TCBI,"Texas Capital Bancshares, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 TCBK,TriCo Bancshares - Common Stock,NASDAQ,NASDAQ,eligible
 TCBS,"Texas Community Bancshares, Inc. - Common Stock",NASDAQ,NASDAQ,eligible

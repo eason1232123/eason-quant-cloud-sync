@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-10T05:34:27.953816+00:00",
+  "generated_at_utc": "2026-07-11T01:11:14.173779+00:00",
   "version": "chatgpt-compact-snapshot-v1.0",
   "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
   "read_priority_for_chatgpt": [
@@ -9,16 +9,16 @@
     "docs/market_report.json"
   ],
   "github_data_quality": {
-    "grade": "Medium",
+    "grade": "High",
     "configured_ticker_count": 94,
     "loaded_ticker_count": 94,
     "coverage_ratio": 1.0,
-    "fresh_request_count": 0,
+    "fresh_request_count": 39,
     "coverage_gaps_count": 0,
     "errors_count": 0,
     "tiingo_circuit_open": false,
-    "latest_price_date_max": "2026-07-09",
-    "expected_latest_market_date": "2026-07-09",
+    "latest_price_date_max": "2026-07-10",
+    "expected_latest_market_date": "2026-07-10",
     "reasons": [],
     "usage_rule": "Use High/Medium as evidence; Medium-Low only as auxiliary evidence; Low/Unusable cannot justify trades by itself."
   },
@@ -36,27 +36,7 @@
     "market_regime": null,
     "buy_permission": null,
     "data_status": null,
-    "top_actionable_buy": {
-      "ticker": "LRCX",
-      "rule": "relative_strength_rebound",
-      "status": "QUANT_PASS_NEEDS_CHATGPT_REVIEW",
-      "latest_date": "2026-07-09",
-      "latest_price": 353.17,
-      "horizon_days": 20,
-      "samples": 22,
-      "valid": true,
-      "win_rate_pct": 81.82,
-      "avg_return_pct": 7.97,
-      "median_return_pct": 8.71,
-      "worst_return_pct": -9.88,
-      "avg_mae_pct": -5.47,
-      "worst_mae_pct": -14.03,
-      "benchmark": "SMH",
-      "avg_alpha_vs_benchmark_pct": 0.74,
-      "evidence_score_0_100": 73.9,
-      "fail_reasons": [],
-      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-    },
+    "top_actionable_buy": null,
     "top_risk": {
       "ticker": "ARM",
       "severity_0_100": 95,
@@ -80,31 +60,31 @@
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
     },
     "freshness": {
-      "source_report_generated_at_utc": "2026-07-10T05:33:43.595280+00:00",
-      "latest_price_date_max": "2026-07-09",
+      "source_report_generated_at_utc": "2026-07-11T01:10:23.500179+00:00",
+      "latest_price_date_max": "2026-07-10",
       "latest_price_date_min": "2026-03-17",
       "loaded_ticker_count": 94,
       "configured_ticker_count": 94,
-      "fresh_request_count": 0,
+      "fresh_request_count": 39,
       "errors_count": 0
     },
     "universe": null
   },
   "market_report_status": {
     "available": true,
-    "generated_at_utc": "2026-07-10T05:33:43.595280+00:00",
+    "generated_at_utc": "2026-07-11T01:10:23.500179+00:00",
     "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.3 coverage-gaps-first",
     "universe": {
       "configured_ticker_count": 94,
       "loaded_ticker_count": 94,
-      "fresh_request_count": 0,
-      "skipped_fresh_enough_no_request": 81,
-      "skipped_by_tier_rotation": 13,
-      "rows_appended_total": 0,
+      "fresh_request_count": 39,
+      "skipped_fresh_enough_no_request": 0,
+      "skipped_by_tier_rotation": 55,
+      "rows_appended_total": 39,
       "append_only_mode": true,
       "coverage_gaps_first": true,
       "historical_rows_overwritten": 0,
-      "expected_latest_market_date": "2026-07-09",
+      "expected_latest_market_date": "2026-07-10",
       "refresh_policy": {
         "core_daily": [
           "AAPL",
@@ -228,7 +208,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2021-08-24",
-        "lookback_end": "2026-07-09",
+        "lookback_end": "2026-07-10",
         "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": "Above 20/50/200-day averages with positive 20-day momentum and non-overheated RSI.",
         "win_rate": 0.6332,
@@ -604,32 +584,32 @@
         "rule_type": "risk",
         "tested_rule": "failed_rebound",
         "horizon_days": 20,
-        "sample_count": 181,
+        "sample_count": 182,
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2021-08-24",
-        "lookback_end": "2026-07-09",
+        "lookback_end": "2026-07-10",
         "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
         "description": "Failed rebound: price loses the 5-day average and undercuts the prior 10-day low.",
-        "win_rate": 0.4641,
-        "avoidance_rate": 0.5359,
-        "avg_forward_return": 0.0221,
-        "median_forward_return": -0.0112,
+        "win_rate": 0.4615,
+        "avoidance_rate": 0.5385,
+        "avg_forward_return": 0.0207,
+        "median_forward_return": -0.0117,
         "worst_forward_return": -0.3964,
         "best_forward_return": 0.7862,
-        "avg_mae": -0.1415,
+        "avg_mae": -0.142,
         "worst_mae": -0.4163,
         "benchmark": "QQQ",
-        "avg_benchmark_same_dates": 0.0092,
-        "alpha_vs_benchmark_same_dates": 0.0128,
+        "avg_benchmark_same_dates": 0.0094,
+        "alpha_vs_benchmark_same_dates": 0.0112,
         "reason": null,
         "evidence_score_0_100": 83.8
       }
     ],
     "latest_active_signals_compact": {
       "SPY": {
-        "latest_date": "2026-07-09",
-        "latest_price": 751.71,
+        "latest_date": "2026-07-10",
+        "latest_price": 754.95,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -643,11 +623,11 @@
         }
       },
       "QQQ": {
-        "latest_date": "2026-07-09",
-        "latest_price": 723.28,
+        "latest_date": "2026-07-10",
+        "latest_price": 725.51,
         "entries": {
-          "ma20_reclaim_bullish": true,
-          "ma50_reclaim_bullish": true,
+          "ma20_reclaim_bullish": false,
+          "ma50_reclaim_bullish": false,
           "momentum_leader": false,
           "pullback_reclaim_5dma": false
         },
@@ -658,8 +638,8 @@
         }
       },
       "SMH": {
-        "latest_date": "2026-07-09",
-        "latest_price": 607.73,
+        "latest_date": "2026-07-10",
+        "latest_price": 611.03,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -673,8 +653,8 @@
         }
       },
       "SOXX": {
-        "latest_date": "2026-07-09",
-        "latest_price": 581.7,
+        "latest_date": "2026-07-10",
+        "latest_price": 581.34,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -688,8 +668,8 @@
         }
       },
       "MSFT": {
-        "latest_date": "2026-07-09",
-        "latest_price": 384.36,
+        "latest_date": "2026-07-10",
+        "latest_price": 385.1,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -703,8 +683,8 @@
         }
       },
       "SGOV": {
-        "latest_date": "2026-07-09",
-        "latest_price": 100.48,
+        "latest_date": "2026-07-10",
+        "latest_price": 100.5,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -718,11 +698,11 @@
         }
       },
       "NVDA": {
-        "latest_date": "2026-07-09",
-        "latest_price": 202.78,
+        "latest_date": "2026-07-10",
+        "latest_price": 210.96,
         "entries": {
           "ma20_reclaim_bullish": false,
-          "ma50_reclaim_bullish": false,
+          "ma50_reclaim_bullish": true,
           "momentum_leader": false,
           "pullback_reclaim_5dma": false
         },
@@ -733,8 +713,8 @@
         }
       },
       "AVGO": {
-        "latest_date": "2026-07-09",
-        "latest_price": 401.11,
+        "latest_date": "2026-07-10",
+        "latest_price": 399.97,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -748,8 +728,8 @@
         }
       },
       "ASML": {
-        "latest_date": "2026-07-09",
-        "latest_price": 1804.25,
+        "latest_date": "2026-07-10",
+        "latest_price": 1797.32,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -763,8 +743,8 @@
         }
       },
       "TSM": {
-        "latest_date": "2026-07-09",
-        "latest_price": 436.96,
+        "latest_date": "2026-07-10",
+        "latest_price": 434.11,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -799,6 +779,21 @@
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
           "momentum_leader": false,
+          "pullback_reclaim_5dma": false
+        },
+        "risks": {
+          "risk_break_ma20": false,
+          "risk_break_ma50": false,
+          "risk_failed_rebound": false
+        }
+      },
+      "VGT": {
+        "latest_date": "2026-07-10",
+        "latest_price": 118.08,
+        "entries": {
+          "ma20_reclaim_bullish": false,
+          "ma50_reclaim_bullish": false,
+          "momentum_leader": true,
           "pullback_reclaim_5dma": false
         },
         "risks": {
@@ -853,8 +848,8 @@
         }
       },
       "AAPL": {
-        "latest_date": "2026-07-09",
-        "latest_price": 316.22,
+        "latest_date": "2026-07-10",
+        "latest_price": 315.32,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -863,6 +858,21 @@
         },
         "risks": {
           "risk_break_ma20": false,
+          "risk_break_ma50": false,
+          "risk_failed_rebound": false
+        }
+      },
+      "GOOGL": {
+        "latest_date": "2026-07-10",
+        "latest_price": 357.18,
+        "entries": {
+          "ma20_reclaim_bullish": false,
+          "ma50_reclaim_bullish": false,
+          "momentum_leader": false,
+          "pullback_reclaim_5dma": false
+        },
+        "risks": {
+          "risk_break_ma20": true,
           "risk_break_ma50": false,
           "risk_failed_rebound": false
         }
@@ -897,39 +907,9 @@
           "risk_failed_rebound": true
         }
       },
-      "LRCX": {
-        "latest_date": "2026-07-09",
-        "latest_price": 353.17,
-        "entries": {
-          "ma20_reclaim_bullish": false,
-          "ma50_reclaim_bullish": false,
-          "momentum_leader": false,
-          "pullback_reclaim_5dma": true
-        },
-        "risks": {
-          "risk_break_ma20": false,
-          "risk_break_ma50": false,
-          "risk_failed_rebound": false
-        }
-      },
       "AMAT": {
         "latest_date": "2026-07-09",
         "latest_price": 588.66,
-        "entries": {
-          "ma20_reclaim_bullish": false,
-          "ma50_reclaim_bullish": false,
-          "momentum_leader": false,
-          "pullback_reclaim_5dma": true
-        },
-        "risks": {
-          "risk_break_ma20": false,
-          "risk_break_ma50": false,
-          "risk_failed_rebound": false
-        }
-      },
-      "KLAC": {
-        "latest_date": "2026-07-09",
-        "latest_price": 229.52,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -958,8 +938,8 @@
         }
       },
       "TXN": {
-        "latest_date": "2026-07-09",
-        "latest_price": 308.53,
+        "latest_date": "2026-07-10",
+        "latest_price": 311.46,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -988,8 +968,8 @@
         }
       },
       "DDOG": {
-        "latest_date": "2026-07-09",
-        "latest_price": 269.0,
+        "latest_date": "2026-07-10",
+        "latest_price": 257.54,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1018,8 +998,8 @@
         }
       },
       "PANW": {
-        "latest_date": "2026-07-09",
-        "latest_price": 338.31,
+        "latest_date": "2026-07-10",
+        "latest_price": 325.91,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1033,8 +1013,8 @@
         }
       },
       "CRWD": {
-        "latest_date": "2026-07-09",
-        "latest_price": 198.4,
+        "latest_date": "2026-07-10",
+        "latest_price": 187.18,
         "entries": {
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
@@ -1085,51 +1065,51 @@
     "latest_regime": "base",
     "strategy_metrics": {
       "start_date": "2005-01-03",
-      "end_date": "2026-07-09",
-      "trading_days": 5412,
-      "years": 21.47,
-      "total_return_pct": 1355.08,
-      "cagr_pct": 13.28,
+      "end_date": "2026-07-10",
+      "trading_days": 5413,
+      "years": 21.48,
+      "total_return_pct": 1359.62,
+      "cagr_pct": 13.29,
       "volatility_pct": 15.57,
-      "sharpe": 0.879,
-      "sortino": 1.184,
+      "sharpe": 0.88,
+      "sortino": 1.185,
       "calmar": 0.416,
       "max_drawdown_pct": -31.94,
-      "daily_win_rate_pct": 54.44,
-      "avg_daily_return_pct": 0.0543,
+      "daily_win_rate_pct": 54.45,
+      "avg_daily_return_pct": 0.0544,
       "best_day_pct": 5.67,
       "worst_day_pct": -8.26,
-      "final_value": 290892.4
+      "final_value": 291799.14
     },
     "strategy_vs_benchmarks": [
       {
         "benchmark": "SPY",
-        "strategy_cagr_minus_benchmark_pct": 2.35,
+        "strategy_cagr_minus_benchmark_pct": 2.34,
         "strategy_maxdd_minus_benchmark_pct": 23.26,
-        "strategy_final_minus_benchmark_dollars": 105567.97
+        "strategy_final_minus_benchmark_dollars": 105675.93
       },
       {
         "benchmark": "QQQ",
         "strategy_cagr_minus_benchmark_pct": -2.08,
         "strategy_maxdd_minus_benchmark_pct": 21.47,
-        "strategy_final_minus_benchmark_dollars": -138899.41
+        "strategy_final_minus_benchmark_dollars": -139317.79
       },
       {
         "benchmark": "SMH",
-        "strategy_cagr_minus_benchmark_pct": -6.91,
+        "strategy_cagr_minus_benchmark_pct": -6.92,
         "strategy_maxdd_minus_benchmark_pct": 30.11,
-        "strategy_final_minus_benchmark_dollars": -746112.13
+        "strategy_final_minus_benchmark_dollars": -750836.36
       }
     ],
     "exposure_summary": {
-      "latest_cash_weight_pct": 15.09,
+      "latest_cash_weight_pct": 15.04,
       "latest_QQQ_weight_pct": 30.07,
-      "latest_SMH_weight_pct": 24.61,
-      "latest_MSFT_weight_pct": 20.1,
-      "latest_SPY_weight_pct": 10.13,
-      "latest_tech_ai_concentration_pct": 74.78,
-      "latest_semiconductor_exposure_pct": 24.61,
-      "latest_MSFT_exposure_pct": 20.1,
+      "latest_SMH_weight_pct": 24.67,
+      "latest_MSFT_weight_pct": 20.08,
+      "latest_SPY_weight_pct": 10.14,
+      "latest_tech_ai_concentration_pct": 74.81,
+      "latest_semiconductor_exposure_pct": 24.67,
+      "latest_MSFT_exposure_pct": 20.08,
       "avg_cash_weight_pct": 22.15,
       "max_tech_ai_concentration_pct": 77.51,
       "max_semiconductor_exposure_pct": 28.18,
@@ -1159,7 +1139,7 @@
   },
   "market_regime_summary": {
     "available": true,
-    "generated_at_utc": "2026-07-10T05:34:27.353492+00:00",
+    "generated_at_utc": "2026-07-11T01:11:13.547920+00:00",
     "version": "market-regime-v2.5",
     "latest_regime": null
   },

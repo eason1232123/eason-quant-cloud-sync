@@ -1,6 +1,6 @@
 Eason Quant Latest MARKET Summary
 ========================================
-generated_at_utc: 2026-07-10T05:33:43.595280+00:00
+generated_at_utc: 2026-07-11T01:10:23.500179+00:00
 strategy_version: Eason Master US Market Monitor Cloud Sync v4.5.3 coverage-gaps-first
 privacy_mode: sanitized_public_report_no_cash_no_shares_no_account_value
 ticker_count: 94
@@ -12,7 +12,7 @@ AAPL, ABNB, ADBE, ADI, AMAT, AMD, AMZN, ANET, APP, ARKK, ARM, ASML, ASTS, AVGO, 
 Active signals (45):
 - {"field": "active_signals", "ticker": "AAPL", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "META", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
-- {"field": "active_signals", "ticker": "QQQ", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": true, "ma50_reclaim_bullish": true, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
+- {"field": "active_signals", "ticker": "NVDA", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": true, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "ANET", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "ARM", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "XLK", "value": {"failed_rebound_risk": true, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
@@ -23,13 +23,13 @@ Active signals (45):
 - {"field": "active_signals", "ticker": "DDOG", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "ETN", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": true, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "IYW", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": true, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
-- {"field": "active_signals", "ticker": "KLAC", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": true, "relative_strength_rebound": true, "rsi_oversold_reclaim_40": false}}
-- {"field": "active_signals", "ticker": "LRCX", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": true, "relative_strength_rebound": true, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "MRVL", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": true, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "MU", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": false, "pullback_reclaim_5dma": false, "relative_strength_rebound": true, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "NET", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "NRG", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 - {"field": "active_signals", "ticker": "PANW", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
+- {"field": "active_signals", "ticker": "SNOW", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
+- {"field": "active_signals", "ticker": "TXN", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": false, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 
 Top rule evidence (50 shown):
 - NVDA | momentum_leader | d | valid=True | samples=1820 | win_rate=0.6412 | avg_return= | alpha_vs_QQQ=
@@ -41,14 +41,14 @@ Top rule evidence (50 shown):
 - ETN | momentum_leader | d | valid=True | samples=1605 | win_rate=0.5639 | avg_return= | alpha_vs_QQQ=
 - MU | momentum_leader | d | valid=True | samples=1593 | win_rate=0.5888 | avg_return= | alpha_vs_QQQ=
 - AMD | momentum_leader | d | valid=True | samples=1578 | win_rate=0.5469 | avg_return= | alpha_vs_QQQ=
-- LRCX | momentum_leader | d | valid=True | samples=1567 | win_rate=0.5278 | avg_return= | alpha_vs_QQQ=
+- LRCX | momentum_leader | d | valid=True | samples=1568 | win_rate=0.5281 | avg_return= | alpha_vs_QQQ=
 - EQIX | momentum_leader | d | valid=True | samples=1527 | win_rate=0.6228 | avg_return= | alpha_vs_QQQ=
 - ON | momentum_leader | d | valid=True | samples=1519 | win_rate=0.5602 | avg_return= | alpha_vs_QQQ=
 - DLR | momentum_leader | d | valid=True | samples=1509 | win_rate=0.6229 | avg_return= | alpha_vs_QQQ=
 - NRG | momentum_leader | d | valid=True | samples=1491 | win_rate=0.5687 | avg_return= | alpha_vs_QQQ=
 - MSTR | momentum_leader | d | valid=True | samples=1470 | win_rate=0.5279 | avg_return= | alpha_vs_QQQ=
 - MRVL | momentum_leader | d | valid=True | samples=1458 | win_rate=0.5748 | avg_return= | alpha_vs_QQQ=
-- ASML | momentum_leader | d | valid=True | samples=1442 | win_rate=0.6012 | avg_return= | alpha_vs_QQQ=
+- ASML | momentum_leader | d | valid=True | samples=1443 | win_rate=0.6015 | avg_return= | alpha_vs_QQQ=
 - ADBE | momentum_leader | d | valid=True | samples=1431 | win_rate=0.5472 | avg_return= | alpha_vs_QQQ=
 - GOOGL | momentum_leader | d | valid=True | samples=1430 | win_rate=0.607 | avg_return= | alpha_vs_QQQ=
-- KLAC | momentum_leader | d | valid=True | samples=1368 | win_rate=0.5899 | avg_return= | alpha_vs_QQQ=
+- KLAC | momentum_leader | d | valid=True | samples=1369 | win_rate=0.5902 | avg_return= | alpha_vs_QQQ=
