@@ -619,7 +619,10 @@
           "minimum": 0
         },
         "reason": {
-          "const": "stale_or_missing_market_data"
+          "enum": [
+            "stale_or_missing_market_data",
+            "technical_analysis_missing_or_failed"
+          ]
         }
       }
     },
@@ -874,7 +877,10 @@
           "const": false
         },
         "data_exclusion_reason": {
-          "const": "stale_or_missing_market_data"
+          "enum": [
+            "stale_or_missing_market_data",
+            "technical_analysis_missing_or_failed"
+          ]
         },
         "risk_scope": {
           "enum": ["model_portfolio", "watchlist_advisory"]

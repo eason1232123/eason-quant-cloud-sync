@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-11T14:45:19.362324+00:00",
+  "generated_at_utc": "2026-07-11T15:10:54.276591+00:00",
   "version": "chatgpt-compact-snapshot-v2.0-decision-contract",
   "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
   "read_priority_for_chatgpt": [
@@ -11,7 +11,7 @@
   ],
   "decision_contract": {
     "schema_version": "decision-packet-v5.0",
-    "generated_at_utc": "2026-07-11T14:45:10.245240+00:00",
+    "generated_at_utc": "2026-07-11T15:10:42.836052+00:00",
     "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
     "roles": {
       "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",

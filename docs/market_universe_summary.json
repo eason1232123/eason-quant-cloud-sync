@@ -9,6 +9,10 @@
     "NYSE American": 263,
     "NYSE Arca": 13
   },
+  "source_counts": {
+    "NASDAQ": 3241,
+    "OTHER": 2375
+  },
   "sources": {
     "NASDAQ": "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqlisted.txt",
     "OTHER": "https://www.nasdaqtrader.com/dynamic/SymDir/otherlisted.txt"

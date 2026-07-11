@@ -61,10 +61,6 @@ def clean_float(value: Any, digits: int = 4) -> Any:
         return None
 
 
-def as_bool(value: Any) -> bool:
-    return bool(value) if value is not None else False
-
-
 def pct(value: Any) -> Any:
     v = clean_float(value, 4)
     if v is None:
@@ -114,6 +110,35 @@ def expected_market_date(report: dict, as_of: Any = None) -> str | None:
     return context["reference_market_date"]
 
 
+def technical_analysis_available(technical: Any) -> bool:
+    if not isinstance(technical, dict):
+        return False
+    if not technical.get("latest_date"):
+        return False
+    latest_price = clean_float(technical.get("latest_price"))
+    trading_days = technical.get("trading_days")
+    if latest_price is None or latest_price <= 0:
+        return False
+    if not isinstance(trading_days, int) or isinstance(trading_days, bool) or trading_days <= 0:
+        return False
+    if any(
+        not isinstance(technical.get(key), bool)
+        for key in ("above_ma5", "above_ma20", "above_ma50", "above_ma200")
+    ):
+        return False
+    if any(
+        clean_float(technical.get(key)) is None
+        for key in ("drawdown_from_52w_high", "ret_5d", "ret_20d")
+    ):
+        return False
+    active = technical.get("active_signals")
+    required_signals = BUY_RULES | {"failed_rebound_risk"}
+    return bool(
+        isinstance(active, dict)
+        and all(isinstance(active.get(rule), bool) for rule in required_signals)
+    )
+
+
 def ticker_freshness(report: dict, as_of: Any = None) -> dict[str, dict[str, Any]]:
     reference_date = market_date_context(report, as_of)["reference_market_date"]
     statuses: dict[str, dict[str, Any]] = {}
@@ -135,39 +160,58 @@ def ticker_freshness(report: dict, as_of: Any = None) -> dict[str, dict[str, Any
         technical = technicals.get(ticker, {})
         update = update_log.get(ticker, {})
         latest_date = technical.get("latest_date") if isinstance(technical, dict) else None
+        technical_available = technical_analysis_available(technical)
         if latest_date is None and isinstance(update, dict):
             latest_date = update.get("latest_date")
         age = business_day_age(latest_date, reference_date)
-        fresh = age is not None and age <= MAX_STALENESS_BUSINESS_DAYS
+        market_date_fresh = age is not None and age <= MAX_STALENESS_BUSINESS_DAYS
+        decision_eligible = market_date_fresh and technical_available
         statuses[ticker] = {
             "latest_date": latest_date,
             "reference_date": reference_date,
             "staleness_business_days": age,
-            "data_fresh": fresh,
-            "decision_eligible": fresh,
-            "exclusion_reason": None if fresh else "stale_or_missing_market_data",
+            "market_date_fresh": market_date_fresh,
+            "data_fresh": decision_eligible,
+            "technical_analysis_available": technical_available,
+            "decision_eligible": decision_eligible,
+            "exclusion_reason": (
+                None
+                if decision_eligible
+                else "technical_analysis_missing_or_failed"
+                if market_date_fresh
+                else "stale_or_missing_market_data"
+            ),
         }
     return statuses
 
 
 def model_risk_scope(portfolio: dict) -> dict[str, Any]:
     portfolio_is_object = isinstance(portfolio, dict)
-    portfolio_declared_available = portfolio.get("available", True) is not False if portfolio_is_object else False
+    portfolio_declared_available = portfolio.get("available") is True if portfolio_is_object else False
     portfolio_has_load_error = bool(portfolio.get("load_error")) if portfolio_is_object else True
     raw_assumptions = portfolio.get("assumptions", {}) if portfolio_is_object else {}
     assumptions = raw_assumptions if isinstance(raw_assumptions, dict) else {}
     tickers_set: set[str] = set()
-    valid_weight_maps = 0
+    valid_weight_maps: set[str] = set()
     for key in ("base_weights", "defensive_weights", "severe_defensive_weights"):
-        weights = assumptions.get(key, {}) or {}
-        if not isinstance(weights, dict):
+        weights = assumptions.get(key)
+        if not isinstance(weights, dict) or not weights:
             continue
-        valid_weight_maps += 1
+        parsed_weights: list[float] = []
+        map_tickers: set[str] = set()
+        map_valid = True
         for ticker, weight in weights.items():
             normalized = str(ticker).strip().upper()
             clean_weight = clean_float(weight)
+            if not normalized or clean_weight is None or clean_weight < 0:
+                map_valid = False
+                break
+            parsed_weights.append(clean_weight)
             if normalized and normalized != "CASH" and clean_weight is not None and clean_weight > 0:
-                tickers_set.add(normalized)
+                map_tickers.add(normalized)
+        if map_valid and sum(parsed_weights) > 0:
+            valid_weight_maps.add(key)
+            tickers_set.update(map_tickers)
     tickers = sorted(tickers_set)
     source = "portfolio_backtest.assumptions.*_weights"
     if not tickers:
@@ -184,7 +228,7 @@ def model_risk_scope(portfolio: dict) -> dict[str, Any]:
         and portfolio_declared_available
         and not portfolio_has_load_error
         and isinstance(raw_assumptions, dict)
-        and valid_weight_maps > 0
+        and len(valid_weight_maps) == 3
         and tickers_set
         and latest_regime_available
     )
@@ -194,7 +238,7 @@ def model_risk_scope(portfolio: dict) -> dict[str, Any]:
         context_reason = "portfolio_backtest_load_error"
     elif not portfolio_declared_available:
         context_reason = "portfolio_backtest_unavailable"
-    elif not isinstance(raw_assumptions, dict) or valid_weight_maps == 0 or not tickers_set:
+    elif not isinstance(raw_assumptions, dict) or len(valid_weight_maps) != 3 or not tickers_set:
         context_reason = "portfolio_weights_missing_or_invalid"
     elif not latest_regime_available:
         context_reason = "portfolio_regime_missing_or_invalid"
@@ -274,7 +318,7 @@ def build_buy_candidates(report: dict, freshness_by_ticker: dict[str, dict[str, 
         tech = technicals.get(ticker, {}) if isinstance(technicals, dict) else {}
         active = rules.get("active_signals_latest_day", {}) or {}
         for rule in BUY_RULES:
-            if not as_bool(active.get(rule)):
+            if active.get(rule) is not True:
                 continue
             row = (rules.get(rule, {}) or {}).get(PRIMARY_HORIZON, {}) or {}
             bench, alpha = get_alpha(row, tech)
@@ -369,7 +413,7 @@ def build_risk_candidates(report: dict, freshness_by_ticker: dict[str, dict[str,
         reasons = []
         severity = 0
 
-        if as_bool(active.get("failed_rebound_risk")):
+        if active.get("failed_rebound_risk") is True:
             severity += 35
             reasons.append("failed_rebound_risk active")
         if tech.get("above_ma5") is False and (tech.get("ret_5d") is not None and float(tech.get("ret_5d")) <= -0.04):
@@ -523,11 +567,18 @@ def portfolio_digest(portfolio: dict) -> dict:
         return {"available": False, "reason": "portfolio_backtest.json not generated yet"}
     if "load_error" in portfolio:
         return {"available": False, "reason": portfolio["load_error"]}
+    scope = model_risk_scope(portfolio)
+    if not scope["portfolio_context_available"]:
+        return {
+            "available": False,
+            "reason": scope["portfolio_context_reason"],
+            "model_risk_scope": scope,
+        }
     return {
         "available": True,
         "version": portfolio.get("version"),
         "latest_regime": portfolio.get("latest_regime"),
-        "model_risk_scope": model_risk_scope(portfolio),
+        "model_risk_scope": scope,
         "assumptions": portfolio.get("assumptions", {}),
         "strategy_metrics": portfolio.get("strategy_metrics", {}),
         "strategy_vs_benchmarks": portfolio.get("strategy_vs_benchmarks", []),

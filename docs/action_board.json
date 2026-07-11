@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-11T14:45:19.362324+00:00",
+  "generated_at_utc": "2026-07-11T15:10:54.276591+00:00",
   "version": "eason-master-action-board-v5.0-decision-contract",
   "purpose": "One compact file for ChatGPT to review GitHub quant evidence, vectorbt validation/evidence, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
   "roles": {
@@ -19,7 +19,7 @@
   },
   "decision_contract": {
     "schema_version": "decision-packet-v5.0",
-    "generated_at_utc": "2026-07-11T14:45:10.245240+00:00",
+    "generated_at_utc": "2026-07-11T15:10:42.836052+00:00",
     "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
     "roles": {
       "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",

@@ -1,5 +1,5 @@
 Eason Quant v5 Decision Status
-generated_at_utc: 2026-07-11T14:45:10.245240+00:00
+generated_at_utc: 2026-07-11T15:10:42.836052+00:00
 data_source: Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates
 market_timezone: America/New_York
 data_timestamp: 2026-07-09

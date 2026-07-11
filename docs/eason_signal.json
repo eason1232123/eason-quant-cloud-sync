@@ -1,6 +1,6 @@
 {
   "schema_version": "eason-signal-v5.0",
-  "generated_at_utc": "2026-07-11T14:45:10.245240+00:00",
+  "generated_at_utc": "2026-07-11T15:10:42.836052+00:00",
   "source": "Derived from market_report.json, portfolio_backtest.json, and cached quant evidence.",
   "decision_policy": {
     "github_role": "quantitative evidence filter and public portfolio-model risk scope only",

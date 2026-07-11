@@ -31,10 +31,20 @@ GENERATED_AT = "2026-07-10T00:00:00+00:00"
 
 
 def technical(latest_date: str = AS_OF, *, high_risk: bool = False) -> dict:
+    active_signals = {
+        "pullback_reclaim_5dma": False,
+        "rsi_oversold_reclaim_40": False,
+        "ma20_reclaim_bullish": False,
+        "ma50_reclaim_bullish": False,
+        "relative_strength_rebound": False,
+        "momentum_leader": False,
+        "failed_rebound_risk": high_risk,
+    }
     if high_risk:
         return {
             "latest_date": latest_date,
             "latest_price": 100.0,
+            "trading_days": 500,
             "relative_benchmark": "SMH",
             "above_ma5": False,
             "above_ma20": False,
@@ -43,11 +53,12 @@ def technical(latest_date: str = AS_OF, *, high_risk: bool = False) -> dict:
             "ret_5d": -0.05,
             "ret_20d": -0.10,
             "drawdown_from_52w_high": -0.20,
-            "active_signals": {"failed_rebound_risk": True},
+            "active_signals": active_signals,
         }
     return {
         "latest_date": latest_date,
         "latest_price": 100.0,
+        "trading_days": 500,
         "relative_benchmark": "SMH",
         "above_ma5": True,
         "above_ma20": True,
@@ -56,7 +67,7 @@ def technical(latest_date: str = AS_OF, *, high_risk: bool = False) -> dict:
         "ret_5d": 0.01,
         "ret_20d": 0.03,
         "drawdown_from_52w_high": -0.02,
-        "active_signals": {"failed_rebound_risk": False},
+        "active_signals": active_signals,
     }
 
 
@@ -203,6 +214,34 @@ class DecisionContractTests(unittest.TestCase):
         self.assertEqual(signal["buy_permission"], "BLOCKED_BY_MODEL_PORTFOLIO_DATA")
         self.assertEqual(signal["data_status"], "STALE_MODEL_PORTFOLIO_DATA")
 
+    def test_fresh_update_log_cannot_hide_missing_model_analysis(self):
+        market_report = report()
+        market_report["update_log"] = {"QQQ": {"latest_date": AS_OF}}
+        market_report["technicals"].pop("QQQ")
+        market_report["backtests"].pop("QQQ")
+        outputs = self.compile(market_report, portfolio())
+        signal = outputs["decision"]
+        self.assertEqual(signal["final_action"], "DATA_REVIEW_REQUIRED")
+        self.assertEqual(signal["buy_permission"], "BLOCKED_BY_MODEL_PORTFOLIO_DATA")
+        stale_qqq = next(row for row in signal["freshness"]["stale_tickers"] if row["ticker"] == "QQQ")
+        self.assertEqual(stale_qqq["reason"], "technical_analysis_missing_or_failed")
+        schema = json.loads(Path("schemas/decision_packet.schema.json").read_text(encoding="utf-8"))
+        contract_validator.validate_schema(outputs["decision_packet"], schema)
+        contract_validator.validate_invariants(outputs["decision_packet"])
+
+        partial_report = report()
+        partial_report["technicals"]["QQQ"] = {"latest_date": AS_OF}
+        partial_signal = self.compile(partial_report, portfolio())["decision"]
+        self.assertEqual(partial_signal["final_action"], "DATA_REVIEW_REQUIRED")
+        self.assertEqual(partial_signal["buy_permission"], "BLOCKED_BY_MODEL_PORTFOLIO_DATA")
+
+    def test_non_boolean_active_signal_cannot_trigger_candidate(self):
+        market_report = report()
+        market_report["backtests"]["LRCX"]["active_signals_latest_day"]["relative_strength_rebound"] = "false"
+        signal = self.compile(market_report, portfolio())["decision"]
+        self.assertEqual(signal["final_action"], "NO_TRADE")
+        self.assertEqual(signal["actionable_buy_candidates"], [])
+
     def test_business_day_freshness_boundary_and_future_date(self):
         self.assertEqual(decision.business_day_age(AS_OF, AS_OF), 0)
         self.assertEqual(decision.business_day_age("2026-07-07", AS_OF), 2)
@@ -249,6 +288,21 @@ class DecisionContractTests(unittest.TestCase):
         malformed_signal = self.compile(report(), malformed)["decision"]
         self.assertEqual(malformed_signal["final_action"], "DATA_REVIEW_REQUIRED")
         self.assertEqual(malformed_signal["buy_permission"], "BLOCKED_BY_PORTFOLIO_CONTEXT")
+
+        partial = portfolio()
+        partial["assumptions"].pop("severe_defensive_weights")
+        partial_signal = self.compile(report(), partial)["decision"]
+        self.assertEqual(partial_signal["final_action"], "DATA_REVIEW_REQUIRED")
+        self.assertEqual(partial_signal["buy_permission"], "BLOCKED_BY_PORTFOLIO_CONTEXT")
+
+        missing_available = portfolio()
+        missing_available.pop("available")
+        missing_available_outputs = self.compile(report(), missing_available)
+        self.assertEqual(
+            missing_available_outputs["decision"]["buy_permission"],
+            "BLOCKED_BY_PORTFOLIO_CONTEXT",
+        )
+        self.assertFalse(missing_available_outputs["action_board"]["portfolio_backtest"]["available"])
 
     def test_missing_market_metadata_is_null_and_blocks_instead_of_fabricating(self):
         market_report = report()
@@ -614,6 +668,7 @@ class DecisionContractTests(unittest.TestCase):
             summary = {
                 "version": "market-universe-v1",
                 "eligible_ticker_count": len(rows),
+                "source_counts": {"NASDAQ": len(rows), "OTHER": 0},
                 "sources": {"NASDAQ": "source-a", "OTHER": "source-b"},
                 "errors": ["OTHER: Timeout"],
             }
@@ -621,6 +676,18 @@ class DecisionContractTests(unittest.TestCase):
             with self.assertRaises(AssertionError):
                 universe_validator.validate_market_universe(csv_path, summary_path)
             summary["errors"] = []
+            summary_path.write_text(json.dumps(summary), encoding="utf-8")
+            with self.assertRaises(AssertionError):
+                universe_validator.validate_market_universe(csv_path, summary_path)
+
+            for row in rows[-universe_validator.MINIMUM_SOURCE_TICKERS :]:
+                row["source"] = "OTHER"
+                row["exchange"] = "NYSE"
+            pd.DataFrame(rows).to_csv(csv_path, index=False)
+            summary["source_counts"] = {
+                "NASDAQ": len(rows) - universe_validator.MINIMUM_SOURCE_TICKERS,
+                "OTHER": universe_validator.MINIMUM_SOURCE_TICKERS,
+            }
             summary_path.write_text(json.dumps(summary), encoding="utf-8")
             result = universe_validator.validate_market_universe(csv_path, summary_path)
             self.assertEqual(result["eligible_ticker_count"], len(rows))
