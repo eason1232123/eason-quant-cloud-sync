@@ -1,6 +1,6 @@
 {
   "available": true,
-  "generated_at_utc": "2026-07-10T05:34:04.068640+00:00",
+  "generated_at_utc": "2026-07-11T01:10:47.449262+00:00",
   "version": "vectorbt-validation-v3.6-next-bar-execution",
   "purpose": "Independent vectorbt validation layer for signal rules. It does not replace pandas portfolio backtest or ChatGPT live review.",
   "vectorbt_version": "1.1.0",
@@ -31,8 +31,8 @@
       "SGOV"
     ],
     "start_date": "2005-01-03",
-    "end_date": "2026-07-09",
-    "rows": 5412
+    "end_date": "2026-07-10",
+    "rows": 5413
   },
   "assumptions": {
     "init_cash_per_column": 10000.0,
@@ -48,10 +48,10 @@
       "rule": "ma20_reclaim_bullish",
       "engine": "vectorbt",
       "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-      "vectorbt_total_return_pct": 1078.02,
+      "vectorbt_total_return_pct": 1074.66,
       "vectorbt_max_drawdown_pct": -33.73,
-      "vectorbt_sharpe": 0.943,
-      "vectorbt_final_value": 117801.59,
+      "vectorbt_sharpe": 0.942,
+      "vectorbt_final_value": 117466.31,
       "vectorbt_trade_count": 177.0,
       "raw_entry_signal_count": 177,
       "executed_entry_count": 177,
@@ -93,10 +93,10 @@
       "rule": "ma20_reclaim_bullish",
       "engine": "vectorbt",
       "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-      "vectorbt_total_return_pct": 3.25,
+      "vectorbt_total_return_pct": 3.27,
       "vectorbt_max_drawdown_pct": -13.39,
-      "vectorbt_sharpe": 0.601,
-      "vectorbt_final_value": 10324.92,
+      "vectorbt_sharpe": 0.605,
+      "vectorbt_final_value": 10326.97,
       "vectorbt_trade_count": 73.0,
       "raw_entry_signal_count": 73,
       "executed_entry_count": 73,
@@ -115,7 +115,7 @@
       "vectorbt_trade_count": 167.0,
       "raw_entry_signal_count": 167,
       "executed_entry_count": 167,
-      "raw_exit_signal_count": 2184,
+      "raw_exit_signal_count": 2185,
       "executed_exit_count": 2184
     },
     {
@@ -130,8 +130,8 @@
       "vectorbt_trade_count": 174.0,
       "raw_entry_signal_count": 174,
       "executed_entry_count": 174,
-      "raw_exit_signal_count": 2169,
-      "executed_exit_count": 2168
+      "raw_exit_signal_count": 2170,
+      "executed_exit_count": 2169
     },
     {
       "ticker": "GLD",
@@ -145,8 +145,8 @@
       "vectorbt_trade_count": 188.0,
       "raw_entry_signal_count": 188,
       "executed_entry_count": 188,
-      "raw_exit_signal_count": 2377,
-      "executed_exit_count": 2376
+      "raw_exit_signal_count": 2378,
+      "executed_exit_count": 2377
     },
     {
       "ticker": "TSM",
@@ -160,8 +160,8 @@
       "vectorbt_trade_count": 196.0,
       "raw_entry_signal_count": 196,
       "executed_entry_count": 196,
-      "raw_exit_signal_count": 2182,
-      "executed_exit_count": 2181
+      "raw_exit_signal_count": 2183,
+      "executed_exit_count": 2182
     },
     {
       "ticker": "AVGO",
@@ -198,10 +198,10 @@
       "rule": "ma20_reclaim_bullish",
       "engine": "vectorbt",
       "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-      "vectorbt_total_return_pct": 135.38,
+      "vectorbt_total_return_pct": 122.07,
       "vectorbt_max_drawdown_pct": -37.02,
-      "vectorbt_sharpe": 0.399,
-      "vectorbt_final_value": 23537.8,
+      "vectorbt_sharpe": 0.378,
+      "vectorbt_final_value": 22206.68,
       "vectorbt_trade_count": 51.0,
       "raw_entry_signal_count": 51,
       "executed_entry_count": 51,
@@ -213,10 +213,10 @@
       "rule": "ma20_reclaim_bullish",
       "engine": "vectorbt",
       "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-      "vectorbt_total_return_pct": 125.77,
+      "vectorbt_total_return_pct": 117.49,
       "vectorbt_max_drawdown_pct": -46.91,
-      "vectorbt_sharpe": 0.36,
-      "vectorbt_final_value": 22576.69,
+      "vectorbt_sharpe": 0.349,
+      "vectorbt_final_value": 21749.19,
       "vectorbt_trade_count": 126.0,
       "raw_entry_signal_count": 126,
       "executed_entry_count": 126,
@@ -228,13 +228,13 @@
       "rule": "ma20_reclaim_bullish",
       "engine": "vectorbt",
       "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-      "vectorbt_total_return_pct": 57.17,
+      "vectorbt_total_return_pct": 57.01,
       "vectorbt_max_drawdown_pct": -81.27,
       "vectorbt_sharpe": 0.255,
-      "vectorbt_final_value": 15716.86,
-      "vectorbt_trade_count": 141.0,
+      "vectorbt_final_value": 15701.16,
+      "vectorbt_trade_count": 142.0,
       "raw_entry_signal_count": 142,
-      "executed_entry_count": 141,
+      "executed_entry_count": 142,
       "raw_exit_signal_count": 2527,
       "executed_exit_count": 2527
     },
@@ -250,8 +250,8 @@
       "vectorbt_trade_count": 36.0,
       "raw_entry_signal_count": 36,
       "executed_entry_count": 36,
-      "raw_exit_signal_count": 441,
-      "executed_exit_count": 440
+      "raw_exit_signal_count": 442,
+      "executed_exit_count": 441
     },
     {
       "ticker": "SOXX",
@@ -265,38 +265,38 @@
       "vectorbt_trade_count": 227.0,
       "raw_entry_signal_count": 227,
       "executed_entry_count": 227,
-      "raw_exit_signal_count": 2131,
-      "executed_exit_count": 2130
-    },
-    {
-      "ticker": "QQQ",
-      "rule": "ma20_reclaim_bullish",
-      "engine": "vectorbt",
-      "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-      "vectorbt_total_return_pct": 22.38,
-      "vectorbt_max_drawdown_pct": -25.32,
-      "vectorbt_sharpe": 0.178,
-      "vectorbt_final_value": 12237.87,
-      "vectorbt_trade_count": 199.0,
-      "raw_entry_signal_count": 200,
-      "executed_entry_count": 199,
-      "raw_exit_signal_count": 1916,
-      "executed_exit_count": 1916
+      "raw_exit_signal_count": 2132,
+      "executed_exit_count": 2131
     },
     {
       "ticker": "META",
       "rule": "ma20_reclaim_bullish",
       "engine": "vectorbt",
       "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-      "vectorbt_total_return_pct": 20.88,
+      "vectorbt_total_return_pct": 28.1,
       "vectorbt_max_drawdown_pct": -61.95,
-      "vectorbt_sharpe": 0.162,
-      "vectorbt_final_value": 12088.1,
+      "vectorbt_sharpe": 0.182,
+      "vectorbt_final_value": 12810.34,
       "vectorbt_trade_count": 138.0,
       "raw_entry_signal_count": 138,
       "executed_entry_count": 138,
       "raw_exit_signal_count": 1389,
       "executed_exit_count": 1389
+    },
+    {
+      "ticker": "QQQ",
+      "rule": "ma20_reclaim_bullish",
+      "engine": "vectorbt",
+      "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
+      "vectorbt_total_return_pct": 22.26,
+      "vectorbt_max_drawdown_pct": -25.32,
+      "vectorbt_sharpe": 0.177,
+      "vectorbt_final_value": 12225.64,
+      "vectorbt_trade_count": 200.0,
+      "raw_entry_signal_count": 200,
+      "executed_entry_count": 200,
+      "raw_exit_signal_count": 1916,
+      "executed_exit_count": 1916
     },
     {
       "ticker": "PLTR",
@@ -325,18 +325,18 @@
       "vectorbt_trade_count": 246.0,
       "raw_entry_signal_count": 246,
       "executed_entry_count": 246,
-      "raw_exit_signal_count": 2110,
-      "executed_exit_count": 2109
+      "raw_exit_signal_count": 2111,
+      "executed_exit_count": 2110
     },
     {
       "ticker": "SPY",
       "rule": "ma20_reclaim_bullish",
       "engine": "vectorbt",
       "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-      "vectorbt_total_return_pct": 11.3,
+      "vectorbt_total_return_pct": 11.78,
       "vectorbt_max_drawdown_pct": -29.4,
-      "vectorbt_sharpe": 0.125,
-      "vectorbt_final_value": 11130.41,
+      "vectorbt_sharpe": 0.128,
+      "vectorbt_final_value": 11178.39,
       "vectorbt_trade_count": 214.0,
       "raw_entry_signal_count": 214,
       "executed_entry_count": 214,
@@ -370,18 +370,18 @@
       "vectorbt_trade_count": 188.0,
       "raw_entry_signal_count": 188,
       "executed_entry_count": 188,
-      "raw_exit_signal_count": 2568,
-      "executed_exit_count": 2567
+      "raw_exit_signal_count": 2569,
+      "executed_exit_count": 2568
     },
     {
       "ticker": "SGOV",
       "rule": "ma50_reclaim_bullish",
       "engine": "vectorbt",
       "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-      "vectorbt_total_return_pct": 11.17,
+      "vectorbt_total_return_pct": 11.2,
       "vectorbt_max_drawdown_pct": -6.87,
-      "vectorbt_sharpe": 2.525,
-      "vectorbt_final_value": 11117.32,
+      "vectorbt_sharpe": 2.529,
+      "vectorbt_final_value": 11119.53,
       "vectorbt_trade_count": 36.0,
       "raw_entry_signal_count": 36,
       "executed_entry_count": 36,
@@ -398,10 +398,10 @@
       "vectorbt_sharpe": 0.948,
       "vectorbt_final_value": 512503.99,
       "vectorbt_trade_count": 125.0,
-      "raw_entry_signal_count": 125,
+      "raw_entry_signal_count": 126,
       "executed_entry_count": 125,
       "raw_exit_signal_count": 1887,
-      "executed_exit_count": 1886
+      "executed_exit_count": 1887
     },
     {
       "ticker": "AMZN",
@@ -415,8 +415,8 @@
       "vectorbt_trade_count": 114.0,
       "raw_entry_signal_count": 114,
       "executed_entry_count": 114,
-      "raw_exit_signal_count": 1920,
-      "executed_exit_count": 1919
+      "raw_exit_signal_count": 1921,
+      "executed_exit_count": 1920
     }
   ],
   "errors": {},

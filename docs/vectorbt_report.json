@@ -1,6 +1,6 @@
 {
   "available": true,
-  "generated_at_utc": "2026-07-10T05:34:25.909723+00:00",
+  "generated_at_utc": "2026-07-11T01:11:11.932468+00:00",
   "version": "vectorbt-validation-layer-v1.2-next-bar-execution",
   "engine": "vectorbt",
   "vectorbt_version": "1.1.0",
@@ -784,7 +784,7 @@
       "valid": true,
       "min_sample_required": 20,
       "lookback_start": "2021-08-24",
-      "lookback_end": "2026-07-09",
+      "lookback_end": "2026-07-10",
       "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
       "description": "Above 20/50/200-day averages with positive 20-day momentum and non-overheated RSI.",
       "win_rate": 0.6332,
@@ -1027,7 +1027,7 @@
       "valid": true,
       "min_sample_required": 20,
       "lookback_start": "2015-05-21",
-      "lookback_end": "2026-07-09",
+      "lookback_end": "2026-07-10",
       "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
       "description": "Above 20/50/200-day averages with positive 20-day momentum and non-overheated RSI.",
       "win_rate": 0.6635,
@@ -1054,7 +1054,7 @@
       "valid": true,
       "min_sample_required": 20,
       "lookback_start": "2005-01-03",
-      "lookback_end": "2026-07-09",
+      "lookback_end": "2026-07-10",
       "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
       "description": "Price reclaims the 20-day moving average while above the 50-day average.",
       "win_rate": 0.6944,
@@ -1081,7 +1081,7 @@
       "valid": true,
       "min_sample_required": 20,
       "lookback_start": "2005-01-03",
-      "lookback_end": "2026-07-09",
+      "lookback_end": "2026-07-10",
       "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
       "description": "Above 20/50/200-day averages with positive 20-day momentum and non-overheated RSI.",
       "win_rate": 0.6658,
@@ -1108,7 +1108,7 @@
       "valid": true,
       "min_sample_required": 20,
       "lookback_start": "2020-09-30",
-      "lookback_end": "2026-07-09",
+      "lookback_end": "2026-07-10",
       "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
       "description": "Above 20/50/200-day averages with positive 20-day momentum and non-overheated RSI.",
       "win_rate": 0.625,
@@ -1162,7 +1162,7 @@
       "valid": true,
       "min_sample_required": 20,
       "lookback_start": "2005-01-03",
-      "lookback_end": "2026-07-09",
+      "lookback_end": "2026-07-10",
       "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
       "description": "Price reclaims the 50-day moving average while above the 200-day average.",
       "win_rate": 0.7413,
@@ -1216,7 +1216,7 @@
       "valid": true,
       "min_sample_required": 20,
       "lookback_start": "2012-06-29",
-      "lookback_end": "2026-07-09",
+      "lookback_end": "2026-07-10",
       "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
       "description": "Price reclaims the 50-day moving average while above the 200-day average.",
       "win_rate": 0.6548,
@@ -1270,7 +1270,7 @@
       "valid": true,
       "min_sample_required": 20,
       "lookback_start": "2009-08-06",
-      "lookback_end": "2026-07-09",
+      "lookback_end": "2026-07-10",
       "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
       "description": "Price reclaims the 50-day moving average while above the 200-day average.",
       "win_rate": 0.6689,
@@ -1484,24 +1484,24 @@
       "rule_type": "risk",
       "tested_rule": "failed_rebound",
       "horizon_days": 20,
-      "sample_count": 181,
+      "sample_count": 182,
       "valid": true,
       "min_sample_required": 20,
       "lookback_start": "2021-08-24",
-      "lookback_end": "2026-07-09",
+      "lookback_end": "2026-07-10",
       "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
       "description": "Failed rebound: price loses the 5-day average and undercuts the prior 10-day low.",
-      "win_rate": 0.4641,
-      "avoidance_rate": 0.5359,
-      "avg_forward_return": 0.0221,
-      "median_forward_return": -0.0112,
+      "win_rate": 0.4615,
+      "avoidance_rate": 0.5385,
+      "avg_forward_return": 0.0207,
+      "median_forward_return": -0.0117,
       "worst_forward_return": -0.3964,
       "best_forward_return": 0.7862,
-      "avg_mae": -0.1415,
+      "avg_mae": -0.142,
       "worst_mae": -0.4163,
       "benchmark": "QQQ",
-      "avg_benchmark_same_dates": 0.0092,
-      "alpha_vs_benchmark_same_dates": 0.0128,
+      "avg_benchmark_same_dates": 0.0094,
+      "alpha_vs_benchmark_same_dates": 0.0112,
       "reason": null,
       "evidence_score_0_100": 83.8
     },
@@ -1731,7 +1731,7 @@
       "valid": true,
       "min_sample_required": 20,
       "lookback_start": "2010-08-06",
-      "lookback_end": "2026-07-09",
+      "lookback_end": "2026-07-10",
       "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
       "description": "Price breaks below the 50-day moving average after being above it.",
       "win_rate": 0.4928,
@@ -1832,8 +1832,8 @@
   ],
   "latest_active_signals": {
     "SPY": {
-      "latest_date": "2026-07-09",
-      "latest_price": 751.71,
+      "latest_date": "2026-07-10",
+      "latest_price": 754.95,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -1847,11 +1847,11 @@
       }
     },
     "QQQ": {
-      "latest_date": "2026-07-09",
-      "latest_price": 723.28,
+      "latest_date": "2026-07-10",
+      "latest_price": 725.51,
       "entries": {
-        "ma20_reclaim_bullish": true,
-        "ma50_reclaim_bullish": true,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
         "momentum_leader": false,
         "pullback_reclaim_5dma": false
       },
@@ -1862,8 +1862,8 @@
       }
     },
     "SMH": {
-      "latest_date": "2026-07-09",
-      "latest_price": 607.73,
+      "latest_date": "2026-07-10",
+      "latest_price": 611.03,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -1877,8 +1877,8 @@
       }
     },
     "SOXX": {
-      "latest_date": "2026-07-09",
-      "latest_price": 581.7,
+      "latest_date": "2026-07-10",
+      "latest_price": 581.34,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -1892,12 +1892,12 @@
       }
     },
     "VGT": {
-      "latest_date": "2026-07-09",
-      "latest_price": 117.71,
+      "latest_date": "2026-07-10",
+      "latest_price": 118.08,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
-        "momentum_leader": false,
+        "momentum_leader": true,
         "pullback_reclaim_5dma": false
       },
       "risks": {
@@ -1967,8 +1967,8 @@
       }
     },
     "SGOV": {
-      "latest_date": "2026-07-09",
-      "latest_price": 100.48,
+      "latest_date": "2026-07-10",
+      "latest_price": 100.5,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -1982,8 +1982,8 @@
       }
     },
     "MSFT": {
-      "latest_date": "2026-07-09",
-      "latest_price": 384.36,
+      "latest_date": "2026-07-10",
+      "latest_price": 385.1,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -1997,11 +1997,11 @@
       }
     },
     "NVDA": {
-      "latest_date": "2026-07-09",
-      "latest_price": 202.78,
+      "latest_date": "2026-07-10",
+      "latest_price": 210.96,
       "entries": {
         "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
+        "ma50_reclaim_bullish": true,
         "momentum_leader": false,
         "pullback_reclaim_5dma": false
       },
@@ -2012,8 +2012,8 @@
       }
     },
     "AAPL": {
-      "latest_date": "2026-07-09",
-      "latest_price": 316.22,
+      "latest_date": "2026-07-10",
+      "latest_price": 315.32,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2027,8 +2027,8 @@
       }
     },
     "GOOGL": {
-      "latest_date": "2026-07-09",
-      "latest_price": 358.89,
+      "latest_date": "2026-07-10",
+      "latest_price": 357.18,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2036,14 +2036,14 @@
         "pullback_reclaim_5dma": false
       },
       "risks": {
-        "risk_break_ma20": false,
+        "risk_break_ma20": true,
         "risk_break_ma50": false,
         "risk_failed_rebound": false
       }
     },
     "AMZN": {
-      "latest_date": "2026-07-09",
-      "latest_price": 247.04,
+      "latest_date": "2026-07-10",
+      "latest_price": 245.34,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2057,8 +2057,8 @@
       }
     },
     "META": {
-      "latest_date": "2026-07-09",
-      "latest_price": 631.48,
+      "latest_date": "2026-07-10",
+      "latest_price": 669.21,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2072,8 +2072,8 @@
       }
     },
     "AVGO": {
-      "latest_date": "2026-07-09",
-      "latest_price": 401.11,
+      "latest_date": "2026-07-10",
+      "latest_price": 399.97,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2117,8 +2117,8 @@
       }
     },
     "ASML": {
-      "latest_date": "2026-07-09",
-      "latest_price": 1804.25,
+      "latest_date": "2026-07-10",
+      "latest_price": 1797.32,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2132,8 +2132,8 @@
       }
     },
     "TSM": {
-      "latest_date": "2026-07-09",
-      "latest_price": 436.96,
+      "latest_date": "2026-07-10",
+      "latest_price": 434.11,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2177,13 +2177,13 @@
       }
     },
     "LRCX": {
-      "latest_date": "2026-07-09",
-      "latest_price": 353.17,
+      "latest_date": "2026-07-10",
+      "latest_price": 350.33,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
         "momentum_leader": false,
-        "pullback_reclaim_5dma": true
+        "pullback_reclaim_5dma": false
       },
       "risks": {
         "risk_break_ma20": false,
@@ -2207,13 +2207,13 @@
       }
     },
     "KLAC": {
-      "latest_date": "2026-07-09",
-      "latest_price": 229.52,
+      "latest_date": "2026-07-10",
+      "latest_price": 231.52,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
         "momentum_leader": false,
-        "pullback_reclaim_5dma": true
+        "pullback_reclaim_5dma": false
       },
       "risks": {
         "risk_break_ma20": false,
@@ -2252,8 +2252,8 @@
       }
     },
     "QCOM": {
-      "latest_date": "2026-07-09",
-      "latest_price": 191.11,
+      "latest_date": "2026-07-10",
+      "latest_price": 189.16,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2267,8 +2267,8 @@
       }
     },
     "ON": {
-      "latest_date": "2026-07-09",
-      "latest_price": 97.87,
+      "latest_date": "2026-07-10",
+      "latest_price": 95.96,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2297,8 +2297,8 @@
       }
     },
     "TXN": {
-      "latest_date": "2026-07-09",
-      "latest_price": 308.53,
+      "latest_date": "2026-07-10",
+      "latest_price": 311.46,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2312,8 +2312,8 @@
       }
     },
     "NXPI": {
-      "latest_date": "2026-07-09",
-      "latest_price": 290.54,
+      "latest_date": "2026-07-10",
+      "latest_price": 292.26,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2357,8 +2357,8 @@
       }
     },
     "ORCL": {
-      "latest_date": "2026-07-09",
-      "latest_price": 144.22,
+      "latest_date": "2026-07-10",
+      "latest_price": 140.64,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2372,8 +2372,8 @@
       }
     },
     "PLTR": {
-      "latest_date": "2026-07-09",
-      "latest_price": 129.04,
+      "latest_date": "2026-07-10",
+      "latest_price": 126.79,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2387,8 +2387,8 @@
       }
     },
     "CRM": {
-      "latest_date": "2026-07-09",
-      "latest_price": 162.5,
+      "latest_date": "2026-07-10",
+      "latest_price": 163.32,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2402,8 +2402,8 @@
       }
     },
     "ADBE": {
-      "latest_date": "2026-07-09",
-      "latest_price": 222.65,
+      "latest_date": "2026-07-10",
+      "latest_price": 223.64,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2432,8 +2432,8 @@
       }
     },
     "DDOG": {
-      "latest_date": "2026-07-09",
-      "latest_price": 269.0,
+      "latest_date": "2026-07-10",
+      "latest_price": 257.54,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2462,8 +2462,8 @@
       }
     },
     "NOW": {
-      "latest_date": "2026-07-09",
-      "latest_price": 108.84,
+      "latest_date": "2026-07-10",
+      "latest_price": 107.71,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2477,8 +2477,8 @@
       }
     },
     "PANW": {
-      "latest_date": "2026-07-09",
-      "latest_price": 338.31,
+      "latest_date": "2026-07-10",
+      "latest_price": 325.91,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2492,8 +2492,8 @@
       }
     },
     "CRWD": {
-      "latest_date": "2026-07-09",
-      "latest_price": 198.4,
+      "latest_date": "2026-07-10",
+      "latest_price": 187.18,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2567,8 +2567,8 @@
       }
     },
     "SHOP": {
-      "latest_date": "2026-07-09",
-      "latest_price": 123.17,
+      "latest_date": "2026-07-10",
+      "latest_price": 122.54,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2717,8 +2717,8 @@
       }
     },
     "GRID": {
-      "latest_date": "2026-07-09",
-      "latest_price": 184.17,
+      "latest_date": "2026-07-10",
+      "latest_price": 184.83,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2837,8 +2837,8 @@
       }
     },
     "GLD": {
-      "latest_date": "2026-07-09",
-      "latest_price": 378.18,
+      "latest_date": "2026-07-10",
+      "latest_price": 377.01,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2852,8 +2852,8 @@
       }
     },
     "TLT": {
-      "latest_date": "2026-07-09",
-      "latest_price": 84.49,
+      "latest_date": "2026-07-10",
+      "latest_price": 84.47,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2867,8 +2867,8 @@
       }
     },
     "IEF": {
-      "latest_date": "2026-07-09",
-      "latest_price": 93.71,
+      "latest_date": "2026-07-10",
+      "latest_price": 93.63,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2882,8 +2882,8 @@
       }
     },
     "SHY": {
-      "latest_date": "2026-07-09",
-      "latest_price": 81.91,
+      "latest_date": "2026-07-10",
+      "latest_price": 81.88,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -2912,23 +2912,23 @@
       }
     },
     "XLP": {
-      "latest_date": "2026-07-09",
-      "latest_price": 83.2,
+      "latest_date": "2026-07-10",
+      "latest_price": 84.12,
       "entries": {
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
+        "ma20_reclaim_bullish": true,
+        "ma50_reclaim_bullish": true,
         "momentum_leader": false,
         "pullback_reclaim_5dma": false
       },
       "risks": {
-        "risk_break_ma20": true,
-        "risk_break_ma50": true,
+        "risk_break_ma20": false,
+        "risk_break_ma50": false,
         "risk_failed_rebound": false
       }
     },
     "XLU": {
-      "latest_date": "2026-07-09",
-      "latest_price": 45.13,
+      "latest_date": "2026-07-10",
+      "latest_price": 45.41,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -3107,8 +3107,8 @@
       }
     },
     "RKLB": {
-      "latest_date": "2026-07-09",
-      "latest_price": 82.55,
+      "latest_date": "2026-07-10",
+      "latest_price": 81.04,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
@@ -3212,8 +3212,8 @@
       }
     },
     "XLF": {
-      "latest_date": "2026-07-09",
-      "latest_price": 55.54,
+      "latest_date": "2026-07-10",
+      "latest_price": 55.71,
       "entries": {
         "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,

@@ -1,12 +1,12 @@
 Eason Quant v5 Decision Status
-generated_at_utc: 2026-07-11T15:10:42.836052+00:00
+generated_at_utc: 2026-07-12T04:40:02.187536+00:00
 data_source: Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates
 market_timezone: America/New_York
-data_timestamp: 2026-07-09
+data_timestamp: 2026-07-10
 price_frequency: end_of_day_daily
 price_adjustment_policy: adjusted_ohlc_when_available_else_unadjusted
-final_action: DATA_REVIEW_REQUIRED
-buy_permission: BLOCKED_BY_MODEL_PORTFOLIO_DATA
-reason: Model-portfolio data is stale or missing; refresh it before using quant signals.
+final_action: NO_TRADE
+buy_permission: NO_QUANT_CANDIDATE
+reason: No fresh active signal passed the sample, return, alpha, and MAE filters.
 automatic_order_allowed: false
 Primary machine-readable file: docs/decision_packet.json
