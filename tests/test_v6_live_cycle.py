@@ -148,12 +148,14 @@ class V6LiveCycleTests(unittest.TestCase):
         self.assertIsNone(result["next_command"])
         self.assertFalse(result["automatic_order_allowed"])
 
+    @patch("scripts.run_v6_live_cycle.build_v6_operating_status")
     @patch("scripts.run_v6_live_cycle.audit_v6_release")
     @patch("scripts.run_v6_live_cycle.record_private_review_from_files")
     def test_finalize_records_sanitized_event_then_refreshes_release_audit(
         self,
         record_private_review_from_files: Mock,
         audit_v6_release: Mock,
+        build_v6_operating_status: Mock,
     ) -> None:
         record_private_review_from_files.return_value = {
             "ledger_counts": {
@@ -167,13 +169,18 @@ class V6LiveCycleTests(unittest.TestCase):
             "status": "PROSPECTIVE_VALIDATION_IN_PROGRESS",
             "ready_for_human_pilot_review": False,
         }
+        build_v6_operating_status.return_value = {
+            "operating_mode": "READ_ONLY_SHADOW",
+        }
 
         result = finalize_live_cycle()
 
         record_private_review_from_files.assert_called_once_with()
         audit_v6_release.assert_called_once_with()
+        build_v6_operating_status.assert_called_once_with()
         self.assertEqual(result["status"], "V6_SANITIZED_LIVE_REVIEW_RECORDED")
         self.assertEqual(result["new_prediction_events"], 1)
+        self.assertEqual(result["operating_mode"], "READ_ONLY_SHADOW")
         self.assertFalse(result["ready_for_human_pilot_review"])
         self.assertFalse(result["automatic_order_allowed"])
 

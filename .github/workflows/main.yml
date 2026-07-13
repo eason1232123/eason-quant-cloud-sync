@@ -67,6 +67,7 @@ jobs:
           python -m scripts.validate_decision_packet
           python -m scripts.validate_market_universe
           python -m scripts.validate_model_artifacts
+          python -m scripts.build_v6_operating_status --validate-only
 
       - name: Compile Python sources
         run: python -m compileall -q scripts tests config.py
@@ -315,6 +316,17 @@ jobs:
         run: |
           python -u scripts/audit_v6_release.py
           test -s docs/v6_release_status.json
+          python -m scripts.validate_generated_json
+
+      - name: Build v6 operating readiness boundary
+        timeout-minutes: 3
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python -u scripts/build_v6_operating_status.py
+          test -s docs/v6_operating_status.json
+          python -u scripts/build_v6_operating_status.py --validate-only
           python -m scripts.validate_generated_json
 
       - name: Enforce operational market-data health before publication

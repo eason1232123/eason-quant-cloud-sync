@@ -26,6 +26,10 @@ from scripts.build_local_ibkr_context import (  # noqa: E402
     DEFAULT_PRIVATE_CONTEXT,
     build_local_context,
 )
+from scripts.build_v6_operating_status import (  # noqa: E402
+    DEFAULT_OUTPUT as DEFAULT_OPERATING_STATUS,
+    build_v6_operating_status,
+)
 from scripts.ibkr_readonly import (  # noqa: E402
     IbkrReadonlyConfig,
     IbkrReadonlyError,
@@ -163,6 +167,7 @@ def prepare_live_cycle(
 def finalize_live_cycle() -> dict[str, Any]:
     summary = record_private_review_from_files()
     release = audit_v6_release()
+    operating = build_v6_operating_status()
     counts = summary["ledger_counts"]
     new_predictions = counts["new_prediction_events"]
     return {
@@ -179,10 +184,12 @@ def finalize_live_cycle() -> dict[str, Any]:
         "ready_for_human_pilot_review": release[
             "ready_for_human_pilot_review"
         ],
+        "operating_mode": operating["operating_mode"],
         "public_artifacts": [
             _relative(DEFAULT_LIVE_REVIEW_LEDGER),
             _relative(DEFAULT_LIVE_REVIEW_STATUS),
             _relative(DEFAULT_RELEASE_STATUS),
+            _relative(DEFAULT_OPERATING_STATUS),
         ],
         "automatic_order_allowed": False,
         "human_confirmation_required": True,

@@ -1,0 +1,89 @@
+{
+  "automatic_order_allowed": false,
+  "capabilities": {
+    "automatic_order_allowed": false,
+    "chatgpt_live_review_available": true,
+    "github_public_evidence_available": true,
+    "human_decision_support_available": true,
+    "human_pilot_review_ready": false,
+    "ibkr_readonly_context_evidenced": true
+  },
+  "contains_private_account_data": false,
+  "contract_fingerprints": {
+    "full_model_fingerprint": "c7b581f73487289f6d6113d894a0149734c88bb76d3548fb8715dc91c906dac6",
+    "model_governance_fingerprint": "708ce0b7fa2edc93bbfdb6aa6e614c7665fda8b8ddfb0ee4fa5351cc253dd0fc",
+    "portfolio_contract_fingerprint": "e21f911c03d9c67f5650d874e7b6ce94d4a00a87a5dc9d48e1d5c0b1db2805f1",
+    "split_manifest_fingerprint": "f785a1c7fc63e21c6816be2017220219c619db543ffffdf5353fe70d8caff7ce",
+    "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807"
+  },
+  "current_data_quality_status": "PARTIAL_STALE_WATCHLIST",
+  "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+  "data_timestamp": "2026-07-10",
+  "evidence_counts": {
+    "minimum_governance_paired_samples": 0,
+    "public_signal_primary_horizon_outcomes": 0,
+    "sanitized_live_review_matured_outcomes": 0,
+    "sanitized_live_review_predictions": 1
+  },
+  "evidence_thresholds": {
+    "governance_paired_samples_per_challenger": 48,
+    "ibkr_bound_sanitized_live_reviews": 1,
+    "public_signal_primary_horizon_outcomes": 20,
+    "sanitized_live_review_matured_outcomes": 20
+  },
+  "final_execution_layer": "IBKR_MANUAL_WITH_EXPLICIT_HUMAN_CONFIRMATION",
+  "generated_at_utc": "2026-07-13T14:44:26.295445+00:00",
+  "human_confirmation_required": true,
+  "important_limit": "READ_ONLY_SHADOW is decision support, not validated pilot performance or an order. Human pilot review requires every frozen release gate; automatic execution is prohibited.",
+  "market_timezone": "America/New_York",
+  "mode_gates": {
+    "automatic_execution": {
+      "passed": false,
+      "reason_code": "AUTOMATIC_EXECUTION_PERMANENTLY_PROHIBITED"
+    },
+    "human_pilot_review": {
+      "failed_release_gates": [
+        "public_signal_minimum_sample_reached",
+        "model_governance_promotion_sample_reached",
+        "live_review_minimum_sample_reached"
+      ],
+      "passed": false,
+      "required_release_gates": [
+        "model_artifacts_valid",
+        "live_review_forward_artifacts_valid",
+        "public_signal_minimum_sample_reached",
+        "model_governance_promotion_sample_reached",
+        "live_review_minimum_sample_reached",
+        "ibkr_to_chatgpt_contract_evidenced"
+      ]
+    },
+    "read_only_shadow": {
+      "failed_release_gates": [],
+      "passed": true,
+      "required_release_gates": [
+        "model_artifacts_valid",
+        "live_review_forward_artifacts_valid",
+        "ibkr_to_chatgpt_contract_evidenced"
+      ]
+    }
+  },
+  "next_operating_mode": "HUMAN_PILOT_REVIEW_READY",
+  "operating_mode": "READ_ONLY_SHADOW",
+  "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+  "price_frequency": "end_of_day_daily",
+  "release_blockers": [
+    "PUBLIC_SIGNAL_PRIMARY_OUTCOMES_BELOW_MINIMUM",
+    "MODEL_GOVERNANCE_PAIRED_SAMPLES_BELOW_PROMOTION_THRESHOLD",
+    "LIVE_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM"
+  ],
+  "release_gates": {
+    "ibkr_to_chatgpt_contract_evidenced": true,
+    "live_review_forward_artifacts_valid": true,
+    "live_review_minimum_sample_reached": false,
+    "model_artifacts_valid": true,
+    "model_governance_promotion_sample_reached": false,
+    "public_signal_minimum_sample_reached": false
+  },
+  "schema_version": "v6-operating-status-v1",
+  "source_release_status": "PROSPECTIVE_VALIDATION_IN_PROGRESS"
+}

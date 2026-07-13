@@ -60,6 +60,18 @@ build_report_safe.py
 
 行情参考日和工作日差统一由 `scripts/market_clock.py` 提供；行情元信息契约统一由 `scripts/market_data_contract.py` 提供；Schema 与跨字段不变量统一由 `scripts/validate_decision_packet.py` 验证，生产任务和测试不再各复制一套规则。当前日期基准是美国市场时区下的工作日保守门，尚未接入交易所节假日日历；节假日前后可能多阻断一天，但不会据此自动下单。
 
+## v6 运行分级
+
+`docs/v6_operating_status.json` 是机器可读的运行范围边界，不替代 `decision_packet.json`，也不改变冻结的前瞻样本门槛：
+
+```text
+UNAVAILABLE                 # 关键模型、审查或 IBKR→ChatGPT 证据链不可用
+READ_ONLY_SHADOW            # 可读证据并进行只读实时辅助；不是人工试用就绪或交易指令
+HUMAN_PILOT_REVIEW_READY    # 20/48/20 等全部冻结发布门槛通过，仍只表示可进入人工试用审核
+```
+
+任何分级下 `automatic_order_allowed` 都必须为 `false`，最终执行层固定为 IBKR 手工操作和明确人工确认。运行状态同时记录数据源、`America/New_York`、市场数据日期、EOD/盘中类型和复权策略；关键字段缺失时构建失败，不会发布模糊状态。
+
 ## v4.5 基础修复点
 
 ```text
@@ -80,6 +92,8 @@ docs/latest_market_summary.json   # 市场/技术/信号轻量摘要，由 build
 docs/latest_market_summary.txt    # 同上，纯文本版
 docs/latest_decision_summary.json # 决策层摘要，由 build_decision_report.py 生成
 docs/decision_packet.json         # GitHub → ChatGPT 的稳定 v5 决策契约（优先读取）
+docs/v6_release_status.json       # v6 前瞻样本与人工试用发布闸门
+docs/v6_operating_status.json     # v6 当前允许的只读/人工试用运行分级
 docs/eason_signal.txt             # 当前阻断/许可的人类可读快照；机器仍优先读取 decision_packet.json
 ```
 
@@ -168,6 +182,8 @@ https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/latest_decision_summary.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/vectorbt_report.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/portfolio_backtest.json
+https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/v6_release_status.json
+https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/v6_operating_status.json
 ```
 
 如果 `market_report.json` 不是空文件，并且 `action_board.json` 能看到 `final_gate`、`signal_summary`、`vectorbt_evidence`、`portfolio_backtest`，就说明主链路成功。
