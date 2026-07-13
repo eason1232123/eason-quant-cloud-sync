@@ -118,7 +118,10 @@ class IbkrReadonlyTests(unittest.TestCase):
         )
         self.assertEqual(parsed.port, 4002)
         self.assertEqual(parsed.client_id, 72)
-        self.assertTrue(str(parsed.private_snapshot_path).endswith("private\\ibkr\\test.json"))
+        self.assertEqual(
+            parsed.private_snapshot_path.relative_to(ibkr_readonly.ROOT).as_posix(),
+            "private/ibkr/test.json",
+        )
 
     def test_probe_reports_offline_without_claiming_account_access(self) -> None:
         config = IbkrReadonlyConfig()
