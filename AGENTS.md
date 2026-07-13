@@ -29,6 +29,7 @@ scripts/build_action_board_v3.py
 scripts/build_forward_ledger.py
 scripts/build_live_review_forward_ledger.py
 scripts/audit_v6_release.py
+scripts/run_v6_live_cycle.py
 config.py
 requirements.txt
 docs/
@@ -63,6 +64,9 @@ build_decision_report.py
 ```
 
 Private `record-private-review` ingestion is local-only and must never run in GitHub Actions.
+The `scripts/run_v6_live_cycle.py` orchestrator is also local-only; it may prepare
+read-only evidence and finalize sanitized events, but it must not start broker
+software, bypass authentication, call an order API, commit, or push.
 
 ## Mandatory workflow
 
