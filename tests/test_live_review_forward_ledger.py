@@ -13,6 +13,7 @@ from scripts import live_review_contract
 from scripts.build_live_review_forward_ledger import (
     LiveReviewForwardLedgerError,
     build_live_review_forward_ledger,
+    live_review_due_status,
     load_live_review_ledger,
     validate_live_review_forward_artifacts,
 )
@@ -53,13 +54,13 @@ def _instrument(symbol: str) -> dict:
     }
 
 
-def _snapshot() -> dict:
+def _snapshot(*, collected_at: datetime = NOW) -> dict:
     return {
         "schema_version": "v6-ibkr-private-readonly-snapshot-v1",
         "status": "CONNECTED_READ_ONLY_SNAPSHOT",
         "source": "IBKR official TWS API local socket",
         "account_data_timezone": "UTC",
-        "collected_at_utc": NOW.isoformat(),
+        "collected_at_utc": collected_at.isoformat(),
         "portfolio_price_temporality": "UNKNOWN_TWS_ACCOUNT_UPDATE_NOT_VALIDATED_AS_REALTIME",
         "managed_accounts": [ACCOUNT],
         "positions": [],
@@ -160,7 +161,7 @@ def _public_inputs(
 
 def _request(packet: dict, *, generated_at: datetime = NOW) -> tuple[dict, dict]:
     context = build_private_context(
-        _snapshot(),
+        _snapshot(collected_at=generated_at),
         packet,
         GOVERNANCE,
         generated_at=generated_at,
@@ -174,7 +175,7 @@ def _source(check_id: str, *, generated_at: datetime) -> dict:
     if check_id == "actual_account_risk":
         source_type = "PRIVATE_CONTEXT"
         data_kind = "PRIVATE_ACCOUNT_SNAPSHOT"
-        observed = NOW
+        observed = generated_at
     elif check_id == "live_quote":
         source_type = "IBKR_TWS"
         data_kind = "INTRADAY_REALTIME_BID_ASK"
@@ -380,7 +381,66 @@ class LiveReviewForwardLedgerTests(unittest.TestCase):
         )
         self.assertEqual(validated["outcome_event_count"], 1)
 
-    def test_overlapping_review_is_recorded_but_not_counted_as_independent(self) -> None:
+    def test_one_live_review_cohort_per_market_date(self) -> None:
+        packet = self._write_public("2026-07-13", action="NO_TRADE")
+        _write_prices(self.root, ["2026-07-13"])
+        before = live_review_due_status(
+            packet_path=self.packet_path,
+            ledger_path=self.ledger_path,
+        )
+        self.assertTrue(before["review_due"])
+
+        context, request = _request(packet)
+        response = _response(request, action="NO_TRADE", symbol=None)
+        first = self._run(
+            context=context,
+            request=request,
+            response=response,
+            as_of="2026-07-13",
+            now=NOW + timedelta(seconds=30),
+        )
+        self.assertEqual(first["ledger_counts"]["new_prediction_events"], 1)
+        after = live_review_due_status(
+            packet_path=self.packet_path,
+            ledger_path=self.ledger_path,
+        )
+        self.assertFalse(after["review_due"])
+
+        later = NOW + timedelta(seconds=60)
+        second_context, second_request = _request(packet, generated_at=later)
+        second_response = _response(
+            second_request,
+            action="NO_TRADE",
+            symbol=None,
+            generated_at=later,
+        )
+        with self.assertRaisesRegex(
+            LiveReviewForwardLedgerError,
+            "cohort already exists",
+        ):
+            self._run(
+                context=second_context,
+                request=second_request,
+                response=second_response,
+                as_of="2026-07-13",
+                now=later + timedelta(seconds=30),
+            )
+
+        changed_packet = self._write_public(
+            "2026-07-13",
+            action="RISK_REVIEW_REQUIRED",
+        )
+        self.assertNotEqual(packet, changed_packet)
+        with self.assertRaisesRegex(
+            LiveReviewForwardLedgerError,
+            "different public decision evidence",
+        ):
+            live_review_due_status(
+                packet_path=self.packet_path,
+                ledger_path=self.ledger_path,
+            )
+
+    def test_later_overlapping_review_is_recorded_but_not_counted_as_independent(self) -> None:
         packet = self._write_public("2026-07-13")
         _write_prices(self.root, ["2026-07-13"])
         first_context, first_request = _request(packet)
@@ -393,8 +453,10 @@ class LiveReviewForwardLedgerTests(unittest.TestCase):
             now=NOW + timedelta(seconds=30),
         )
 
-        later = NOW + timedelta(minutes=2)
-        second_context, second_request = _request(packet, generated_at=later)
+        second_packet = self._write_public("2026-07-14")
+        _write_prices(self.root, ["2026-07-13", "2026-07-14"])
+        later = datetime(2026, 7, 15, 1, 0, tzinfo=timezone.utc)
+        second_context, second_request = _request(second_packet, generated_at=later)
         second_response = _response(
             second_request,
             action="WAIT",
@@ -405,7 +467,7 @@ class LiveReviewForwardLedgerTests(unittest.TestCase):
             context=second_context,
             request=second_request,
             response=second_response,
-            as_of="2026-07-13",
+            as_of="2026-07-14",
             now=later + timedelta(seconds=30),
         )
         self.assertEqual(summary["ledger_counts"]["prediction_events"], 2)

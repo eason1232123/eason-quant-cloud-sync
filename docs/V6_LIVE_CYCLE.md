@@ -31,6 +31,7 @@ python -m scripts.run_v6_live_cycle prepare
 
 ```text
 公开模型产物完整验证
+-> 当前市场日期前瞻审查到期检查
 -> 本地 IBKR 端口探测
 -> 官方 ibapi 只读快照
 -> 私有账户/模型上下文
@@ -38,6 +39,8 @@ python -m scripts.run_v6_live_cycle prepare
 ```
 
 任何一步失败都会停止后续步骤。特别是端口离线时不会尝试捕获，也不会拿旧快照继续生成请求。自动发现遇到多个可达标准端口时会显式失败，必须用 `IBKR_PORT` 固定选择，避免误连实盘/模拟盘。
+
+同一公开策略/治理代际在同一市场日期只允许一条实时审查预测。相同公开证据重复运行 `prepare` 会正常返回 `V6_LIVE_CYCLE_CURRENT_MARKET_DATE_ALREADY_RECORDED`，且不会连接 IBKR、覆盖私有请求或再次要求 ChatGPT 审查；同一市场日期若公开决策指纹发生变化则显式失败，防止事后重选审查结果。只有新的市场日期才进入下一轮。
 
 生成的文件全部位于 Git 已忽略的 `private/ibkr/`：
 

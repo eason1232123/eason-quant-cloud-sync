@@ -28,14 +28,21 @@ class V6LiveCycleTests(unittest.TestCase):
 
     @patch("scripts.run_v6_live_cycle.capture_private_snapshot")
     @patch("scripts.run_v6_live_cycle.resolve_runtime_endpoint")
+    @patch("scripts.run_v6_live_cycle.live_review_due_status")
     @patch("scripts.run_v6_live_cycle.validate_model_artifacts")
     def test_prepare_fails_before_capture_when_endpoint_is_offline(
         self,
         validate_model_artifacts: Mock,
+        live_review_due_status: Mock,
         resolve_runtime_endpoint: Mock,
         capture_private_snapshot: Mock,
     ) -> None:
         validate_model_artifacts.return_value = {"status": "VALID"}
+        live_review_due_status.return_value = {
+            "status": "LIVE_REVIEW_DUE",
+            "review_due": True,
+            "data_timestamp": "2026-07-13",
+        }
         resolve_runtime_endpoint.return_value = (
             None,
             {
@@ -52,16 +59,23 @@ class V6LiveCycleTests(unittest.TestCase):
     @patch("scripts.run_v6_live_cycle.build_local_context")
     @patch("scripts.run_v6_live_cycle.capture_private_snapshot")
     @patch("scripts.run_v6_live_cycle.resolve_runtime_endpoint")
+    @patch("scripts.run_v6_live_cycle.live_review_due_status")
     @patch("scripts.run_v6_live_cycle.validate_model_artifacts")
     def test_prepare_runs_readonly_chain_and_returns_only_sanitized_status(
         self,
         validate_model_artifacts: Mock,
+        live_review_due_status: Mock,
         resolve_runtime_endpoint: Mock,
         capture_private_snapshot: Mock,
         build_local_context: Mock,
         build_request_from_files: Mock,
     ) -> None:
         validate_model_artifacts.return_value = {"status": "VALID"}
+        live_review_due_status.return_value = {
+            "status": "LIVE_REVIEW_DUE",
+            "review_due": True,
+            "data_timestamp": "2026-07-13",
+        }
         config = IbkrReadonlyConfig()
         resolve_runtime_endpoint.return_value = (
             config,
@@ -103,6 +117,36 @@ class V6LiveCycleTests(unittest.TestCase):
             result["next_command"],
             "python -m scripts.run_v6_live_cycle finalize",
         )
+
+    @patch("scripts.run_v6_live_cycle.capture_private_snapshot")
+    @patch("scripts.run_v6_live_cycle.resolve_runtime_endpoint")
+    @patch("scripts.run_v6_live_cycle.live_review_due_status")
+    @patch("scripts.run_v6_live_cycle.validate_model_artifacts")
+    def test_prepare_stops_before_broker_when_current_market_date_is_recorded(
+        self,
+        validate_model_artifacts: Mock,
+        live_review_due_status: Mock,
+        resolve_runtime_endpoint: Mock,
+        capture_private_snapshot: Mock,
+    ) -> None:
+        validate_model_artifacts.return_value = {"status": "VALID"}
+        live_review_due_status.return_value = {
+            "status": "LIVE_REVIEW_ALREADY_RECORDED_FOR_MARKET_DATE",
+            "review_due": False,
+            "data_timestamp": "2026-07-10",
+        }
+
+        result = prepare_live_cycle(config=IbkrReadonlyConfig())
+
+        resolve_runtime_endpoint.assert_not_called()
+        capture_private_snapshot.assert_not_called()
+        self.assertEqual(
+            result["status"],
+            "V6_LIVE_CYCLE_CURRENT_MARKET_DATE_ALREADY_RECORDED",
+        )
+        self.assertFalse(result["broker_snapshot_collected"])
+        self.assertIsNone(result["next_command"])
+        self.assertFalse(result["automatic_order_allowed"])
 
     @patch("scripts.run_v6_live_cycle.audit_v6_release")
     @patch("scripts.run_v6_live_cycle.record_private_review_from_files")

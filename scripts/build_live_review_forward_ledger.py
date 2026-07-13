@@ -164,6 +164,67 @@ def _reviewer_fingerprint(response: dict[str, Any]) -> str:
     )
 
 
+def _prediction_for_market_date(
+    events: list[dict[str, Any]],
+    observation_market_date: str,
+) -> dict[str, Any] | None:
+    matches = [
+        event
+        for event in events
+        if event.get("event_type") == "LIVE_REVIEW_PREDICTION"
+        and event.get("prediction", {}).get("observation_market_date")
+        == observation_market_date
+    ]
+    if len(matches) > 1:
+        raise LiveReviewForwardLedgerError(
+            f"duplicate live-review prediction cohort at {observation_market_date}"
+        )
+    return matches[0] if matches else None
+
+
+def live_review_due_status(
+    *,
+    packet_path: Path = DEFAULT_DECISION_PACKET,
+    ledger_path: Path = DEFAULT_LEDGER,
+) -> dict[str, Any]:
+    packet = load_public_json(packet_path, "decision_packet")
+    market_data = packet.get("market_data")
+    if not isinstance(market_data, dict):
+        raise LiveReviewForwardLedgerError("decision_packet.market_data is required")
+    observation = _parse_required_date(
+        market_data.get("data_timestamp"),
+        "decision_packet.market_data.data_timestamp",
+    ).isoformat()
+    decision_fp = canonical_fingerprint(packet)
+    events = load_live_review_ledger(ledger_path)
+    prediction_dates = [
+        event["prediction"]["observation_market_date"]
+        for event in events
+        if event["event_type"] == "LIVE_REVIEW_PREDICTION"
+    ]
+    if prediction_dates and observation < max(prediction_dates):
+        raise LiveReviewForwardLedgerError(
+            "current public decision predates the latest live-review prediction"
+        )
+    existing = _prediction_for_market_date(events, observation)
+    if existing is not None and existing["public_decision_fingerprint"] != decision_fp:
+        raise LiveReviewForwardLedgerError(
+            "current market date already has a live review bound to different public decision evidence"
+        )
+    due = existing is None
+    return {
+        "status": (
+            "LIVE_REVIEW_DUE"
+            if due
+            else "LIVE_REVIEW_ALREADY_RECORDED_FOR_MARKET_DATE"
+        ),
+        "review_due": due,
+        "data_timestamp": observation,
+        "automatic_order_allowed": False,
+        "human_confirmation_required": True,
+    }
+
+
 def _public_symbol_and_status(
     request: dict[str, Any],
     response: dict[str, Any],
@@ -305,6 +366,11 @@ def _prediction_event(
         public_action=action,
         public_symbol=symbol,
     )
+    existing_cohort = _prediction_for_market_date(events, observation_market_date)
+    if existing_cohort is not None and existing_cohort["event_id"] != event_id:
+        raise LiveReviewForwardLedgerError(
+            f"live-review prediction cohort already exists at {observation_market_date}"
+        )
     evaluation_status = _apply_non_overlap_policy(
         events,
         symbol=symbol,
@@ -786,6 +852,7 @@ def load_live_review_ledger(path: Path = DEFAULT_LEDGER) -> list[dict[str, Any]]
         raise LiveReviewForwardLedgerError(f"could not read live-review ledger {path}: {exc}") from exc
     events: list[dict[str, Any]] = []
     ids: set[str] = set()
+    prediction_dates: set[str] = set()
     for line_number, line in enumerate(lines, start=1):
         if not line.strip():
             raise LiveReviewForwardLedgerError(f"blank live-review JSONL record at line {line_number}")
@@ -807,6 +874,13 @@ def load_live_review_ledger(path: Path = DEFAULT_LEDGER) -> list[dict[str, Any]]
         if event["event_id"] in ids:
             raise LiveReviewForwardLedgerError(f"duplicate live-review event_id: {event['event_id']}")
         ids.add(event["event_id"])
+        if event["event_type"] == "LIVE_REVIEW_PREDICTION":
+            observation = event["prediction"]["observation_market_date"]
+            if observation in prediction_dates:
+                raise LiveReviewForwardLedgerError(
+                    f"duplicate live-review prediction cohort at {observation}"
+                )
+            prediction_dates.add(observation)
         events.append(event)
     predictions = {
         event["event_id"]: event
