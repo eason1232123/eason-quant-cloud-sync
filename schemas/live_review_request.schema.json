@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/eason-quant/live_review_request.schema.json",
+  "title": "V6 private ChatGPT live-review request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "request_id",
+    "generated_at_utc",
+    "expires_at_utc",
+    "privacy",
+    "required_input_files",
+    "source_context",
+    "quant_boundary",
+    "candidate_symbols",
+    "held_symbols",
+    "required_check_ids",
+    "validation_policy",
+    "automatic_order_allowed",
+    "human_confirmation_required",
+    "order_payload"
+  ],
+  "properties": {
+    "schema_version": {"const": "v6-private-live-review-request-v1"},
+    "status": {"const": "AWAITING_CHATGPT_LIVE_REVIEW"},
+    "request_id": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "expires_at_utc": {"type": "string", "format": "date-time"},
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "git_publish_allowed",
+        "contains_private_position_symbols",
+        "contains_exact_account_values"
+      ],
+      "properties": {
+        "classification": {"const": "PRIVATE_LOCAL_ONLY"},
+        "git_publish_allowed": {"const": false},
+        "contains_private_position_symbols": {"type": "boolean"},
+        "contains_exact_account_values": {"const": false}
+      }
+    },
+    "required_input_files": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "source_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["context_schema_version", "context_generated_at_utc", "context_sha256", "ibkr", "github"],
+      "properties": {
+        "context_schema_version": {"type": "string", "minLength": 1},
+        "context_generated_at_utc": {"type": "string", "format": "date-time"},
+        "context_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "ibkr": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["source", "account_data_timezone", "data_timestamp", "status", "portfolio_price_temporality"],
+          "properties": {
+            "source": {"type": "string", "minLength": 1},
+            "account_data_timezone": {"type": "string", "minLength": 1},
+            "data_timestamp": {"type": "string", "format": "date-time"},
+            "status": {"const": "CONNECTED_READ_ONLY_SNAPSHOT"},
+            "portfolio_price_temporality": {"type": "string", "minLength": 1}
+          }
+        },
+        "github": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "market_timezone",
+            "report_generated_at_utc",
+            "data_timestamp",
+            "price_frequency",
+            "price_adjustment_policy",
+            "decision_schema_version",
+            "model_governance_fingerprint"
+          ],
+          "properties": {
+            "source": {"type": "string", "minLength": 1},
+            "market_timezone": {"type": "string", "minLength": 1},
+            "report_generated_at_utc": {"type": "string", "format": "date-time"},
+            "data_timestamp": {"type": "string", "format": "date"},
+            "price_frequency": {"type": "string", "minLength": 1},
+            "price_adjustment_policy": {"type": "string", "minLength": 1},
+            "decision_schema_version": {"type": "string", "minLength": 1},
+            "model_governance_fingerprint": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+          }
+        }
+      }
+    },
+    "quant_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["quant_final_action", "quant_buy_permission", "maximum_live_action", "allowed_live_conclusions", "monotonic_safety_rule"],
+      "properties": {
+        "quant_final_action": {
+          "enum": ["DATA_REVIEW_REQUIRED", "NO_TRADE", "RISK_REVIEW_REQUIRED", "BUY_CANDIDATE_REVIEW_REQUIRED"]
+        },
+        "quant_buy_permission": {"type": "string", "minLength": 1},
+        "maximum_live_action": {"enum": ["WAIT_ONLY", "REDUCE_REVIEW_ONLY", "BUY_REVIEW_ONLY"]},
+        "allowed_live_conclusions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"enum": ["NO_TRADE", "WAIT", "REDUCE_REVIEW", "BUY_REVIEW"]}
+        },
+        "monotonic_safety_rule": {"type": "string", "minLength": 1}
+      }
+    },
+    "candidate_symbols": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Z0-9.-]+$"}
+    },
+    "held_symbols": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[A-Z0-9.-]+$"}
+    },
+    "required_check_ids": {
+      "type": "array",
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true,
+      "items": {
+        "enum": ["live_quote", "market_regime", "fresh_news_macro", "earnings_valuation", "actual_account_risk", "execution_feasibility"]
+      }
+    },
+    "validation_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_account_snapshot_age_seconds",
+        "max_context_age_seconds",
+        "request_ttl_seconds",
+        "response_max_age_seconds",
+        "buy_review_requires_all_checks_pass",
+        "buy_review_requires_realtime_quote",
+        "missing_or_failed_check_action"
+      ],
+      "properties": {
+        "max_account_snapshot_age_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "max_context_age_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "request_ttl_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "response_max_age_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "buy_review_requires_all_checks_pass": {"const": true},
+        "buy_review_requires_realtime_quote": {"const": true},
+        "missing_or_failed_check_action": {"const": "WAIT"}
+      }
+    },
+    "automatic_order_allowed": {"const": false},
+    "human_confirmation_required": {"const": true},
+    "order_payload": {"type": "null"}
+  }
+}
