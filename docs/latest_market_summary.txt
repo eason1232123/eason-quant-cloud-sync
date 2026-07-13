@@ -1,12 +1,12 @@
 Eason Quant Latest MARKET Summary
 ========================================
-generated_at_utc: 2026-07-11T15:32:37.269656+00:00
+generated_at_utc: 2026-07-13T16:56:52.314696+00:00
 data_source: Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates
 market_timezone: America/New_York
 data_timestamp: 2026-07-10
 price_frequency: end_of_day_daily
 price_adjustment_policy: adjusted_ohlc_when_available_else_unadjusted
-strategy_version: Eason Master US Market Monitor Cloud Sync v5 freshness-contract
+strategy_version: Eason Master US Market Monitor Cloud Sync v5.1 shared-execution-contract
 privacy_mode: sanitized_public_report_no_cash_no_shares_no_account_value
 ticker_count: 94
 errors_count: 0
@@ -37,23 +37,23 @@ Active signals (45):
 - {"field": "active_signals", "ticker": "GE", "value": {"failed_rebound_risk": false, "ma20_reclaim_bullish": true, "ma50_reclaim_bullish": false, "momentum_leader": true, "pullback_reclaim_5dma": false, "relative_strength_rebound": false, "rsi_oversold_reclaim_40": false}}
 
 Top rule evidence (50 shown):
-- NVDA | momentum_leader | d | valid=True | samples=1820 | win_rate=0.6412 | avg_return= | alpha_vs_QQQ=
-- AAPL | momentum_leader | d | valid=True | samples=1746 | win_rate=0.6627 | avg_return= | alpha_vs_QQQ=
-- PWR | momentum_leader | d | valid=True | samples=1723 | win_rate=0.6019 | avg_return= | alpha_vs_QQQ=
-- MPWR | momentum_leader | d | valid=True | samples=1702 | win_rate=0.5752 | avg_return= | alpha_vs_QQQ=
-- AMZN | momentum_leader | d | valid=True | samples=1694 | win_rate=0.5726 | avg_return= | alpha_vs_QQQ=
-- CRM | momentum_leader | d | valid=True | samples=1681 | win_rate=0.5753 | avg_return= | alpha_vs_QQQ=
-- ETN | momentum_leader | d | valid=True | samples=1605 | win_rate=0.5639 | avg_return= | alpha_vs_QQQ=
-- MU | momentum_leader | d | valid=True | samples=1593 | win_rate=0.5888 | avg_return= | alpha_vs_QQQ=
-- AMD | momentum_leader | d | valid=True | samples=1578 | win_rate=0.5469 | avg_return= | alpha_vs_QQQ=
-- LRCX | momentum_leader | d | valid=True | samples=1568 | win_rate=0.5281 | avg_return= | alpha_vs_QQQ=
-- EQIX | momentum_leader | d | valid=True | samples=1527 | win_rate=0.6228 | avg_return= | alpha_vs_QQQ=
-- ON | momentum_leader | d | valid=True | samples=1519 | win_rate=0.5602 | avg_return= | alpha_vs_QQQ=
-- DLR | momentum_leader | d | valid=True | samples=1509 | win_rate=0.6229 | avg_return= | alpha_vs_QQQ=
-- NRG | momentum_leader | d | valid=True | samples=1491 | win_rate=0.5687 | avg_return= | alpha_vs_QQQ=
-- MSTR | momentum_leader | d | valid=True | samples=1470 | win_rate=0.5279 | avg_return= | alpha_vs_QQQ=
-- MRVL | momentum_leader | d | valid=True | samples=1458 | win_rate=0.5748 | avg_return= | alpha_vs_QQQ=
-- ASML | momentum_leader | d | valid=True | samples=1443 | win_rate=0.6015 | avg_return= | alpha_vs_QQQ=
-- ADBE | momentum_leader | d | valid=True | samples=1431 | win_rate=0.5472 | avg_return= | alpha_vs_QQQ=
-- GOOGL | momentum_leader | d | valid=True | samples=1430 | win_rate=0.607 | avg_return= | alpha_vs_QQQ=
-- KLAC | momentum_leader | d | valid=True | samples=1369 | win_rate=0.5902 | avg_return= | alpha_vs_QQQ=
+- GE | failed_rebound_risk | d | valid=True | samples=167 | win_rate=0.515 | avg_return= | alpha_vs_QQQ=
+- AMAT | failed_rebound_risk | d | valid=True | samples=165 | win_rate=0.5758 | avg_return= | alpha_vs_QQQ=
+- MU | failed_rebound_risk | d | valid=True | samples=165 | win_rate=0.5394 | avg_return= | alpha_vs_QQQ=
+- LRCX | failed_rebound_risk | d | valid=True | samples=165 | win_rate=0.5879 | avg_return= | alpha_vs_QQQ=
+- INTC | failed_rebound_risk | d | valid=True | samples=164 | win_rate=0.5732 | avg_return= | alpha_vs_QQQ=
+- COST | failed_rebound_risk | d | valid=True | samples=164 | win_rate=0.6159 | avg_return= | alpha_vs_QQQ=
+- MSTR | failed_rebound_risk | d | valid=True | samples=164 | win_rate=0.5244 | avg_return= | alpha_vs_QQQ=
+- NRG | failed_rebound_risk | d | valid=True | samples=163 | win_rate=0.546 | avg_return= | alpha_vs_QQQ=
+- XLE | failed_rebound_risk | d | valid=True | samples=163 | win_rate=0.546 | avg_return= | alpha_vs_QQQ=
+- TLT | failed_rebound_risk | d | valid=True | samples=162 | win_rate=0.5 | avg_return= | alpha_vs_QQQ=
+- ON | failed_rebound_risk | d | valid=True | samples=162 | win_rate=0.5123 | avg_return= | alpha_vs_QQQ=
+- QCOM | failed_rebound_risk | d | valid=True | samples=162 | win_rate=0.5494 | avg_return= | alpha_vs_QQQ=
+- LLY | failed_rebound_risk | d | valid=True | samples=161 | win_rate=0.5776 | avg_return= | alpha_vs_QQQ=
+- AMZN | failed_rebound_risk | d | valid=True | samples=161 | win_rate=0.5776 | avg_return= | alpha_vs_QQQ=
+- TSM | failed_rebound_risk | d | valid=True | samples=161 | win_rate=0.6025 | avg_return= | alpha_vs_QQQ=
+- TXN | failed_rebound_risk | d | valid=True | samples=161 | win_rate=0.5839 | avg_return= | alpha_vs_QQQ=
+- MCHP | failed_rebound_risk | d | valid=True | samples=160 | win_rate=0.6 | avg_return= | alpha_vs_QQQ=
+- MRVL | failed_rebound_risk | d | valid=True | samples=160 | win_rate=0.5125 | avg_return= | alpha_vs_QQQ=
+- ADBE | failed_rebound_risk | d | valid=True | samples=160 | win_rate=0.5625 | avg_return= | alpha_vs_QQQ=
+- XLV | failed_rebound_risk | d | valid=True | samples=159 | win_rate=0.6415 | avg_return= | alpha_vs_QQQ=

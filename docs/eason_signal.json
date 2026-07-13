@@ -1,6 +1,6 @@
 {
   "schema_version": "eason-signal-v5.0",
-  "generated_at_utc": "2026-07-13T04:21:07.955036+00:00",
+  "generated_at_utc": "2026-07-13T16:59:04.687911+00:00",
   "source": "Derived from market_report.json, portfolio_backtest.json, and cached quant evidence.",
   "decision_policy": {
     "github_role": "quantitative evidence filter and public portfolio-model risk scope only",
@@ -23,11 +23,11 @@
     "important_limit": "This is an evidence report, not an automatic trading bot."
   },
   "freshness": {
-    "source_report_generated_at_utc": "2026-07-12T11:51:50.511707+00:00",
+    "source_report_generated_at_utc": "2026-07-13T16:56:52.314696+00:00",
     "market_data": {
       "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
       "market_timezone": "America/New_York",
-      "report_generated_at_utc": "2026-07-12T11:51:50.511707+00:00",
+      "report_generated_at_utc": "2026-07-13T16:56:52.314696+00:00",
       "data_timestamp": "2026-07-10",
       "data_timestamp_granularity": "market_date",
       "data_timestamp_status": "AVAILABLE",
@@ -386,7 +386,7 @@
   "market_data": {
     "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "report_generated_at_utc": "2026-07-12T11:51:50.511707+00:00",
+    "report_generated_at_utc": "2026-07-13T16:56:52.314696+00:00",
     "data_timestamp": "2026-07-10",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
@@ -559,16 +559,16 @@
   "universe": {
     "configured_ticker_count": 94,
     "loaded_ticker_count": 94,
-    "tiingo_request_attempt_count": 0,
+    "tiingo_request_attempt_count": 1,
     "fresh_request_count": 0,
     "exact_fresh_ticker_count": 39,
     "lagging_ticker_count": 55,
     "future_quarantine_ticker_count": 0,
     "missing_ticker_count": 0,
     "skipped_fresh_enough_no_request": 39,
-    "skipped_by_tier_rotation": 35,
+    "skipped_by_tier_rotation": 39,
     "forced_refresh_due_count": 8,
-    "forced_refresh_requested_count": 0,
+    "forced_refresh_requested_count": 1,
     "forced_refresh_succeeded_count": 0,
     "forced_refresh_deferred_count": 8,
     "future_quarantine_event_count": 0,
@@ -641,11 +641,11 @@
       "force_refresh_watch_lag_business_days": 2,
       "force_refresh_long_tail_lag_business_days": 5
     },
-    "max_tiingo_requests_per_run": 0,
-    "max_new_full_downloads_per_run": 0,
-    "tiingo_circuit_open": false,
-    "tiingo_circuit_reason": "",
-    "warnings_count": 20,
+    "max_tiingo_requests_per_run": 50,
+    "max_new_full_downloads_per_run": 40,
+    "tiingo_circuit_open": true,
+    "tiingo_circuit_reason": "Tiingo 429 circuit breaker opened after CFLT: CFLT Tiingo HTTP 429: Too Many Requests",
+    "warnings_count": 16,
     "coverage_gaps_count": 0,
     "errors_count": 0,
     "note": "coverage_gaps are tickers without usable cache yet; errors are true processing/fetch failures not classified as rotation/rate-limit coverage gaps."

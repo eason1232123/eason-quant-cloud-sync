@@ -536,6 +536,7 @@ AYI,Acuity Inc. Common Stock,NYSE,OTHER,eligible
 AYTU,"Aytu BioPharma, Inc.  - Common Stock",NASDAQ,NASDAQ,eligible
 AZ,A2Z Cust2Mate Solutions Corp. - Common Shares,NASDAQ,NASDAQ,eligible
 AZI,Autozi Internet Technology (Global) Ltd. - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
+AZIO,"Azio AI Holdings, Inc. - Common stock",NASDAQ,NASDAQ,eligible
 AZN,AstraZeneca PLC Ordinary Shares,NYSE,OTHER,eligible
 AZO,"AutoZone, Inc. Common Stock",NYSE,OTHER,eligible
 AZTA,"Azenta, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
@@ -1811,7 +1812,6 @@ EVRG,"Evergy, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 EVT,Eaton Vance Tax Advantaged Dividend Income Fund Common Shares of Beneficial Interest,NYSE,OTHER,eligible
 EVTC,"Evertec, Inc. Common Stock",NYSE,OTHER,eligible
 EVTL,Vertical Aerospace Ltd. Ordinary Shares,NYSE,OTHER,eligible
-EVTV,"Azio AI Holdings, Inc. - Common stock",NASDAQ,NASDAQ,eligible
 EVV,Eaton Vance Limited Duration Income Fund Common Shares of Beneficial Interest,NYSE American,OTHER,eligible
 EW,Edwards Lifesciences Corporation Common Stock,NYSE,OTHER,eligible
 EWBC,"East West Bancorp, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
@@ -2147,6 +2147,7 @@ GFF,Griffon Corporation Common Stock,NYSE,OTHER,eligible
 GFL,"GFL Environmental Inc. Subordinate voting shares, no par value",NYSE,OTHER,eligible
 GFR,Greenfire Resources Ltd. Common Shares,NYSE,OTHER,eligible
 GFS,GlobalFoundries Inc. - Ordinary Share,NASDAQ,NASDAQ,eligible
+GFUZ,General Fusion Group Ltd. - Common Shares,NASDAQ,NASDAQ,eligible
 GGB,Gerdau S.A. Common Stock,NYSE,OTHER,eligible
 GGG,Graco Inc. Common Stock,NYSE,OTHER,eligible
 GGN,"GAMCO Global Gold, Natural Resources & Income Trust",NYSE American,OTHER,eligible
@@ -4230,6 +4231,7 @@ R,"Ryder System, Inc. Common Stock",NYSE,OTHER,eligible
 RA,Brookfield Real Assets Income Fund Inc. Common Stock,NYSE,OTHER,eligible
 RAC,Rithm Acquisition Corp. Class A Ordinary Shares,NYSE,OTHER,eligible
 RACC,Research Alliance Corporation III - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
+RACD,Research Alliance Corporation IV - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
 RACE,Ferrari N.V. Common Shares,NYSE,OTHER,eligible
 RAIL,"Freightcar America, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 RAIN,"Rain Enhancement Technologies Holdco, Inc. - Class A Common Stock",NASDAQ,NASDAQ,eligible
@@ -4615,7 +4617,6 @@ SJ,Scienjoy Holding Corporation - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
 SJM,The J.M. Smucker Company Common Stock,NYSE,OTHER,eligible
 SJT,San Juan Basin Royalty Trust Common Stock,NYSE,OTHER,eligible
 SKE,Skeena Resources Limited Common Shares,NYSE,OTHER,eligible
-SKHYV,SK hynix Inc. - American Depository Shares,NASDAQ,NASDAQ,eligible
 SKIL,Skillsoft Corp. Class A Common Stock,NYSE,OTHER,eligible
 SKIN,SkinHealth Systems Inc. - Class A Common Stock,NASDAQ,NASDAQ,eligible
 SKK,SKK Holdings Limited - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
@@ -4845,7 +4846,6 @@ SUPN,"Supernus Pharmaceuticals, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 SUPX,SuperX AI Technology Limited - Ordinary Shares,NASDAQ,NASDAQ,eligible
 SURG,"SurgePays, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 SVA,"Sinovac Biotech, Ltd. - Ordinary Shares (Antigua/Barbudo)",NASDAQ,NASDAQ,eligible
-SVAC,Spring Valley Acquisition Corp. III - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
 SVAQ,Silicon Valley Acquisition Corp. - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
 SVC,Service Properties Trust - Common Shares of Beneficial Interest,NASDAQ,NASDAQ,eligible
 SVCC,Stellar V Capital Corp. - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
@@ -5119,6 +5119,7 @@ TVAI,Thayer Ventures Acquisition Corporation II - Class A Ordinary Shares,NASDAQ
 TVC,Tennessee Valley Authority Common Stock,NYSE,OTHER,eligible
 TVE,Tennessee Valley Authority,NYSE,OTHER,eligible
 TVGN,Tevogen Bio Holdings Inc. - Common Stock,NASDAQ,NASDAQ,eligible
+TVIV,Texas Ventures Acquisition IV Corp - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
 TVRD,"Tvardi Therapeutics, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 TVTX,"Travere Therapeutics, Inc. - Common Stock",NASDAQ,NASDAQ,eligible
 TW,Tradeweb Markets Inc. - Class A Common Stock,NASDAQ,NASDAQ,eligible
@@ -5256,7 +5257,6 @@ VERX,"Vertex, Inc. - Class A Common Stock",NASDAQ,NASDAQ,eligible
 VET,Vermilion Energy Inc. Common (Canada),NYSE,OTHER,eligible
 VFC,V.F. Corporation Common Stock,NYSE,OTHER,eligible
 VFF,"Village Farms International, Inc. - Common Shares",NASDAQ,NASDAQ,eligible
-VFL,abrdn National Municipal Income Fund Common Stock,NYSE American,OTHER,eligible
 VFS,VinFast Auto Ltd. - Ordinary Shares,NASDAQ,NASDAQ,eligible
 VG,"Venture Global, Inc. Class A common stock",NYSE,OTHER,eligible
 VGAS,"Verde Clean Fuels, Inc. - Class A Common Stock",NASDAQ,NASDAQ,eligible
@@ -5560,6 +5560,7 @@ YHC,LQR House Inc. - Common Stock,NASDAQ,NASDAQ,eligible
 YHGJ,Yunhong Green CTI Ltd. - Common Stock,NASDAQ,NASDAQ,eligible
 YHNA,YHN Acquisition I Limited - Ordinary Shares,NASDAQ,NASDAQ,eligible
 YIBO,Planet Image International Limited - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
+YICC,Yorkville International Capital Corp. - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible
 YJ,Yunji Inc. - American Depository Shares,NASDAQ,NASDAQ,eligible
 YMAT,"J-Star Holding Co., Ltd. - Class A Ordinary Shares",NASDAQ,NASDAQ,eligible
 YOOV,Concorde International Group Ltd - Class A Ordinary Shares,NASDAQ,NASDAQ,eligible

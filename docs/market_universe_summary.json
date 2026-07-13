@@ -1,17 +1,17 @@
 {
-  "generated_at_utc": "2026-07-11T00:57:54.385457+00:00",
+  "generated_at_utc": "2026-07-13T16:56:04.308371+00:00",
   "version": "market-universe-v1",
-  "eligible_ticker_count": 5616,
+  "eligible_ticker_count": 5617,
   "exchange_counts": {
     "Cboe": 4,
-    "NASDAQ": 3241,
+    "NASDAQ": 3243,
     "NYSE": 2095,
-    "NYSE American": 263,
+    "NYSE American": 262,
     "NYSE Arca": 13
   },
   "source_counts": {
-    "NASDAQ": 3241,
-    "OTHER": 2375
+    "NASDAQ": 3243,
+    "OTHER": 2374
   },
   "sources": {
     "NASDAQ": "https://www.nasdaqtrader.com/dynamic/SymDir/nasdaqlisted.txt",
