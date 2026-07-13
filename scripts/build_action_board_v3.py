@@ -27,6 +27,7 @@ FILES = {
     "portfolio_backtest": OUT / "portfolio_backtest.json",
     "walk_forward_report": OUT / "walk_forward_report.json",
     "market_regime_report": OUT / "market_regime_report.json",
+    "model_governance": OUT / "model_governance.json",
     "overfitting_check": OUT / "overfitting_check.json",
     "trade_review": OUT / "trade_review.json",
     "actual_vs_backtest": OUT / "actual_vs_backtest.json",
@@ -115,6 +116,31 @@ def compact_walk_forward(walk: dict[str, Any]) -> dict[str, Any]:
         "version": walk.get("version"),
         "important_limit": walk.get("important_limit"),
         "periods": periods,
+    }
+
+
+def compact_model_governance(governance: dict[str, Any]) -> dict[str, Any]:
+    if not governance.get("available"):
+        return governance
+    return {
+        "available": True,
+        "schema_version": governance.get("schema_version"),
+        "status": governance.get("status"),
+        "data_source": governance.get("data_source"),
+        "market_timezone": governance.get("market_timezone"),
+        "data_timestamp": governance.get("data_timestamp"),
+        "model_governance_contract_version": governance.get(
+            "model_governance_contract_version"
+        ),
+        "model_governance_fingerprint": governance.get("model_governance_fingerprint"),
+        "ledger_counts": governance.get("ledger_counts", {}),
+        "current_market_regime": governance.get("current_market_regime", {}),
+        "candidate_registry": governance.get("candidate_registry", []),
+        "challenger_metrics": governance.get("challenger_metrics", {}),
+        "allocation_decision": governance.get("allocation_decision", {}),
+        "effective_target_weights": governance.get("effective_target_weights", {}),
+        "automatic_order_allowed": governance.get("automatic_order_allowed"),
+        "important_limit": governance.get("important_limit"),
     }
 
 
@@ -442,11 +468,12 @@ def build_chatgpt_snapshot(
 
     return {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "chatgpt-compact-snapshot-v2.0-decision-contract",
+        "version": "chatgpt-compact-snapshot-v6.0-model-governance-t2",
         "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
         "read_priority_for_chatgpt": [
             "docs/decision_packet.json",
             "docs/chatgpt_snapshot.json",
+            "docs/model_governance.json",
             "docs/eason_master_status.json",
             "docs/action_board.json",
             "docs/market_report.json",
@@ -476,6 +503,9 @@ def build_chatgpt_snapshot(
             "version": regime.get("version"),
             "latest_regime": first_item(regime.get("latest_regime"), regime.get("current_regime")),
         },
+        "model_governance_summary": compact_model_governance(
+            loaded.get("model_governance", {})
+        ),
         "stability_summary": {
             "overfitting_verdict": overfit.get("verdict"),
             "overfitting_available": overfit.get("available", False),
@@ -537,6 +567,7 @@ def main() -> None:
     vectorbt_validation = loaded.get("vectorbt_validation", {})
     vectorbt_report = loaded.get("vectorbt_report", {})
     market_report = loaded.get("market_report", {})
+    model_governance = loaded.get("model_governance", {})
 
     gate = final_gate(signal, overfit, trade, vectorbt_validation, vectorbt_report)
     sig_summary = signal_summary(signal)
@@ -544,8 +575,8 @@ def main() -> None:
 
     master = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "eason-master-action-board-v5.0-decision-contract",
-        "purpose": "One compact file for ChatGPT to review GitHub quant evidence, vectorbt validation/evidence, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
+        "version": "eason-master-action-board-v6.0-model-governance-t2",
+        "purpose": "One evidence file for ChatGPT to review the decision contract, prospective model governance, quant validation, portfolio backtest, regime behavior, and actual trade review before live-market judgment.",
         "roles": {
             "github": "data, backtest, vectorbt validation/evidence, stability, risk, and trade-review evidence layer",
             "chatgpt": "live quote/news/macro/valuation/account-risk reviewer and execution planner",
@@ -561,6 +592,7 @@ def main() -> None:
         "portfolio_backtest": compact_portfolio(portfolio),
         "walk_forward_report": compact_walk_forward(walk),
         "market_regime_report": regime,
+        "model_governance": model_governance,
         "overfitting_check": overfit,
         "trade_review": trade,
         "actual_vs_backtest": actual,

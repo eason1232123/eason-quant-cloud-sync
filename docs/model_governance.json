@@ -1,0 +1,150 @@
+{
+  "allocation_decision": {
+    "automatic_order_allowed": false,
+    "challenger_allocation": 0.0,
+    "human_review_required": true,
+    "incumbent_model_id": "balanced_incumbent_v1",
+    "model_allocations": {
+      "balanced_incumbent_v1": 1.0
+    },
+    "reason_codes": [
+      "NO_CHALLENGER_PASSED_FROZEN_ALLOCATION_GATES"
+    ],
+    "selected_challenger_model_id": null,
+    "status": "HOLD_INCUMBENT_INSUFFICIENT_OR_WEAK_PROSPECTIVE_EVIDENCE"
+  },
+  "allocation_gates": {
+    "limited_challenger_allocation": 0.25,
+    "maximum_candidate_drawdown": -0.15,
+    "maximum_challenger_allocation": 0.5,
+    "minimum_mean_excess_return": 0.0,
+    "minimum_paired_samples_for_limited_blend": 24,
+    "minimum_paired_samples_for_pilot_blend": 12,
+    "minimum_paired_samples_for_promotion_review": 48,
+    "minimum_paired_win_rate": 0.55,
+    "pilot_challenger_allocation": 0.1
+  },
+  "automatic_order_allowed": false,
+  "candidate_registry": [
+    {
+      "design_basis": "Existing v6 T1 portfolio weights frozen before prospective governance evidence.",
+      "model_fingerprint": "4110cb182eacba341c603a452f67cdcde74d4a6314fbb9a9d2506e5a07a5b123",
+      "model_id": "balanced_incumbent_v1",
+      "role": "INCUMBENT"
+    },
+    {
+      "design_basis": "Predeclared lower technology and semiconductor concentration with higher SPY and cash weights; not selected from retrospective performance.",
+      "model_fingerprint": "53abd3447beb12bccf344100ef996d7a51cfa3a3be21a4a241267230a1c04aa7",
+      "model_id": "lower_concentration_challenger_v1",
+      "role": "CHALLENGER"
+    },
+    {
+      "design_basis": "Predeclared cash-heavy stress alternative for prospective comparison; not selected from retrospective performance.",
+      "model_fingerprint": "d9ec3a4b26957b0b276ee99e6a150ee2abac57ac71b1109847f259b220b560d0",
+      "model_id": "capital_preservation_challenger_v1",
+      "role": "CHALLENGER"
+    }
+  ],
+  "challenger_metrics": {
+    "capital_preservation_challenger_v1": {
+      "challenger_max_drawdown": null,
+      "cumulative_challenger_return": null,
+      "cumulative_excess_return": null,
+      "cumulative_incumbent_return": null,
+      "mean_excess_return": null,
+      "median_excess_return": null,
+      "paired_sample_count": 0,
+      "paired_win_rate": null,
+      "recent_cumulative_excess_return": null
+    },
+    "lower_concentration_challenger_v1": {
+      "challenger_max_drawdown": null,
+      "cumulative_challenger_return": null,
+      "cumulative_excess_return": null,
+      "cumulative_incumbent_return": null,
+      "mean_excess_return": null,
+      "median_excess_return": null,
+      "paired_sample_count": 0,
+      "paired_win_rate": null,
+      "recent_cumulative_excess_return": null
+    }
+  },
+  "contains_private_account_data": false,
+  "cost_contract": {
+    "applicability": "uniform_model_assumption_for_all_tickers_and_historical_periods",
+    "assumption_source": "configured_not_observed",
+    "commission_bps_per_side": 5.0,
+    "execution_price_basis": "next_trading_bar_close",
+    "execution_shift_bars": 1,
+    "full_spread_bps": 2.0,
+    "half_spread_bps_per_side": 1.0,
+    "limitation": "Actual commissions, market impact, and bid-ask spreads vary by ticker, order size, venue, and time.",
+    "slippage_bps_per_side": 5.0,
+    "spread_observation_status": "NOT_OBSERVED",
+    "vectorbt_fees_rate": 0.0005,
+    "vectorbt_slippage_plus_half_spread_rate": 0.0006
+  },
+  "current_market_regime": {
+    "features": {
+      "QQQ_below_ma200": false,
+      "QQQ_ret20_at_or_below_minus_8pct": false,
+      "SMH_below_ma200": false,
+      "SMH_ret20_at_or_below_minus_12pct": false,
+      "SPY_below_ma200": false
+    },
+    "reason_codes": [
+      "NO_DEFENSIVE_TRIGGER"
+    ],
+    "regime": "base",
+    "warmup": false
+  },
+  "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+  "data_timestamp": "2026-07-10",
+  "data_timestamp_granularity": "market_date",
+  "data_timestamp_status": "AVAILABLE",
+  "effective_target_weights": {
+    "CASH_PROXY": 0.15,
+    "MSFT": 0.2,
+    "QQQ": 0.3,
+    "SMH": 0.25,
+    "SPY": 0.1
+  },
+  "evaluation_horizon_bars": 20,
+  "evidence_classification": "PROSPECTIVE",
+  "generated_at_utc": "2026-07-12T11:51:50.511707+00:00",
+  "important_limit": "Governance uses only paired, non-overlapping prospective public-model samples. It cannot place an order and cannot infer current private IBKR holdings.",
+  "ledger_counts": {
+    "new_outcome_events": 0,
+    "new_prediction_events": 0,
+    "outcome_events": 0,
+    "prediction_events": 0
+  },
+  "market_timezone": "America/New_York",
+  "model_fingerprints": {
+    "balanced_incumbent_v1": "4110cb182eacba341c603a452f67cdcde74d4a6314fbb9a9d2506e5a07a5b123",
+    "capital_preservation_challenger_v1": "d9ec3a4b26957b0b276ee99e6a150ee2abac57ac71b1109847f259b220b560d0",
+    "lower_concentration_challenger_v1": "53abd3447beb12bccf344100ef996d7a51cfa3a3be21a4a241267230a1c04aa7"
+  },
+  "model_governance_contract_version": "v6-model-governance-contract-v1",
+  "model_governance_fingerprint": "708ce0b7fa2edc93bbfdb6aa6e614c7665fda8b8ddfb0ee4fa5351cc253dd0fc",
+  "non_overlapping_samples_required": true,
+  "paired_incumbent_challenger_samples_required": true,
+  "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+  "price_frequency": "end_of_day_daily",
+  "prospective_starts_strictly_after": "2026-07-10",
+  "retrospective_evidence_may_promote": false,
+  "rollback_gates": {
+    "critical_data_failure_rolls_back": true,
+    "maximum_candidate_drawdown": -0.12,
+    "maximum_recent_cumulative_excess_loss": -0.03,
+    "recent_paired_sample_window": 6
+  },
+  "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
+  "schema_version": "v6-model-governance-status-v1",
+  "selection_bias_status": "CANDIDATES_PREDECLARED_BEFORE_PROSPECTIVE_EVIDENCE_NOT_SELECTED_FROM_REPORTED_RETURNS",
+  "split_manifest_fingerprint": "f785a1c7fc63e21c6816be2017220219c619db543ffffdf5353fe70d8caff7ce",
+  "status": "WAITING_FOR_FIRST_PROSPECTIVE_MARKET_DATE",
+  "strategy_contract_version": "v6-rc2-shared-rules-next-close",
+  "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
+  "survivorship_bias_status": "KNOWN_UNCONTROLLED_CURRENT_FIXED_ASSET_SET"
+}

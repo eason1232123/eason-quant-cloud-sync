@@ -23,6 +23,13 @@ from scripts.market_data_contract import (
     PRICE_FREQUENCY,
     read_checked_daily_csv,
 )
+from scripts.model_governance import (
+    choose_regime as governance_choose_regime,
+    governance_fingerprint,
+    incumbent_model,
+    load_governance_config,
+    model_fingerprint,
+)
 from scripts.strategy_contract import (
     COMMISSION_BPS_PER_SIDE,
     COMMISSION_RATE,
@@ -47,7 +54,7 @@ from scripts.validate_validation_split import (
 OUT = Path("docs")
 
 INITIAL_CAPITAL = 20000.0
-PORTFOLIO_CONTRACT_VERSION = "v6-rc1-pending-rebalance-cost-model"
+PORTFOLIO_CONTRACT_VERSION = "v6-rc2-governed-incumbent-pending-rebalance"
 SLIPPAGE_BPS = SLIPPAGE_BPS_PER_SIDE
 MIN_TRADE_DOLLARS = 25.0
 EXECUTION_SHIFT_DAYS = EXECUTION_SHIFT_BARS
@@ -56,29 +63,14 @@ CORE_TICKERS = ["QQQ", "SMH", "MSFT", "SPY"]
 BENCHMARK_TICKERS = ["SPY", "QQQ", "SMH"]
 CASH_TICKER = "SGOV"
 
-BASE_WEIGHTS = {
-    "QQQ": 0.30,
-    "SMH": 0.25,
-    "MSFT": 0.20,
-    "SPY": 0.10,
-    "CASH": 0.15,
-}
-
-DEFENSIVE_WEIGHTS = {
-    "QQQ": 0.18,
-    "SMH": 0.12,
-    "MSFT": 0.16,
-    "SPY": 0.14,
-    "CASH": 0.40,
-}
-
-SEVERE_DEFENSIVE_WEIGHTS = {
-    "QQQ": 0.10,
-    "SMH": 0.08,
-    "MSFT": 0.12,
-    "SPY": 0.10,
-    "CASH": 0.60,
-}
+MODEL_GOVERNANCE = load_governance_config()
+INCUMBENT_MODEL = incumbent_model(MODEL_GOVERNANCE)
+INCUMBENT_MODEL_ID = str(INCUMBENT_MODEL["model_id"])
+MODEL_GOVERNANCE_FINGERPRINT = governance_fingerprint(MODEL_GOVERNANCE)
+INCUMBENT_MODEL_FINGERPRINT = model_fingerprint(INCUMBENT_MODEL)
+BASE_WEIGHTS = dict(INCUMBENT_MODEL["regime_weights"]["base"])
+DEFENSIVE_WEIGHTS = dict(INCUMBENT_MODEL["regime_weights"]["defensive"])
+SEVERE_DEFENSIVE_WEIGHTS = dict(INCUMBENT_MODEL["regime_weights"]["severe_defensive"])
 
 
 def clean_float(value: Any, digits: int = 4) -> Any:
@@ -171,19 +163,7 @@ def add_trend_columns(prices: pd.DataFrame) -> pd.DataFrame:
 
 
 def choose_regime(row: pd.Series) -> str:
-    qqq_below_200 = row["QQQ"] < row.get("QQQ_ma200", np.nan)
-    smh_below_200 = row["SMH"] < row.get("SMH_ma200", np.nan)
-    spy_below_200 = row["SPY"] < row.get("SPY_ma200", np.nan)
-    qqq_weak = row.get("QQQ_ret20", np.nan) <= -0.08
-    smh_weak = row.get("SMH_ret20", np.nan) <= -0.12
-
-    if pd.isna(row.get("QQQ_ma200")) or pd.isna(row.get("SMH_ma200")) or pd.isna(row.get("SPY_ma200")):
-        return "warmup_base"
-    if spy_below_200 and qqq_below_200 and smh_below_200:
-        return "severe_defensive"
-    if (qqq_below_200 and smh_below_200) or (qqq_weak and smh_weak):
-        return "defensive"
-    return "base"
+    return governance_choose_regime(row)
 
 
 def weights_for_regime(regime: str) -> dict[str, float]:
@@ -488,11 +468,15 @@ def simulate_strategy(prices: pd.DataFrame, cash_returns: pd.Series | None = Non
         "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
         "rule_fingerprint": RULE_FINGERPRINT,
         "strategy_fingerprint": STRATEGY_FINGERPRINT,
+        "model_governance_fingerprint": MODEL_GOVERNANCE_FINGERPRINT,
+        "incumbent_model_id": INCUMBENT_MODEL_ID,
+        "incumbent_model_fingerprint": INCUMBENT_MODEL_FINGERPRINT,
         "base_weights": BASE_WEIGHTS,
         "defensive_weights": DEFENSIVE_WEIGHTS,
         "severe_defensive_weights": SEVERE_DEFENSIVE_WEIGHTS,
         "rebalance_policy": "monthly, regime-change, or drift >= 5 percentage points",
         "regime_policy": "base unless QQQ/SMH/SPY trend weakness triggers defensive or severe defensive weights",
+        "model_governance_policy": "Only the frozen incumbent is used in this retrospective portfolio; challengers require paired non-overlapping prospective evidence before any capped blend.",
         "cash_proxy": cash_proxy_metadata,
         "pending_rebalance_at_end": pending_rebalance,
         "last_execution_signal_date": last_execution_signal_date,
@@ -617,6 +601,9 @@ def attach_output_metadata(
         "portfolio_contract_fingerprint": portfolio_fingerprint,
         "split_manifest_fingerprint": split_fingerprint,
         "full_model_fingerprint": model_fingerprint,
+        "model_governance_fingerprint": MODEL_GOVERNANCE_FINGERPRINT,
+        "incumbent_model_id": INCUMBENT_MODEL_ID,
+        "incumbent_model_fingerprint": INCUMBENT_MODEL_FINGERPRINT,
     }
     for field, value in metadata.items():
         out[field] = value
@@ -639,6 +626,9 @@ def portfolio_contract_payload() -> dict[str, Any]:
         "core_tickers": CORE_TICKERS,
         "benchmark_tickers": BENCHMARK_TICKERS,
         "cash_proxy_ticker": CASH_TICKER,
+        "model_governance_fingerprint": MODEL_GOVERNANCE_FINGERPRINT,
+        "incumbent_model_id": INCUMBENT_MODEL_ID,
+        "incumbent_model_fingerprint": INCUMBENT_MODEL_FINGERPRINT,
         "weights": {
             "base": BASE_WEIGHTS,
             "defensive": DEFENSIVE_WEIGHTS,
@@ -735,7 +725,7 @@ def main() -> None:
         "price_adjustment_policy": PRICE_ADJUSTMENT_POLICY,
         "execution_price_kind": "model_close_with_configured_impact_not_historical_fill",
         "market_data_status": "CACHE_VALIDATED_NOT_LIVE",
-        "version": "portfolio-backtest-v3.0-next-bar-all-triggers-cost-contract",
+        "version": "portfolio-backtest-v3.1-governed-incumbent-next-bar",
         "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
         "rule_fingerprint": RULE_FINGERPRINT,
         "strategy_fingerprint": STRATEGY_FINGERPRINT,
@@ -743,6 +733,9 @@ def main() -> None:
         "portfolio_contract_fingerprint": portfolio_fingerprint,
         "split_manifest_fingerprint": split_fingerprint,
         "full_model_fingerprint": model_fingerprint,
+        "model_governance_fingerprint": MODEL_GOVERNANCE_FINGERPRINT,
+        "incumbent_model_id": INCUMBENT_MODEL_ID,
+        "incumbent_model_fingerprint": INCUMBENT_MODEL_FINGERPRINT,
         "cost_calibration_status": "configured_not_observed",
         "purpose": "Model-level portfolio backtest for Eason strategy. This is not live execution and not personalized account truth.",
         "bias_controls": {

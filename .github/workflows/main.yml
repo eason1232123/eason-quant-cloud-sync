@@ -264,6 +264,13 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_decision_report.py
 
+      - name: Record immutable prospective model-candidate ledger
+        timeout-minutes: 4
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_model_candidate_ledger.py
+
       - name: Build v3 master action board
         timeout-minutes: 4
         env:
@@ -283,6 +290,8 @@ jobs:
         run: |
           test -s docs/decision_packet.json
           test -s docs/forward_validation_status.json
+          test -s docs/model_governance.json
+          test -e docs/model_candidate_forward_ledger.jsonl
           test -s schemas/decision_packet.schema.json
           python -m scripts.validate_decision_packet
           python -m scripts.validate_validation_split
