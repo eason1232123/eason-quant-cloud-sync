@@ -285,6 +285,13 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_forward_ledger.py
 
+      - name: Mature sanitized live-review forward outcomes
+        timeout-minutes: 4
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_live_review_forward_ledger.py update-outcomes
+
       - name: Validate final decision packet contract
         timeout-minutes: 2
         run: |
@@ -292,10 +299,22 @@ jobs:
           test -s docs/forward_validation_status.json
           test -s docs/model_governance.json
           test -e docs/model_candidate_forward_ledger.jsonl
+          test -s docs/live_review_forward_status.json
+          test -e docs/live_review_forward_ledger.jsonl
           test -s schemas/decision_packet.schema.json
           python -m scripts.validate_decision_packet
           python -m scripts.validate_validation_split
           python -m scripts.validate_model_artifacts
+          python -m scripts.validate_generated_json
+
+      - name: Audit v6 human-pilot release readiness
+        timeout-minutes: 3
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python -u scripts/audit_v6_release.py
+          test -s docs/v6_release_status.json
           python -m scripts.validate_generated_json
 
       - name: Enforce operational market-data health before publication

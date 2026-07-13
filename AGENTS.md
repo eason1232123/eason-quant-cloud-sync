@@ -24,7 +24,11 @@ scripts/build_portfolio_backtest.py
 scripts/build_walk_forward_report.py
 scripts/build_trade_review.py
 scripts/build_decision_report.py
+scripts/build_model_candidate_ledger.py
 scripts/build_action_board_v3.py
+scripts/build_forward_ledger.py
+scripts/build_live_review_forward_ledger.py
+scripts/audit_v6_release.py
 config.py
 requirements.txt
 docs/
@@ -45,6 +49,20 @@ build_market_universe.py
 → build_decision_report.py
 → build_action_board_v3.py
 ```
+
+Additional v6 public-evidence chain:
+
+```text
+build_decision_report.py
+-> build_model_candidate_ledger.py
+-> build_action_board_v3.py
+-> build_forward_ledger.py
+-> build_live_review_forward_ledger.py update-outcomes
+-> validate_model_artifacts.py
+-> audit_v6_release.py
+```
+
+Private `record-private-review` ingestion is local-only and must never run in GitHub Actions.
 
 ## Mandatory workflow
 

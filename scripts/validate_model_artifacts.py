@@ -157,6 +157,13 @@ def validate_model_artifacts(
     docs: Path = DOCS,
     manifest_path: Path = DEFAULT_MANIFEST,
 ) -> dict[str, Any]:
+    # Imported here because the private live-review contract already depends on
+    # this validator. Keeping the public T5 validator lazy avoids a module cycle.
+    from scripts.build_live_review_forward_ledger import (
+        LiveReviewForwardLedgerError,
+        validate_live_review_forward_artifacts,
+    )
+
     manifest = load_strict_json(manifest_path)
     validate_split_manifest(manifest)
     split_fingerprint = split_manifest_fingerprint(manifest)
@@ -239,6 +246,16 @@ def validate_model_artifacts(
     if reported_counts.get("outcome_events") != actual_outcome_count:
         raise AssertionError("model candidate outcome count mismatch")
 
+    try:
+        live_review_validation = validate_live_review_forward_artifacts(
+            ledger_path=docs / "live_review_forward_ledger.jsonl",
+            summary_path=docs / "live_review_forward_status.json",
+            report_path=docs / "market_report.json",
+            split_path=manifest_path,
+        )
+    except LiveReviewForwardLedgerError as exc:
+        raise AssertionError(f"invalid sanitized live-review forward artifacts: {exc}") from exc
+
     csv_rows = {
         name: validate_csv_contract(docs / name)
         for name in MODEL_CSV_REPORTS
@@ -258,6 +275,12 @@ def validate_model_artifacts(
         "full_model_fingerprint": model_fingerprint,
         "model_governance_fingerprint": governance_fp,
         "model_candidate_event_count": len(candidate_events),
+        "live_review_prediction_event_count": live_review_validation[
+            "prediction_event_count"
+        ],
+        "live_review_outcome_event_count": live_review_validation[
+            "outcome_event_count"
+        ],
     }
 
 
