@@ -67,6 +67,10 @@ Private `record-private-review` ingestion is local-only and must never run in Gi
 The `scripts/run_v6_live_cycle.py` orchestrator is also local-only; it may prepare
 read-only evidence and finalize sanitized events, but it must not start broker
 software, bypass authentication, call an order API, commit, or push.
+When `IBKR_PORT` is absent or `auto`, the orchestrator may select exactly one
+reachable standard loopback Gateway/TWS port; zero or multiple listeners must fail
+closed. Account readiness requires the official matching `accountDownloadEnd`
+callback, and any explicit non-true `accountReady` value remains a hard failure.
 
 ## Mandatory workflow
 

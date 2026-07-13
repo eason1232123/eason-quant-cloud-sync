@@ -6,7 +6,7 @@ import math
 import os
 import socket
 import threading
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import datetime, timezone
 from decimal import Decimal
 from pathlib import Path
@@ -39,7 +39,7 @@ ACCOUNT_UPDATE_TAGS = {
     "MaintMarginReq",
     "GrossPositionValue",
 }
-INFORMATIONAL_ERROR_CODES = {2104, 2106, 2107, 2108, 2158}
+INFORMATIONAL_ERROR_CODES = {2100, 2104, 2106, 2107, 2108, 2158}
 FORBIDDEN_ORDER_METHODS = {
     "placeOrder",
     "cancelOrder",
@@ -49,6 +49,7 @@ FORBIDDEN_ORDER_METHODS = {
     "reqExecutions",
     "reqIds",
 }
+STANDARD_TWS_API_PORTS = (4001, 4002, 7496, 7497)
 
 
 class IbkrReadonlyError(RuntimeError):
@@ -160,6 +161,115 @@ def probe_endpoint(config: IbkrReadonlyConfig) -> dict[str, Any]:
     }
 
 
+def resolve_runtime_endpoint(
+    *,
+    config: IbkrReadonlyConfig | None = None,
+    env: dict[str, str] | None = None,
+) -> tuple[IbkrReadonlyConfig | None, dict[str, Any]]:
+    """Resolve one local TWS/IB Gateway endpoint without guessing between listeners."""
+    if config is not None:
+        active = validate_config(config)
+        endpoint = probe_endpoint(active)
+        endpoint.update(
+            {
+                "selection_mode": "EXPLICIT_CONFIG",
+                "candidate_ports": [active.port],
+                "reachable_ports": [active.port] if endpoint["reachable"] else [],
+            }
+        )
+        return (active if endpoint["reachable"] else None), endpoint
+
+    values = dict(os.environ if env is None else env)
+    raw_port = values.get("IBKR_PORT")
+    if raw_port is not None and raw_port.strip().lower() not in {"", "auto"}:
+        active = config_from_env(values)
+        endpoint = probe_endpoint(active)
+        endpoint.update(
+            {
+                "selection_mode": "ENV_FIXED_PORT",
+                "candidate_ports": [active.port],
+                "reachable_ports": [active.port] if endpoint["reachable"] else [],
+            }
+        )
+        return (active if endpoint["reachable"] else None), endpoint
+
+    # A concrete port is required to validate the remaining configuration. It is
+    # replaced below before any broker request is made.
+    values["IBKR_PORT"] = "7497"
+    template = config_from_env(values)
+    reachable_ports: list[int] = []
+    for port in STANDARD_TWS_API_PORTS:
+        discovery_config = replace(
+            template,
+            port=port,
+            timeout_seconds=min(template.timeout_seconds, 1.0),
+        )
+        if probe_endpoint(discovery_config)["reachable"]:
+            reachable_ports.append(port)
+
+    selected_port = reachable_ports[0] if len(reachable_ports) == 1 else None
+    if selected_port is not None:
+        status = "IBKR_ENDPOINT_REACHABLE"
+        reason = None
+        active = replace(template, port=selected_port)
+    elif not reachable_ports:
+        status = "IBKR_ENDPOINT_OFFLINE"
+        reason = "no listener found on the standard local TWS/IB Gateway ports"
+        active = None
+    else:
+        status = "IBKR_ENDPOINT_AMBIGUOUS"
+        reason = (
+            "multiple standard local TWS/IB Gateway ports are reachable; "
+            "set IBKR_PORT explicitly"
+        )
+        active = None
+    endpoint = {
+        "status": status,
+        "reachable": active is not None,
+        "host_scope": "LOOPBACK_ONLY",
+        "port": selected_port,
+        "checked_at_utc": datetime.now(timezone.utc).isoformat(),
+        "reason": reason,
+        "selection_mode": "AUTO_STANDARD_PORT_DISCOVERY",
+        "candidate_ports": list(STANDARD_TWS_API_PORTS),
+        "reachable_ports": reachable_ports,
+        "automatic_order_allowed": False,
+    }
+    return active, endpoint
+
+
+def validate_account_download_readiness(
+    account_id: str,
+    explicit_readiness: dict[str, bool | None],
+    completed_accounts: set[str],
+) -> bool:
+    """Use the documented completion callback unless IBKR explicitly rejects readiness."""
+    if account_id not in completed_accounts:
+        raise IbkrReadonlyError(
+            "IBKR_ACCOUNT_DOWNLOAD_INCOMPLETE: accountDownloadEnd did not match the requested account"
+        )
+    if account_id in explicit_readiness and explicit_readiness[account_id] is not True:
+        raise IbkrReadonlyError(
+            "IBKR_ACCOUNT_NOT_READY: account values may be stale or incorrect"
+        )
+    return True
+
+
+def normalize_ibkr_error_callback(args: tuple[Any, ...]) -> tuple[int, str]:
+    """Normalize the legacy and current official EWrapper.error signatures."""
+    if (
+        len(args) >= 3
+        and isinstance(args[0], int)
+        and isinstance(args[1], int)
+        and isinstance(args[2], str)
+    ):
+        # TWS API 10.33+ inserts errorTime before errorCode.
+        return args[1], args[2]
+    if len(args) >= 2 and isinstance(args[0], int) and isinstance(args[1], str):
+        return args[0], args[1]
+    raise IbkrReadonlyError("IBKR returned an unrecognized error callback signature")
+
+
 def _finite_ib_number(value: Any, *, required: bool = False) -> float | None:
     try:
         parsed = float(value)
@@ -220,6 +330,7 @@ class OfficialIbapiAdapter:
                 self.account_summary: list[dict[str, Any]] = []
                 self.account_values: list[dict[str, Any]] = []
                 self.account_readiness: dict[str, bool | None] = {}
+                self.account_download_completed: set[str] = set()
                 self.errors: list[dict[str, Any]] = []
 
             def nextValidId(self, orderId: int) -> None:  # noqa: N802
@@ -321,15 +432,27 @@ class OfficialIbapiAdapter:
                     )
 
             def accountDownloadEnd(self, accountName: str) -> None:  # noqa: N802
+                self.account_download_completed.add(accountName)
                 self.account_download_ready.set()
 
-            def error(self, reqId: int, errorCode: int, errorString: str, *args: Any) -> None:
-                if errorCode not in INFORMATIONAL_ERROR_CODES:
+            def error(self, reqId: int, *args: Any) -> None:
+                try:
+                    error_code, error_string = normalize_ibkr_error_callback(args)
+                except IbkrReadonlyError as exc:
                     self.errors.append(
                         {
                             "request_id": reqId,
-                            "error_code": errorCode,
-                            "message": errorString,
+                            "error_code": -1,
+                            "message": str(exc),
+                        }
+                    )
+                    return
+                if error_code not in INFORMATIONAL_ERROR_CODES:
+                    self.errors.append(
+                        {
+                            "request_id": reqId,
+                            "error_code": error_code,
+                            "message": error_string,
                         }
                     )
 
@@ -356,15 +479,17 @@ class OfficialIbapiAdapter:
 
             for account_id in app.managed_accounts:
                 app.account_download_ready.clear()
+                app.account_download_completed.discard(account_id)
                 app.account_readiness.pop(account_id, None)
                 app.reqAccountUpdates(True, account_id)
                 if not app.account_download_ready.wait(validated.timeout_seconds):
                     raise IbkrReadonlyError("IBKR portfolio/account update timed out")
                 app.reqAccountUpdates(False, account_id)
-                if app.account_readiness.get(account_id) is not True:
-                    raise IbkrReadonlyError(
-                        "IBKR_ACCOUNT_NOT_READY: account values may be stale or incorrect"
-                    )
+                app.account_readiness[account_id] = validate_account_download_readiness(
+                    account_id,
+                    app.account_readiness,
+                    app.account_download_completed,
+                )
             if app.errors:
                 raise IbkrReadonlyError(
                     "IBKR returned non-informational errors: "

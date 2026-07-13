@@ -30,8 +30,7 @@ from scripts.ibkr_readonly import (  # noqa: E402
     IbkrReadonlyError,
     SnapshotAdapter,
     capture_private_snapshot,
-    config_from_env,
-    probe_endpoint,
+    resolve_runtime_endpoint,
 )
 from scripts.live_review_contract import (  # noqa: E402
     DEFAULT_REQUEST,
@@ -68,12 +67,16 @@ def probe_live_cycle(
     config: IbkrReadonlyConfig | None = None,
 ) -> dict[str, Any]:
     model_validation = validate_model_artifacts()
-    endpoint = probe_endpoint(config or config_from_env())
+    _, endpoint = resolve_runtime_endpoint(config=config)
     return {
         "status": (
             "V6_LIVE_CYCLE_ENDPOINT_READY"
             if endpoint["reachable"]
-            else "V6_LIVE_CYCLE_ENDPOINT_OFFLINE"
+            else (
+                "V6_LIVE_CYCLE_ENDPOINT_AMBIGUOUS"
+                if endpoint["status"] == "IBKR_ENDPOINT_AMBIGUOUS"
+                else "V6_LIVE_CYCLE_ENDPOINT_OFFLINE"
+            )
         ),
         "model_artifacts_status": model_validation["status"],
         "endpoint": endpoint,
@@ -103,12 +106,10 @@ def prepare_live_cycle(
         "max_context_age_seconds",
     )
     model_validation = validate_model_artifacts()
-    active_config = config or config_from_env()
-    endpoint = probe_endpoint(active_config)
-    if not endpoint["reachable"]:
+    active_config, endpoint = resolve_runtime_endpoint(config=config)
+    if active_config is None or not endpoint["reachable"]:
         raise V6LiveCycleError(
-            f"IBKR_ENDPOINT_OFFLINE: no TWS/IB Gateway listener on loopback port "
-            f"{active_config.port}"
+            f"{endpoint['status']}: {endpoint['reason']}"
         )
 
     snapshot = capture_private_snapshot(active_config, adapter=adapter)

@@ -12,7 +12,7 @@
     "wait_result_interpretation": "counterfactual filtered-candidate return; not a cash return"
   },
   "evaluation_status_counts": {
-    "not_evaluated_no_public_candidate": 0,
+    "not_evaluated_no_public_candidate": 1,
     "not_evaluated_overlapping_window": 0,
     "not_evaluated_private_reduction_redacted": 0,
     "pending": 0
@@ -25,10 +25,10 @@
     "evaluable_prediction_events": 0,
     "matured_outcome_events": 0,
     "new_outcome_events": 0,
-    "new_prediction_events": 0,
-    "non_evaluable_prediction_events": 0,
+    "new_prediction_events": 1,
+    "non_evaluable_prediction_events": 1,
     "pending_outcomes": 0,
-    "prediction_events": 0
+    "prediction_events": 1
   },
   "live_review_request_contract_version": "v6-private-live-review-request-v1",
   "live_review_response_contract_version": "v6-private-live-review-response-v1",
@@ -58,14 +58,14 @@
   },
   "public_action_counts": {
     "buy_review": 0,
-    "no_trade": 0,
+    "no_trade": 1,
     "private_reduction_review_redacted": 0,
     "wait": 0
   },
   "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
   "schema_version": "v6-live-review-forward-status-v1",
   "split_manifest_fingerprint": "f785a1c7fc63e21c6816be2017220219c619db543ffffdf5353fe70d8caff7ce",
-  "status": "WAITING_FOR_VALIDATED_PRIVATE_LIVE_REVIEW",
+  "status": "PROSPECTIVE_LIVE_REVIEWS_RECORDED_OUTCOMES_PENDING",
   "strategy_contract_version": "v6-rc2-shared-rules-next-close",
   "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807"
 }

@@ -27,19 +27,23 @@ class V6LiveCycleTests(unittest.TestCase):
         validate_model_artifacts.assert_not_called()
 
     @patch("scripts.run_v6_live_cycle.capture_private_snapshot")
-    @patch("scripts.run_v6_live_cycle.probe_endpoint")
+    @patch("scripts.run_v6_live_cycle.resolve_runtime_endpoint")
     @patch("scripts.run_v6_live_cycle.validate_model_artifacts")
     def test_prepare_fails_before_capture_when_endpoint_is_offline(
         self,
         validate_model_artifacts: Mock,
-        probe_endpoint: Mock,
+        resolve_runtime_endpoint: Mock,
         capture_private_snapshot: Mock,
     ) -> None:
         validate_model_artifacts.return_value = {"status": "VALID"}
-        probe_endpoint.return_value = {
-            "status": "IBKR_ENDPOINT_OFFLINE",
-            "reachable": False,
-        }
+        resolve_runtime_endpoint.return_value = (
+            None,
+            {
+                "status": "IBKR_ENDPOINT_OFFLINE",
+                "reachable": False,
+                "reason": "no listener found",
+            },
+        )
         with self.assertRaisesRegex(V6LiveCycleError, "IBKR_ENDPOINT_OFFLINE"):
             prepare_live_cycle(config=IbkrReadonlyConfig())
         capture_private_snapshot.assert_not_called()
@@ -47,21 +51,26 @@ class V6LiveCycleTests(unittest.TestCase):
     @patch("scripts.run_v6_live_cycle.build_request_from_files")
     @patch("scripts.run_v6_live_cycle.build_local_context")
     @patch("scripts.run_v6_live_cycle.capture_private_snapshot")
-    @patch("scripts.run_v6_live_cycle.probe_endpoint")
+    @patch("scripts.run_v6_live_cycle.resolve_runtime_endpoint")
     @patch("scripts.run_v6_live_cycle.validate_model_artifacts")
     def test_prepare_runs_readonly_chain_and_returns_only_sanitized_status(
         self,
         validate_model_artifacts: Mock,
-        probe_endpoint: Mock,
+        resolve_runtime_endpoint: Mock,
         capture_private_snapshot: Mock,
         build_local_context: Mock,
         build_request_from_files: Mock,
     ) -> None:
         validate_model_artifacts.return_value = {"status": "VALID"}
-        probe_endpoint.return_value = {
-            "status": "IBKR_ENDPOINT_REACHABLE",
-            "reachable": True,
-        }
+        config = IbkrReadonlyConfig()
+        resolve_runtime_endpoint.return_value = (
+            config,
+            {
+                "status": "IBKR_ENDPOINT_REACHABLE",
+                "reachable": True,
+                "reason": None,
+            },
+        )
         capture_private_snapshot.return_value = {
             "collected_at_utc": "2026-07-13T13:00:00+00:00",
             "managed_accounts": ["SECRET_ACCOUNT"],
@@ -77,7 +86,6 @@ class V6LiveCycleTests(unittest.TestCase):
             "automatic_order_allowed": False,
             "human_confirmation_required": True,
         }
-        config = IbkrReadonlyConfig()
         adapter = Mock()
 
         result = prepare_live_cycle(config=config, adapter=adapter)
