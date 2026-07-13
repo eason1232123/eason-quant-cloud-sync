@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -8,6 +9,16 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.model_governance import (
+    governance_fingerprint,
+    incumbent_model,
+    load_governance_config,
+    model_fingerprint,
+)
 from scripts.market_clock import MARKET_TIMEZONE
 from scripts.market_data_contract import (
     DATA_TIMESTAMP_GRANULARITY,
@@ -318,6 +329,10 @@ def overfitting_check(walk: dict, metadata: dict[str, Any]) -> dict:
 def main() -> None:
     manifest = load_strict_json(DEFAULT_MANIFEST)
     validate_split_manifest(manifest)
+    governance = load_governance_config()
+    governance_fp = governance_fingerprint(governance)
+    incumbent = incumbent_model(governance)
+    incumbent_fp = model_fingerprint(incumbent)
     portfolio_report = load_portfolio_report()
     vs = load_csv(PORTFOLIO_VS_PATH)
     equity = load_csv(EQUITY_PATH)
@@ -338,6 +353,9 @@ def main() -> None:
         "portfolio_contract_version": portfolio_report.get("portfolio_contract_version"),
         "portfolio_contract_fingerprint": portfolio_report.get("portfolio_contract_fingerprint"),
         "full_model_fingerprint": portfolio_report.get("full_model_fingerprint"),
+        "model_governance_fingerprint": portfolio_report.get("model_governance_fingerprint"),
+        "incumbent_model_id": portfolio_report.get("incumbent_model_id"),
+        "incumbent_model_fingerprint": portfolio_report.get("incumbent_model_fingerprint"),
         "survivorship_bias_status": "KNOWN_UNCONTROLLED_CURRENT_FIXED_ASSET_SET",
     }
     required_metadata = {
@@ -363,6 +381,14 @@ def main() -> None:
         value = metadata.get(field)
         if not isinstance(value, str) or len(value) != 64:
             raise SystemExit(f"Portfolio report {field} is missing or invalid")
+    expected_governance = {
+        "model_governance_fingerprint": governance_fp,
+        "incumbent_model_id": incumbent["model_id"],
+        "incumbent_model_fingerprint": incumbent_fp,
+    }
+    actual_governance = {field: metadata.get(field) for field in expected_governance}
+    if actual_governance != expected_governance:
+        raise SystemExit("Portfolio report model-governance identity is missing or mismatched")
 
     periods = validation_periods(manifest)
     walk = build_walk_forward(vs, periods, metadata)

@@ -1,17 +1,18 @@
 {
-  "generated_at_utc": "2026-07-12T11:58:41.800153+00:00",
-  "version": "chatgpt-compact-snapshot-v2.0-decision-contract",
+  "generated_at_utc": "2026-07-13T04:23:06.311112+00:00",
+  "version": "chatgpt-compact-snapshot-v6.0-model-governance-t2",
   "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
   "read_priority_for_chatgpt": [
     "docs/decision_packet.json",
     "docs/chatgpt_snapshot.json",
+    "docs/model_governance.json",
     "docs/eason_master_status.json",
     "docs/action_board.json",
     "docs/market_report.json"
   ],
   "decision_contract": {
     "schema_version": "decision-packet-v5.0",
-    "generated_at_utc": "2026-07-12T11:53:30.014666+00:00",
+    "generated_at_utc": "2026-07-13T04:21:07.955036+00:00",
     "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
     "roles": {
       "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",
@@ -1120,7 +1121,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1167,7 +1168,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-10",
@@ -1214,7 +1215,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-10",
@@ -1261,7 +1262,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1308,7 +1309,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1355,7 +1356,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-10",
@@ -1402,7 +1403,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-10",
@@ -1449,7 +1450,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-10",
@@ -1498,7 +1499,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1545,7 +1546,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1592,7 +1593,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1639,7 +1640,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-07",
@@ -1686,7 +1687,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-07",
@@ -1733,7 +1734,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-10",
@@ -1780,7 +1781,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1827,7 +1828,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-12T11:51:09.699782+00:00",
+        "report_generated_at_utc": "2026-07-12T11:59:47.342702+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -2410,7 +2411,7 @@
   },
   "portfolio_backtest_summary": {
     "available": true,
-    "version": "portfolio-backtest-v3.0-next-bar-all-triggers-cost-contract",
+    "version": "portfolio-backtest-v3.1-governed-incumbent-next-bar",
     "latest_regime": "base",
     "strategy_metrics": {
       "start_date": "2020-05-29",
@@ -2492,9 +2493,106 @@
   },
   "market_regime_summary": {
     "available": true,
-    "generated_at_utc": "2026-07-12T11:58:23.776726+00:00",
+    "generated_at_utc": "2026-07-13T04:21:06.052890+00:00",
     "version": "market-regime-v3.0-contiguous-episodes",
     "latest_regime": null
+  },
+  "model_governance_summary": {
+    "available": true,
+    "schema_version": "v6-model-governance-status-v1",
+    "status": "WAITING_FOR_FIRST_PROSPECTIVE_MARKET_DATE",
+    "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+    "market_timezone": "America/New_York",
+    "data_timestamp": "2026-07-10",
+    "model_governance_contract_version": "v6-model-governance-contract-v1",
+    "model_governance_fingerprint": "708ce0b7fa2edc93bbfdb6aa6e614c7665fda8b8ddfb0ee4fa5351cc253dd0fc",
+    "ledger_counts": {
+      "new_outcome_events": 0,
+      "new_prediction_events": 0,
+      "outcome_events": 0,
+      "prediction_events": 0
+    },
+    "current_market_regime": {
+      "features": {
+        "QQQ_below_ma200": false,
+        "QQQ_ret20_at_or_below_minus_8pct": false,
+        "SMH_below_ma200": false,
+        "SMH_ret20_at_or_below_minus_12pct": false,
+        "SPY_below_ma200": false
+      },
+      "reason_codes": [
+        "NO_DEFENSIVE_TRIGGER"
+      ],
+      "regime": "base",
+      "warmup": false
+    },
+    "candidate_registry": [
+      {
+        "design_basis": "Existing v6 T1 portfolio weights frozen before prospective governance evidence.",
+        "model_fingerprint": "4110cb182eacba341c603a452f67cdcde74d4a6314fbb9a9d2506e5a07a5b123",
+        "model_id": "balanced_incumbent_v1",
+        "role": "INCUMBENT"
+      },
+      {
+        "design_basis": "Predeclared lower technology and semiconductor concentration with higher SPY and cash weights; not selected from retrospective performance.",
+        "model_fingerprint": "53abd3447beb12bccf344100ef996d7a51cfa3a3be21a4a241267230a1c04aa7",
+        "model_id": "lower_concentration_challenger_v1",
+        "role": "CHALLENGER"
+      },
+      {
+        "design_basis": "Predeclared cash-heavy stress alternative for prospective comparison; not selected from retrospective performance.",
+        "model_fingerprint": "d9ec3a4b26957b0b276ee99e6a150ee2abac57ac71b1109847f259b220b560d0",
+        "model_id": "capital_preservation_challenger_v1",
+        "role": "CHALLENGER"
+      }
+    ],
+    "challenger_metrics": {
+      "capital_preservation_challenger_v1": {
+        "challenger_max_drawdown": null,
+        "cumulative_challenger_return": null,
+        "cumulative_excess_return": null,
+        "cumulative_incumbent_return": null,
+        "mean_excess_return": null,
+        "median_excess_return": null,
+        "paired_sample_count": 0,
+        "paired_win_rate": null,
+        "recent_cumulative_excess_return": null
+      },
+      "lower_concentration_challenger_v1": {
+        "challenger_max_drawdown": null,
+        "cumulative_challenger_return": null,
+        "cumulative_excess_return": null,
+        "cumulative_incumbent_return": null,
+        "mean_excess_return": null,
+        "median_excess_return": null,
+        "paired_sample_count": 0,
+        "paired_win_rate": null,
+        "recent_cumulative_excess_return": null
+      }
+    },
+    "allocation_decision": {
+      "automatic_order_allowed": false,
+      "challenger_allocation": 0.0,
+      "human_review_required": true,
+      "incumbent_model_id": "balanced_incumbent_v1",
+      "model_allocations": {
+        "balanced_incumbent_v1": 1.0
+      },
+      "reason_codes": [
+        "NO_CHALLENGER_PASSED_FROZEN_ALLOCATION_GATES"
+      ],
+      "selected_challenger_model_id": null,
+      "status": "HOLD_INCUMBENT_INSUFFICIENT_OR_WEAK_PROSPECTIVE_EVIDENCE"
+    },
+    "effective_target_weights": {
+      "CASH_PROXY": 0.15,
+      "MSFT": 0.2,
+      "QQQ": 0.3,
+      "SMH": 0.25,
+      "SPY": 0.1
+    },
+    "automatic_order_allowed": false,
+    "important_limit": "Governance uses only paired, non-overlapping prospective public-model samples. It cannot place an order and cannot infer current private IBKR holdings."
   },
   "stability_summary": {
     "overfitting_verdict": "RETROSPECTIVE_ONLY_NOT_VALIDATED",

@@ -1,6 +1,6 @@
 {
   "schema_version": "eason-signal-v5.0",
-  "generated_at_utc": "2026-07-12T11:53:30.014666+00:00",
+  "generated_at_utc": "2026-07-13T04:21:07.955036+00:00",
   "source": "Derived from market_report.json, portfolio_backtest.json, and cached quant evidence.",
   "decision_policy": {
     "github_role": "quantitative evidence filter and public portfolio-model risk scope only",
@@ -411,7 +411,7 @@
   },
   "portfolio_backtest": {
     "available": true,
-    "version": "portfolio-backtest-v3.0-next-bar-all-triggers-cost-contract",
+    "version": "portfolio-backtest-v3.1-governed-incumbent-next-bar",
     "latest_regime": "base",
     "model_risk_scope": {
       "scope_type": "public_model_portfolio_symbols_only",
@@ -451,6 +451,9 @@
       "strategy_contract_version": "v6-rc2-shared-rules-next-close",
       "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
       "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
+      "model_governance_fingerprint": "708ce0b7fa2edc93bbfdb6aa6e614c7665fda8b8ddfb0ee4fa5351cc253dd0fc",
+      "incumbent_model_id": "balanced_incumbent_v1",
+      "incumbent_model_fingerprint": "4110cb182eacba341c603a452f67cdcde74d4a6314fbb9a9d2506e5a07a5b123",
       "base_weights": {
         "QQQ": 0.3,
         "SMH": 0.25,
@@ -474,6 +477,7 @@
       },
       "rebalance_policy": "monthly, regime-change, or drift >= 5 percentage points",
       "regime_policy": "base unless QQQ/SMH/SPY trend weakness triggers defensive or severe defensive weights",
+      "model_governance_policy": "Only the frozen incumbent is used in this retrospective portfolio; challengers require paired non-overlapping prospective evidence before any capped blend.",
       "cash_proxy": {
         "cash_proxy_ticker": "SGOV",
         "cash_proxy_status": "OBSERVED_COMPLETE_AFTER_START",
@@ -483,10 +487,10 @@
       },
       "pending_rebalance_at_end": null,
       "last_execution_signal_date": "2026-07-01",
-      "portfolio_contract_version": "v6-rc1-pending-rebalance-cost-model",
-      "portfolio_contract_fingerprint": "e25bfdd28b7542bb1d95b0a711846b7422cb9e406d7de36fd0554fe5aabba336",
+      "portfolio_contract_version": "v6-rc2-governed-incumbent-pending-rebalance",
+      "portfolio_contract_fingerprint": "e21f911c03d9c67f5650d874e7b6ce94d4a00a87a5dc9d48e1d5c0b1db2805f1",
       "split_manifest_fingerprint": "f785a1c7fc63e21c6816be2017220219c619db543ffffdf5353fe70d8caff7ce",
-      "full_model_fingerprint": "21c91c9633f20d7f9651b22969a52e9b4fe966b6957a98546aa9e0d9d3f53b7d"
+      "full_model_fingerprint": "c7b581f73487289f6d6113d894a0149734c88bb76d3548fb8715dc91c906dac6"
     },
     "strategy_metrics": {
       "start_date": "2020-05-29",

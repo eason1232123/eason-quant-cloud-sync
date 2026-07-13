@@ -20,7 +20,11 @@ class ModelArtifactValidationTests(unittest.TestCase):
     def test_fingerprint_drift_fails_before_publication(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             docs = Path(temp_dir)
-            for name in set(validator.METADATA_REPORTS) | set(validator.METADATA_CSV_REPORTS):
+            for name in (
+                set(validator.METADATA_REPORTS)
+                | set(validator.METADATA_CSV_REPORTS)
+                | set(validator.LEDGER_REPORTS)
+            ):
                 shutil.copy2(validator.DOCS / name, docs / name)
             path = docs / "vectorbt_report.json"
             report = json.loads(path.read_text(encoding="utf-8"))

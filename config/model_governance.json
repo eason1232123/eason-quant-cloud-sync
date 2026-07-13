@@ -1,0 +1,69 @@
+{
+  "schema_version": "v6-model-governance-v1",
+  "status": "FROZEN",
+  "frozen_on_date": "2026-07-13",
+  "evidence_policy": {
+    "classification": "PROSPECTIVE",
+    "strictly_after_market_date": "2026-07-10",
+    "evaluation_horizon_bars": 20,
+    "entry_close_offset_bars": 1,
+    "non_overlapping_samples_required": true,
+    "paired_incumbent_challenger_samples_required": true,
+    "retrospective_evidence_may_promote": false
+  },
+  "models": [
+    {
+      "model_id": "balanced_incumbent_v1",
+      "role": "INCUMBENT",
+      "design_basis": "Existing v6 T1 portfolio weights frozen before prospective governance evidence.",
+      "regime_weights": {
+        "base": {"QQQ": 0.30, "SMH": 0.25, "MSFT": 0.20, "SPY": 0.10, "CASH": 0.15},
+        "defensive": {"QQQ": 0.18, "SMH": 0.12, "MSFT": 0.16, "SPY": 0.14, "CASH": 0.40},
+        "severe_defensive": {"QQQ": 0.10, "SMH": 0.08, "MSFT": 0.12, "SPY": 0.10, "CASH": 0.60}
+      }
+    },
+    {
+      "model_id": "lower_concentration_challenger_v1",
+      "role": "CHALLENGER",
+      "design_basis": "Predeclared lower technology and semiconductor concentration with higher SPY and cash weights; not selected from retrospective performance.",
+      "regime_weights": {
+        "base": {"QQQ": 0.22, "SMH": 0.15, "MSFT": 0.15, "SPY": 0.28, "CASH": 0.20},
+        "defensive": {"QQQ": 0.12, "SMH": 0.08, "MSFT": 0.12, "SPY": 0.23, "CASH": 0.45},
+        "severe_defensive": {"QQQ": 0.06, "SMH": 0.04, "MSFT": 0.08, "SPY": 0.17, "CASH": 0.65}
+      }
+    },
+    {
+      "model_id": "capital_preservation_challenger_v1",
+      "role": "CHALLENGER",
+      "design_basis": "Predeclared cash-heavy stress alternative for prospective comparison; not selected from retrospective performance.",
+      "regime_weights": {
+        "base": {"QQQ": 0.20, "SMH": 0.12, "MSFT": 0.13, "SPY": 0.25, "CASH": 0.30},
+        "defensive": {"QQQ": 0.10, "SMH": 0.05, "MSFT": 0.10, "SPY": 0.20, "CASH": 0.55},
+        "severe_defensive": {"QQQ": 0.04, "SMH": 0.02, "MSFT": 0.06, "SPY": 0.13, "CASH": 0.75}
+      }
+    }
+  ],
+  "allocation_gates": {
+    "minimum_paired_samples_for_pilot_blend": 12,
+    "minimum_paired_samples_for_limited_blend": 24,
+    "minimum_paired_samples_for_promotion_review": 48,
+    "pilot_challenger_allocation": 0.10,
+    "limited_challenger_allocation": 0.25,
+    "maximum_challenger_allocation": 0.50,
+    "minimum_mean_excess_return": 0.0,
+    "minimum_paired_win_rate": 0.55,
+    "maximum_candidate_drawdown": -0.15
+  },
+  "rollback_gates": {
+    "recent_paired_sample_window": 6,
+    "maximum_recent_cumulative_excess_loss": -0.03,
+    "maximum_candidate_drawdown": -0.12,
+    "critical_data_failure_rolls_back": true
+  },
+  "execution_policy": {
+    "automatic_order_allowed": false,
+    "maximum_challenger_allocation_without_human_review": 0.50,
+    "final_execution_layer": "IBKR read-only evidence plus explicit human confirmation"
+  },
+  "amendment_policy": "Any candidate, weight, horizon, threshold, cost, or boundary change creates a new governance generation and a new prospective ledger; existing events are immutable."
+}

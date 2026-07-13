@@ -6,11 +6,21 @@ from pathlib import Path
 from typing import Any
 
 from scripts.build_portfolio_backtest import portfolio_contract_payload
+from scripts.build_model_candidate_ledger import (
+    ModelCandidateLedgerError,
+    _read_candidate_ledger,
+)
 from scripts.market_clock import MARKET_TIMEZONE, parse_market_date, parse_timestamp
 from scripts.market_data_contract import (
     DATA_TIMESTAMP_GRANULARITY,
     PRICE_ADJUSTMENT_POLICY,
     PRICE_FREQUENCY,
+)
+from scripts.model_governance import (
+    GOVERNANCE_CONTRACT_VERSION,
+    governance_fingerprint,
+    load_governance_config,
+    model_fingerprint as governed_model_fingerprint,
 )
 from scripts.strategy_contract import (
     RULE_FINGERPRINT,
@@ -39,6 +49,7 @@ MODEL_REPORTS = (
     "market_regime_report.json",
     "overfitting_check.json",
     "forward_validation_status.json",
+    "model_governance.json",
 )
 METADATA_REPORTS = MODEL_REPORTS + (
     "trade_review.json",
@@ -55,6 +66,7 @@ MODEL_CSV_REPORTS = (
     "portfolio_vs_benchmark.csv",
 )
 METADATA_CSV_REPORTS = MODEL_CSV_REPORTS + ("trade_review.csv",)
+LEDGER_REPORTS = ("model_candidate_forward_ledger.jsonl",)
 METADATA_FIELDS = (
     "data_source",
     "market_timezone",
@@ -155,6 +167,11 @@ def validate_model_artifacts(
         portfolio_payload,
         manifest,
     )
+    governance = load_governance_config()
+    governance_fp = governance_fingerprint(governance)
+    expected_model_fingerprints = {
+        model["model_id"]: governed_model_fingerprint(model) for model in governance["models"]
+    }
 
     reports = {name: load_json_object(docs / name) for name in METADATA_REPORTS}
     for name, report in reports.items():
@@ -178,6 +195,7 @@ def validate_model_artifacts(
         "portfolio_contract_fingerprint": portfolio_fingerprint,
         "split_manifest_fingerprint": split_fingerprint,
         "full_model_fingerprint": model_fingerprint,
+        "model_governance_fingerprint": governance_fp,
     }
     for name in portfolio_bound_reports:
         actual = {field: reports[name].get(field) for field in expected_portfolio}
@@ -189,6 +207,37 @@ def validate_model_artifacts(
         raise AssertionError("forward_validation_status.json split fingerprint mismatch")
     if forward.get("automatic_order_allowed") is not False:
         raise AssertionError("forward validation must never allow automatic orders")
+
+    governance_report = reports["model_governance.json"]
+    if governance_report.get("model_governance_fingerprint") != governance_fp:
+        raise AssertionError("model_governance.json governance fingerprint mismatch")
+    if governance_report.get("model_governance_contract_version") != GOVERNANCE_CONTRACT_VERSION:
+        raise AssertionError("model_governance.json governance contract version mismatch")
+    if governance_report.get("model_fingerprints") != expected_model_fingerprints:
+        raise AssertionError("model_governance.json candidate fingerprints mismatch")
+    if governance_report.get("retrospective_evidence_may_promote") is not False:
+        raise AssertionError("retrospective evidence must not promote a governed model")
+    if governance_report.get("automatic_order_allowed") is not False:
+        raise AssertionError("model governance must never allow automatic orders")
+    if governance_report.get("contains_private_account_data") is not False:
+        raise AssertionError("model governance report must not contain private account data")
+    try:
+        candidate_events = _read_candidate_ledger(docs / LEDGER_REPORTS[0])
+    except ModelCandidateLedgerError as exc:
+        raise AssertionError(f"invalid model candidate ledger: {exc}") from exc
+    reported_counts = governance_report.get("ledger_counts")
+    if not isinstance(reported_counts, dict):
+        raise AssertionError("model_governance.json ledger_counts is missing")
+    actual_prediction_count = sum(
+        event["event_type"] == "MODEL_PREDICTION" for event in candidate_events
+    )
+    actual_outcome_count = sum(
+        event["event_type"] == "MODEL_OUTCOME" for event in candidate_events
+    )
+    if reported_counts.get("prediction_events") != actual_prediction_count:
+        raise AssertionError("model candidate prediction count mismatch")
+    if reported_counts.get("outcome_events") != actual_outcome_count:
+        raise AssertionError("model candidate outcome count mismatch")
 
     csv_rows = {
         name: validate_csv_contract(docs / name)
@@ -207,6 +256,8 @@ def validate_model_artifacts(
         "split_manifest_fingerprint": split_fingerprint,
         "portfolio_contract_fingerprint": portfolio_fingerprint,
         "full_model_fingerprint": model_fingerprint,
+        "model_governance_fingerprint": governance_fp,
+        "model_candidate_event_count": len(candidate_events),
     }
 
 

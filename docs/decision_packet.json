@@ -1,6 +1,6 @@
 {
   "schema_version": "decision-packet-v5.0",
-  "generated_at_utc": "2026-07-12T11:53:30.014666+00:00",
+  "generated_at_utc": "2026-07-13T04:21:07.955036+00:00",
   "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
   "roles": {
     "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",
