@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -7,58 +8,77 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-import vectorbt as vbt
 
 from config import TICKERS
-from scripts.market_data_contract import read_checked_daily_csv
+from scripts.market_clock import MARKET_TIMEZONE, latest_completed_us_market_weekday
+from scripts.market_data_contract import (
+    DATA_TIMESTAMP_GRANULARITY,
+    PRICE_ADJUSTMENT_POLICY,
+    PRICE_FREQUENCY,
+    read_checked_daily_csv,
+)
+from scripts.strategy_contract import (
+    COMMISSION_RATE,
+    ENTRY_RULE_SPECS,
+    EXECUTION_IMPACT_RATE,
+    FORWARD_HORIZONS,
+    MIN_EFFECTIVE_SAMPLE,
+    RISK_RULE_SPECS,
+    RULE_FINGERPRINT,
+    STRATEGY_CONTRACT_VERSION,
+    STRATEGY_FINGERPRINT,
+    benchmark_for_ticker,
+    execution_cost_assumptions,
+    exit_signals,
+    net_return_after_round_trip_costs,
+    next_close_forward_mae,
+    next_close_forward_return,
+    non_overlapping_signal_mask,
+    risk_signals,
+    rsi as strategy_rsi,
+    rule_signals,
+    shift_for_execution,
+)
 
 OUT = Path("docs")
 OUT.mkdir(exist_ok=True)
 
+vbt: Any | None = None
+
 INITIAL_CASH = 10000.0
-FEES = 0.0005
-SLIPPAGE = 0.0005
-MIN_SAMPLE = 20
-HORIZONS = [5, 10, 20, 60]
-EXECUTION_SHIFT_DAYS = 1
+MIN_SAMPLE = MIN_EFFECTIVE_SAMPLE
+HORIZONS = list(FORWARD_HORIZONS)
 
 ENTRY_RULES = {
-    "ma20_reclaim_bullish": {
-        "entry_col": "entry_ma20_reclaim_bullish",
-        "exit_col": "exit_close_below_ma20",
-        "description": "Price reclaims the 20-day moving average while above the 50-day average.",
-    },
-    "ma50_reclaim_bullish": {
-        "entry_col": "entry_ma50_reclaim_bullish",
-        "exit_col": "exit_close_below_ma50",
-        "description": "Price reclaims the 50-day moving average while above the 200-day average.",
-    },
-    "momentum_leader": {
-        "entry_col": "entry_momentum_leader",
-        "exit_col": "exit_close_below_ma20",
-        "description": "Above 20/50/200-day averages with positive 20-day momentum and non-overheated RSI.",
-    },
-    "pullback_reclaim_5dma": {
-        "entry_col": "entry_pullback_reclaim_5dma",
-        "exit_col": "exit_close_below_ma20",
-        "description": "Short pullback followed by a 5-day moving-average reclaim.",
-    },
+    name: {
+        "entry_col": f"entry_{name}",
+        "exit_col": f"exit_{spec['exit_rule']}",
+        "description": spec["description"],
+    }
+    for name, spec in ENTRY_RULE_SPECS.items()
 }
 
 RISK_RULES = {
-    "risk_break_ma20": {
-        "signal_col": "risk_break_ma20",
-        "description": "Price breaks below the 20-day moving average after being above it.",
-    },
-    "risk_break_ma50": {
-        "signal_col": "risk_break_ma50",
-        "description": "Price breaks below the 50-day moving average after being above it.",
-    },
-    "risk_failed_rebound": {
-        "signal_col": "risk_failed_rebound",
-        "description": "Failed rebound: price loses the 5-day average and undercuts the prior 10-day low.",
-    },
+    name: {
+        "signal_col": f"risk_{name}",
+        "description": spec["description"],
+    }
+    for name, spec in RISK_RULE_SPECS.items()
 }
+
+
+def vectorbt_module() -> Any:
+    global vbt
+    if vbt is None:
+        vbt = importlib.import_module("vectorbt")
+    return vbt
+
+
+def configured_cost_assumptions() -> dict[str, Any]:
+    return {
+        **execution_cost_assumptions(),
+        "assumption_source": "configured_not_observed",
+    }
 
 
 def clean_float(value: Any, digits: int = 4) -> Any:
@@ -114,62 +134,56 @@ def load_price(ticker: str) -> pd.DataFrame:
     low_col = "low_price" if "low_price" in df.columns else "adjLow" if "adjLow" in df.columns else "low"
 
     out = df[["date", price_col]].rename(columns={price_col: "close"}).copy()
-    out["low"] = pd.to_numeric(df[low_col], errors="coerce") if low_col in df.columns else pd.to_numeric(out["close"], errors="coerce")
+    if low_col not in df.columns:
+        raise ValueError(f"{ticker} price cache is missing a low-price field required for MAE")
+    out["low"] = pd.to_numeric(df[low_col], errors="coerce")
     out["close"] = pd.to_numeric(out["close"], errors="coerce")
-    out = out.dropna(subset=["date", "close"]).sort_values("date").drop_duplicates("date", keep="last")
-    return out.reset_index(drop=True)
+    if out["date"].duplicated().any():
+        raise ValueError(f"{ticker} price cache contains duplicate market dates")
+    invalid_close = out["close"].isna() | ~np.isfinite(out["close"]) | (out["close"] <= 0)
+    invalid_low = out["low"].isna() | ~np.isfinite(out["low"]) | (out["low"] <= 0)
+    if invalid_close.any() or invalid_low.any():
+        raise ValueError(f"{ticker} price cache contains invalid close or low prices")
+    out = out.sort_values("date").reset_index(drop=True)
+    out.attrs["price_basis"] = "adjusted" if "adjClose" in df.columns else "unadjusted"
+    return out
 
 
-def rsi(series: pd.Series, period: int = 14) -> pd.Series:
-    delta = series.diff()
-    gain = delta.clip(lower=0)
-    loss = -delta.clip(upper=0)
-    avg_gain = gain.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
-    avg_loss = loss.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
-    rs = avg_gain / avg_loss.replace(0, np.nan)
-    return 100 - (100 / (1 + rs))
+def relative_20d_series(data: pd.DataFrame, benchmark: pd.DataFrame | None) -> pd.Series:
+    relative = pd.Series(np.nan, index=data.index, dtype=float)
+    if benchmark is None or benchmark.empty:
+        return relative
+
+    aligned = data[["date", "close"]].merge(
+        benchmark[["date", "close"]].rename(columns={"close": "benchmark_close"}),
+        on="date",
+        how="left",
+        validate="one_to_one",
+    )
+    ticker_return = aligned["close"].pct_change(20, fill_method=None)
+    benchmark_return = aligned["benchmark_close"].pct_change(20, fill_method=None)
+    return pd.Series((ticker_return - benchmark_return).to_numpy(), index=data.index)
 
 
-def add_signals(df: pd.DataFrame) -> pd.DataFrame:
+def add_signals(df: pd.DataFrame, benchmark: pd.DataFrame | None = None) -> pd.DataFrame:
     d = df.copy().sort_values("date").reset_index(drop=True)
     d["ma5"] = d["close"].rolling(5).mean()
     d["ma20"] = d["close"].rolling(20).mean()
     d["ma50"] = d["close"].rolling(50).mean()
     d["ma200"] = d["close"].rolling(200).mean()
-    d["ret_5d"] = d["close"].pct_change(5)
-    d["ret_20d"] = d["close"].pct_change(20)
-    d["rsi14"] = rsi(d["close"])
+    d["ret_5d"] = d["close"].pct_change(5, fill_method=None)
+    d["ret_20d"] = d["close"].pct_change(20, fill_method=None)
+    d["rsi14"] = strategy_rsi(d["close"])
     d["ma20_slope_10d"] = d["ma20"] / d["ma20"].shift(10) - 1
+    d["relative_20d"] = relative_20d_series(d, benchmark)
 
-    d["entry_ma20_reclaim_bullish"] = (
-        (d["close"].shift(1) <= d["ma20"].shift(1))
-        & (d["close"] > d["ma20"])
-        & (d["close"] > d["ma50"])
-        & (d["ma20_slope_10d"] > -0.01)
-    )
-    d["entry_ma50_reclaim_bullish"] = (
-        (d["close"].shift(1) <= d["ma50"].shift(1))
-        & (d["close"] > d["ma50"])
-        & (d["close"] > d["ma200"])
-    )
-    d["entry_momentum_leader"] = (
-        (d["close"] > d["ma20"])
-        & (d["ma20"] > d["ma50"])
-        & (d["close"] > d["ma200"])
-        & (d["ret_20d"] > 0.05)
-        & (d["rsi14"] < 78)
-    )
-    d["entry_pullback_reclaim_5dma"] = (d["ret_5d"] <= -0.04) & (d["close"] > d["ma5"])
-
-    d["exit_close_below_ma20"] = d["close"] < d["ma20"]
-    d["exit_close_below_ma50"] = d["close"] < d["ma50"]
-    d["risk_break_ma20"] = (d["close"].shift(1) >= d["ma20"].shift(1)) & (d["close"] < d["ma20"])
-    d["risk_break_ma50"] = (d["close"].shift(1) >= d["ma50"].shift(1)) & (d["close"] < d["ma50"])
-    d["risk_failed_rebound"] = (d["close"] < d["ma5"]) & (d["close"] < d["close"].rolling(10).min().shift(1))
-
-    bool_cols = [c for c in d.columns if c.startswith(("entry_", "exit_", "risk_"))]
-    for col in bool_cols:
-        d[col] = d[col].fillna(False).astype(bool)
+    for name, signal in rule_signals(d["close"], d["relative_20d"]).items():
+        if name in ENTRY_RULE_SPECS:
+            d[f"entry_{name}"] = signal
+    for name, signal in exit_signals(d["close"]).items():
+        d[f"exit_{name}"] = signal
+    for name, signal in risk_signals(d["close"]).items():
+        d[f"risk_{name}"] = signal
     return d
 
 
@@ -177,7 +191,7 @@ def metric_summary(value: pd.Series) -> dict[str, Any]:
     v = pd.to_numeric(value, errors="coerce").dropna()
     if len(v) < 3:
         return {}
-    rets = v.pct_change().dropna()
+    rets = v.pct_change(fill_method=None).dropna()
     total_return = v.iloc[-1] / v.iloc[0] - 1
     years = len(rets) / 252
     cagr = (v.iloc[-1] / v.iloc[0]) ** (1 / years) - 1 if years > 0 else np.nan
@@ -195,36 +209,20 @@ def metric_summary(value: pd.Series) -> dict[str, Any]:
 
 
 def shift_execution(signal: pd.Series) -> pd.Series:
-    return signal.shift(EXECUTION_SHIFT_DAYS).fillna(False).astype(bool)
+    return shift_for_execution(signal)
 
 
-def trade_returns(close: pd.Series, entries: pd.Series, exits: pd.Series) -> list[float]:
-    in_pos = False
-    entry_price = None
-    returns: list[float] = []
-    for price, entry, exit_ in zip(close, entries, exits):
-        if pd.isna(price):
-            continue
-        if in_pos and bool(exit_):
-            returns.append(float(price) / float(entry_price) - 1)
-            in_pos = False
-            entry_price = None
-        if not in_pos and bool(entry):
-            in_pos = True
-            entry_price = float(price)
-    if in_pos and entry_price:
-        returns.append(float(close.iloc[-1]) / float(entry_price) - 1)
-    return returns
-
-
-def latest_position(entries: pd.Series, exits: pd.Series) -> bool:
-    in_pos = False
-    for entry, exit_ in zip(entries, exits):
-        if bool(exit_):
-            in_pos = False
-        if bool(entry):
-            in_pos = True
-    return in_pos
+def engine_trade_statistics(portfolio: Any) -> tuple[list[float], int, int]:
+    closed = portfolio.trades.closed
+    opened = portfolio.trades.open
+    closed_count = int(np.asarray(closed.count()).reshape(-1)[0])
+    open_count = int(np.asarray(opened.count()).reshape(-1)[0])
+    returns = np.asarray(closed.returns.values, dtype=float).reshape(-1)
+    if len(returns) != closed_count:
+        raise ValueError("vectorbt closed-trade count does not match closed return records")
+    if not np.isfinite(returns).all():
+        raise ValueError("vectorbt returned non-finite closed-trade returns")
+    return returns.tolist(), closed_count, open_count
 
 
 def portfolio_value_series(pf: Any, index: pd.Index) -> pd.Series:
@@ -245,39 +243,67 @@ def run_vectorbt_strategy(ticker: str, d: pd.DataFrame, strategy_name: str, spec
     raw_exits = data[exit_col].astype(bool)
     entries = shift_execution(raw_entries)
     exits = shift_execution(raw_exits)
+    raw_signal_count = int(raw_entries.sum())
 
     row: dict[str, Any] = {
         "ticker": ticker,
         "strategy": strategy_name,
         "engine": "vectorbt",
-        "execution_assumption": "EOD signal, next-bar execution: entries/exits shifted 1 trading day to avoid same-close look-ahead.",
+        "strategy_contract": STRATEGY_CONTRACT_VERSION,
+        "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
+        "rule_fingerprint": RULE_FINGERPRINT,
+        "strategy_fingerprint": STRATEGY_FINGERPRINT,
+        "cost_assumption_source": "configured_not_observed",
+        "execution_assumption": "Signal on trading bar t; entry/exit can execute only at trading bar t+1 close.",
         "tested_entry_rule": entry_col.replace("entry_", ""),
         "tested_risk_rule": exit_col.replace("exit_", ""),
-        "sample_count": int(raw_entries.sum()),
-        "executed_entry_count": int(entries.sum()),
+        "raw_signal_count": raw_signal_count,
+        "effective_samples": 0,
+        "closed_trade_count": 0,
+        "sample_count": 0,
+        "trade_count": 0,
+        "executed_entry_count": 0,
+        "open_position_count": 0,
         "lookback_start": data["date"].min().date().isoformat() if not data.empty else None,
         "lookback_end": data["date"].max().date().isoformat() if not data.empty else None,
-        "forward_horizon": "signal_to_shifted_exit_or_latest_close",
-        "valid": bool(int(raw_entries.sum()) >= MIN_SAMPLE and len(data) >= 252),
+        "forward_horizon": "next_close_to_next_close_after_exit_signal",
+        "valid": False,
         "min_sample_required": MIN_SAMPLE,
         "description": spec["description"],
     }
-    if raw_entries.sum() == 0 or len(data) < 60:
+    if raw_signal_count == 0 or len(data) < 60:
         row["reason"] = "not enough signals or history"
         return row
 
     close = data["close"]
-    pf = vbt.Portfolio.from_signals(close=close, entries=entries, exits=exits, init_cash=INITIAL_CASH, fees=FEES, slippage=SLIPPAGE, freq="1D")
+    pf = vectorbt_module().Portfolio.from_signals(
+        close=close,
+        entries=entries,
+        exits=exits,
+        init_cash=INITIAL_CASH,
+        fees=COMMISSION_RATE,
+        slippage=EXECUTION_IMPACT_RATE,
+        upon_long_conflict="exit",
+        freq="1D",
+    )
     value = portfolio_value_series(pf, data.index)
     row.update(metric_summary(value))
 
     buy_hold_return = close.iloc[-1] / close.iloc[0] - 1
-    returns = trade_returns(close, entries, exits)
+    returns, closed_trade_count, open_position_count = engine_trade_statistics(pf)
+    executed_entry_count = closed_trade_count + open_position_count
+    strategy_total_return = row.get("strategy_total_return")
     row.update(
         {
+            "sample_count": int(closed_trade_count),
+            "effective_samples": int(closed_trade_count),
+            "closed_trade_count": int(closed_trade_count),
+            "open_position_count": int(open_position_count),
+            "executed_entry_count": int(executed_entry_count),
+            "valid": bool(closed_trade_count >= MIN_SAMPLE and len(data) >= 252),
             "buy_hold_return_same_window": clean_float(buy_hold_return),
-            "alpha_vs_buy_hold": clean_float(row.get("strategy_total_return", 0) - buy_hold_return if row.get("strategy_total_return") is not None else None),
-            "trade_count": int(len(returns)),
+            "alpha_vs_buy_hold": clean_float(strategy_total_return - buy_hold_return) if strategy_total_return is not None else None,
+            "trade_count": int(closed_trade_count),
             "trade_win_rate": clean_float(np.mean([r > 0 for r in returns]) if returns else None),
             "avg_trade_return": clean_float(np.mean(returns) if returns else None),
             "median_trade_return": clean_float(np.median(returns) if returns else None),
@@ -285,7 +311,7 @@ def run_vectorbt_strategy(ticker: str, d: pd.DataFrame, strategy_name: str, spec
             "best_trade_return": clean_float(np.max(returns) if returns else None),
             "latest_entry_signal_active": bool(raw_entries.iloc[-1]),
             "latest_exit_signal_active": bool(raw_exits.iloc[-1]),
-            "latest_position_active": bool(latest_position(entries, exits)),
+            "latest_position_active": bool(open_position_count > 0),
         }
     )
     return row
@@ -295,55 +321,91 @@ def attach_benchmark(data: pd.DataFrame, benchmark: pd.DataFrame | None, horizon
     if benchmark is None or benchmark.empty:
         return pd.Series([np.nan] * len(data), index=data.index)
     b = benchmark[["date", "close"]].copy().rename(columns={"close": "bench_close"})
-    b[f"bench_fwd_{horizon}d"] = b["bench_close"].shift(-horizon) / b["bench_close"] - 1
+    b[f"bench_fwd_{horizon}d"] = next_close_forward_return(b["bench_close"], horizon)
     merged = data[["date"]].merge(b[["date", f"bench_fwd_{horizon}d"]], on="date", how="left")
     return pd.Series(merged[f"bench_fwd_{horizon}d"].to_numpy(), index=data.index)
 
 
 def future_mae(data: pd.DataFrame, horizon: int) -> pd.Series:
-    # For row i, this gives min low over rows i+1 ... i+horizon.
-    return data["low"].rolling(horizon).min().shift(-horizon) / data["close"] - 1
+    return next_close_forward_mae(data["close"], data["low"], horizon)
 
 
-def forward_evidence_row(ticker: str, d: pd.DataFrame, rule_name: str, rule_type: str, signal_col: str, horizon: int, benchmark: pd.DataFrame | None, description: str) -> dict[str, Any]:
+def forward_evidence_row(
+    ticker: str,
+    d: pd.DataFrame,
+    rule_name: str,
+    rule_type: str,
+    signal_col: str,
+    horizon: int,
+    benchmark: pd.DataFrame | None,
+    description: str,
+    benchmark_name: str = "QQQ",
+) -> dict[str, Any]:
     data = d.copy()
-    data[f"fwd_{horizon}d"] = data["close"].shift(-horizon) / data["close"] - 1
+    raw_signal = data[signal_col].fillna(False).astype(bool)
+    gross_col = f"gross_fwd_{horizon}d"
+    net_col = f"fwd_{horizon}d"
+    bench_gross_col = f"bench_gross_fwd_{horizon}d"
+    bench_net_col = f"bench_fwd_{horizon}d"
+    data[gross_col] = next_close_forward_return(data["close"], horizon)
+    data[net_col] = net_return_after_round_trip_costs(data[gross_col])
     data[f"mae_{horizon}d"] = future_mae(data, horizon)
-    data[f"bench_fwd_{horizon}d"] = attach_benchmark(data, benchmark, horizon)
-    sig = data[data[signal_col]].dropna(subset=[f"fwd_{horizon}d"])
+    data[bench_gross_col] = attach_benchmark(data, benchmark, horizon)
+    data[bench_net_col] = net_return_after_round_trip_costs(data[bench_gross_col])
+    required_results = [gross_col, net_col, f"mae_{horizon}d", bench_gross_col, bench_net_col]
+    completed_signal = raw_signal & data[required_results].notna().all(axis=1)
+    completed_signal_count = int(completed_signal.sum())
+    effective_mask = non_overlapping_signal_mask(completed_signal, horizon)
+    sig = data[effective_mask]
+    effective_samples = int(len(sig))
 
     row: dict[str, Any] = {
         "ticker": ticker,
         "rule": rule_name,
         "rule_type": rule_type,
+        "strategy_contract": STRATEGY_CONTRACT_VERSION,
+        "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
+        "rule_fingerprint": RULE_FINGERPRINT,
+        "strategy_fingerprint": STRATEGY_FINGERPRINT,
+        "cost_assumption_source": "configured_not_observed",
         "tested_rule": signal_col.replace("entry_", "").replace("risk_", ""),
         "horizon_days": horizon,
-        "sample_count": int(len(sig)),
-        "valid": bool(len(sig) >= MIN_SAMPLE),
+        "raw_signal_count": int(raw_signal.sum()),
+        "completed_signal_count": completed_signal_count,
+        "effective_samples": effective_samples,
+        "closed_trade_count": 0,
+        "sample_count": effective_samples,
+        "valid": bool(effective_samples >= MIN_SAMPLE),
         "min_sample_required": MIN_SAMPLE,
         "lookback_start": data["date"].min().date().isoformat() if not data.empty else None,
         "lookback_end": data["date"].max().date().isoformat() if not data.empty else None,
-        "measurement_assumption": "Forward evidence measures close-to-close outcome after the signal day; executable vectorbt strategy uses next-bar shifted signals.",
+        "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
+        "benchmark_data_required_for_completed_sample": True,
         "description": description,
     }
     if sig.empty:
         row["reason"] = "no completed samples"
         return row
 
-    fwd = sig[f"fwd_{horizon}d"]
+    gross_fwd = sig[gross_col]
+    fwd = sig[net_col]
     mae = sig[f"mae_{horizon}d"]
-    bench = sig[f"bench_fwd_{horizon}d"]
+    gross_bench = sig[bench_gross_col]
+    bench = sig[bench_net_col]
     row.update(
         {
             "win_rate": clean_float((fwd > 0).mean()),
             "avoidance_rate": clean_float((fwd < 0).mean()) if rule_type == "risk" else None,
+            "avg_gross_forward_return": clean_float(gross_fwd.mean()),
             "avg_forward_return": clean_float(fwd.mean()),
             "median_forward_return": clean_float(fwd.median()),
             "worst_forward_return": clean_float(fwd.min()),
             "best_forward_return": clean_float(fwd.max()),
             "avg_mae": clean_float(mae.mean()),
             "worst_mae": clean_float(mae.min()),
-            "benchmark": "QQQ",
+            "benchmark": benchmark_name,
+            "paired_benchmark_sample_count": int(len(sig)),
+            "avg_gross_benchmark_same_dates": clean_float(gross_bench.mean()) if gross_bench.notna().any() else None,
             "avg_benchmark_same_dates": clean_float(bench.mean()) if bench.notna().any() else None,
             "alpha_vs_benchmark_same_dates": clean_float(fwd.mean() - bench.mean()) if bench.notna().any() else None,
         }
@@ -351,16 +413,34 @@ def forward_evidence_row(ticker: str, d: pd.DataFrame, rule_name: str, rule_type
     return row
 
 
-def evidence_score(row: dict[str, Any]) -> float:
-    sample = row.get("sample_count") or 0
+def numeric_metric(row: dict[str, Any], field: str) -> float | None:
+    value = row.get(field)
+    if value is None:
+        return None
+    try:
+        number = float(value)
+    except (TypeError, ValueError):
+        return None
+    return number if np.isfinite(number) else None
+
+
+def evidence_score(row: dict[str, Any]) -> float | None:
+    sample = numeric_metric(row, "sample_count")
+    if sample is None:
+        return None
     valid_bonus = 20 if row.get("valid") else 0
     if row.get("rule_type") == "risk":
-        avoidance = row.get("avoidance_rate") or 0
-        worst = abs(row.get("worst_forward_return") or 0)
+        avoidance = numeric_metric(row, "avoidance_rate")
+        worst_return = numeric_metric(row, "worst_forward_return")
+        if avoidance is None or worst_return is None:
+            return None
+        worst = abs(worst_return)
         return round(min(100, valid_bonus + min(sample, 80) / 80 * 30 + float(avoidance) * 35 + min(worst, 0.25) / 0.25 * 15), 1)
-    win = row.get("win_rate") or 0
-    median = row.get("median_forward_return") or 0
-    alpha = row.get("alpha_vs_benchmark_same_dates") or 0
+    win = numeric_metric(row, "win_rate")
+    median = numeric_metric(row, "median_forward_return")
+    alpha = numeric_metric(row, "alpha_vs_benchmark_same_dates")
+    if win is None or median is None or alpha is None:
+        return None
     return round(min(100, valid_bonus + min(sample, 80) / 80 * 30 + max(0, float(win) - 0.5) / 0.3 * 25 + max(0, float(median)) / 0.08 * 15 + max(0, float(alpha)) / 0.08 * 10), 1)
 
 
@@ -373,32 +453,83 @@ def ensure_columns(df: pd.DataFrame, columns: list[str]) -> pd.DataFrame:
 
 
 def main() -> None:
-    price_map: dict[str, pd.DataFrame] = {}
+    engine = vectorbt_module()
+    generated_at_utc = datetime.now(timezone.utc).isoformat()
+    expected_market_date = latest_completed_us_market_weekday().isoformat()
+    raw_price_map: dict[str, pd.DataFrame] = {}
     for ticker in TICKERS:
         df = load_price(ticker)
         if not df.empty and len(df) >= 60:
-            price_map[ticker] = add_signals(df)
+            raw_price_map[ticker] = df
 
-    benchmark = price_map.get("QQQ")
+    missing_tickers = sorted(set(TICKERS) - set(raw_price_map))
+    data_timestamp_by_ticker = {
+        ticker: frame["date"].max().date().isoformat()
+        for ticker, frame in sorted(raw_price_map.items())
+    }
+    price_basis_by_ticker = {
+        ticker: str(frame.attrs.get("price_basis") or "unknown")
+        for ticker, frame in sorted(raw_price_map.items())
+    }
+    stale_tickers = sorted(
+        ticker
+        for ticker, timestamp in data_timestamp_by_ticker.items()
+        if timestamp < expected_market_date
+    )
+
+    price_map: dict[str, pd.DataFrame] = {}
+    errors: dict[str, str] = {}
+    for ticker, df in raw_price_map.items():
+        benchmark_name = benchmark_for_ticker(ticker)
+        if benchmark_name not in raw_price_map:
+            errors[f"{ticker}/benchmark"] = f"required benchmark {benchmark_name} is missing"
+        price_map[ticker] = add_signals(df, raw_price_map.get(benchmark_name))
+
     strategy_rows: list[dict[str, Any]] = []
     evidence_rows: list[dict[str, Any]] = []
     latest_active: dict[str, dict[str, Any]] = {}
-    errors: dict[str, str] = {}
-
     for ticker, d in price_map.items():
         try:
+            benchmark_name = benchmark_for_ticker(ticker)
+            benchmark = raw_price_map.get(benchmark_name)
             for strategy_name, spec in ENTRY_RULES.items():
                 strategy_rows.append(run_vectorbt_strategy(ticker, d, strategy_name, spec))
                 for horizon in HORIZONS:
-                    evidence_rows.append(forward_evidence_row(ticker, d, strategy_name, "entry", spec["entry_col"], horizon, benchmark, spec["description"]))
+                    evidence_rows.append(
+                        forward_evidence_row(
+                            ticker,
+                            d,
+                            strategy_name,
+                            "entry",
+                            spec["entry_col"],
+                            horizon,
+                            benchmark,
+                            spec["description"],
+                            benchmark_name,
+                        )
+                    )
             for risk_name, spec in RISK_RULES.items():
                 for horizon in HORIZONS:
-                    evidence_rows.append(forward_evidence_row(ticker, d, risk_name, "risk", spec["signal_col"], horizon, benchmark, spec["description"]))
+                    evidence_rows.append(
+                        forward_evidence_row(
+                            ticker,
+                            d,
+                            risk_name,
+                            "risk",
+                            spec["signal_col"],
+                            horizon,
+                            benchmark,
+                            spec["description"],
+                            benchmark_name,
+                        )
+                    )
 
             latest = d.iloc[-1]
             latest_active[ticker] = {
                 "latest_date": latest["date"].date().isoformat(),
                 "latest_price": clean_float(latest["close"]),
+                "data_fresh": latest["date"].date().isoformat() == expected_market_date,
+                "decision_eligible": latest["date"].date().isoformat() == expected_market_date,
                 "entries": {name: bool(latest[spec["entry_col"]]) for name, spec in ENTRY_RULES.items()},
                 "risks": {name: bool(latest[spec["signal_col"]]) for name, spec in RISK_RULES.items()},
             }
@@ -407,6 +538,20 @@ def main() -> None:
 
     strategy_df = pd.DataFrame(strategy_rows)
     evidence_df = pd.DataFrame(evidence_rows)
+
+    row_metadata = {
+        "data_source": "Tiingo daily local CSV cache",
+        "market_timezone": MARKET_TIMEZONE,
+        "report_generated_at_utc": generated_at_utc,
+        "price_frequency": PRICE_FREQUENCY,
+        "price_adjustment_policy": PRICE_ADJUSTMENT_POLICY,
+    }
+    for frame in (strategy_df, evidence_df):
+        if not frame.empty:
+            for field, value in row_metadata.items():
+                frame[field] = value
+            frame["data_timestamp"] = frame["ticker"].map(data_timestamp_by_ticker)
+            frame["price_basis"] = frame["ticker"].map(price_basis_by_ticker)
 
     if not strategy_df.empty:
         strategy_df = ensure_columns(strategy_df, ["valid", "alpha_vs_buy_hold", "strategy_sharpe", "sample_count"])
@@ -426,24 +571,61 @@ def main() -> None:
         top_entry_evidence = evidence_df[(evidence_df["rule_type"] == "entry") & (evidence_df["horizon_days"] == 20)].head(20).to_dict("records")
         top_risk_evidence = evidence_df[(evidence_df["rule_type"] == "risk") & (evidence_df["horizon_days"] == 20)].head(20).to_dict("records")
 
+    expected_strategy_rows = len(price_map) * len(ENTRY_RULES)
+    expected_evidence_rows = len(price_map) * (len(ENTRY_RULES) + len(RISK_RULES)) * len(HORIZONS)
+    available = bool(
+        not missing_tickers
+        and not errors
+        and len(strategy_df) == expected_strategy_rows
+        and len(evidence_df) == expected_evidence_rows
+    )
     report = {
-        "available": True,
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "vectorbt-validation-layer-v1.2-next-bar-execution",
+        "available": available,
+        "generated_at_utc": generated_at_utc,
+        "version": "vectorbt-validation-layer-v2.0-shared-contract",
         "engine": "vectorbt",
-        "vectorbt_version": getattr(vbt, "__version__", None),
-        "execution_assumption": "Executable strategy backtests shift entry/exit signals by 1 trading day to avoid same-close look-ahead. Forward evidence remains signal-close outcome measurement.",
-        "data_source": "Local Tiingo CSV cache in docs generated by scripts/build_report_safe.py",
+        "vectorbt_version": getattr(engine, "__version__", None),
+        "strategy_contract": STRATEGY_CONTRACT_VERSION,
+        "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
+        "rule_fingerprint": RULE_FINGERPRINT,
+        "strategy_fingerprint": STRATEGY_FINGERPRINT,
+        "execution_assumption": "Signals on trading bar t execute only at trading bar t+1 close. Forward evidence uses the same next-close basis and chronological non-overlapping samples.",
+        "data_source": "Tiingo daily local CSV cache",
+        "market_timezone": MARKET_TIMEZONE,
+        "data_timestamp": max(data_timestamp_by_ticker.values()) if data_timestamp_by_ticker else None,
+        "data_timestamp_granularity": DATA_TIMESTAMP_GRANULARITY,
+        "data_timestamp_status": "AVAILABLE" if data_timestamp_by_ticker else "MISSING",
+        "price_frequency": PRICE_FREQUENCY,
+        "price_adjustment_policy": PRICE_ADJUSTMENT_POLICY,
+        "data_quality": {
+            "expected_latest_market_date": expected_market_date,
+            "data_timestamp_by_ticker": data_timestamp_by_ticker,
+            "price_basis_by_ticker": price_basis_by_ticker,
+            "missing_tickers": missing_tickers,
+            "stale_tickers": stale_tickers,
+            "current_signal_status": "COMPLETE" if not stale_tickers and not missing_tickers else "PARTIAL_STALE_OR_MISSING",
+            "calendar_policy": "each_ticker_native_valid_dates_no_forward_fill",
+        },
+        "bias_controls": {
+            "look_ahead_bias": "CONTROLLED_BY_NEXT_BAR_EXECUTION",
+            "overlapping_forward_samples": "CONTROLLED_BY_CHRONOLOGICAL_NON_OVERLAP",
+            "survivorship_bias": "KNOWN_UNCONTROLLED_CURRENT_CONFIGURED_UNIVERSE",
+            "selection_bias": "KNOWN_UNCONTROLLED_MANUALLY_CONFIGURED_UNIVERSE",
+        },
         "loaded_ticker_count": len(price_map),
         "configured_ticker_count": len(TICKERS),
         "initial_cash": INITIAL_CASH,
-        "fees": FEES,
-        "slippage": SLIPPAGE,
+        "fees": COMMISSION_RATE,
+        "slippage": EXECUTION_IMPACT_RATE,
+        "cost_assumptions": configured_cost_assumptions(),
         "minimum_valid_samples": MIN_SAMPLE,
         "horizons_days": HORIZONS,
         "required_evidence_fields": {
             "tested_risk_rule": True,
             "sample_count": True,
+            "raw_signal_count": True,
+            "effective_samples": True,
+            "closed_trade_count": True,
             "lookback_window": True,
             "forward_horizon": True,
             "win_rate_or_avoidance_rate": True,
@@ -475,6 +657,12 @@ def main() -> None:
         json.dump(json_safe(report), f, indent=2, ensure_ascii=False, allow_nan=False)
 
     print("Saved docs/vectorbt_report.json, docs/vectorbt_strategy_summary.csv, docs/vectorbt_forward_evidence.csv")
+    if not available:
+        raise SystemExit(
+            f"Vectorbt evidence incomplete: missing={missing_tickers}, errors={errors}, "
+            f"strategy_rows={len(strategy_df)}/{expected_strategy_rows}, "
+            f"evidence_rows={len(evidence_df)}/{expected_evidence_rows}"
+        )
 
 
 if __name__ == "__main__":

@@ -1,9 +1,29 @@
 {
-  "generated_at_utc": "2026-07-11T01:11:13.548040+00:00",
-  "version": "overfitting-check-v2.5",
-  "purpose": "Flag whether the model only works in one historical window or remains acceptable across multiple periods.",
-  "verdict": "PASS_STABILITY_CHECK",
+  "generated_at_utc": "2026-07-12T11:58:23.776726+00:00",
+  "data_source": "Tiingo daily local CSV cache",
+  "market_timezone": "America/New_York",
+  "data_timestamp": "2026-07-10",
+  "data_timestamp_granularity": "market_date",
+  "data_timestamp_status": "AVAILABLE",
+  "price_frequency": "end_of_day_daily",
+  "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+  "strategy_contract_version": "v6-rc2-shared-rules-next-close",
+  "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
+  "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
+  "split_manifest_fingerprint": "f785a1c7fc63e21c6816be2017220219c619db543ffffdf5353fe70d8caff7ce",
+  "portfolio_contract_version": "v6-rc1-pending-rebalance-cost-model",
+  "portfolio_contract_fingerprint": "5d068399f33e6b895729f3e455f8a173ae48f7283a4a6c7aedb9c278ab8e6dbe",
+  "full_model_fingerprint": "9879fdc62b8cc8f0be7737bad9dcfd127b0b483c11e78aa8e640247af964db67",
+  "survivorship_bias_status": "KNOWN_UNCONTROLLED_CURRENT_FIXED_ASSET_SET",
+  "version": "overfitting-check-v3.0-retrospective-only",
+  "purpose": "Report retrospective stability heuristics while preventing them from being mistaken for model validation.",
+  "verdict": "RETROSPECTIVE_ONLY_NOT_VALIDATED",
+  "raw_heuristic_verdict": "PASS_STABILITY_CHECK",
   "score_0_100": 100.0,
-  "warnings": [],
-  "important_limit": "This is a heuristic stability check, not a formal statistical proof."
+  "evidence_classification": "RETROSPECTIVE_CONTAMINATED",
+  "prospective_validation_status": "NOT_YET_SUFFICIENT",
+  "warnings": [
+    "All scored periods were visible during model development; heuristic stability cannot validate V6."
+  ],
+  "important_limit": "This heuristic is descriptive only; a PASS-like raw score is not V6 validation and cannot authorize a trade."
 }

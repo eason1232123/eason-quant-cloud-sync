@@ -615,7 +615,10 @@ def main() -> None:
             "future-dated caches/provider responses are quarantined; "
             "existing historical CSV rows are not overwritten, only new dates are appended"
         ),
-        "strategy_version": "Eason Master US Market Monitor Cloud Sync v5 freshness-contract",
+        "strategy_version": "Eason Master US Market Monitor Cloud Sync v5.1 shared-execution-contract",
+        "strategy_contract_version": br.STRATEGY_CONTRACT_VERSION,
+        "rule_fingerprint": br.RULE_FINGERPRINT,
+        "strategy_fingerprint": br.STRATEGY_FINGERPRINT,
         "privacy_mode": "sanitized_public_report_no_cash_no_shares_no_account_value",
         "universe": {
             "configured_ticker_count": len(br.TICKERS),
@@ -677,6 +680,16 @@ def main() -> None:
             ],
             "horizons_days": br.HORIZONS,
             "minimum_valid_samples": br.MIN_SAMPLE,
+            "sample_independence": "chronological non-overlapping signal windows",
+            "execution": {
+                "signal_time": "end_of_day_close",
+                "entry_time": "next_trading_bar_close",
+                "execution_shift_bars": br.EXECUTION_SHIFT_BARS,
+            },
+            "cost_assumptions": br.execution_cost_assumptions(),
+            "strategy_contract_version": br.STRATEGY_CONTRACT_VERSION,
+            "rule_fingerprint": br.RULE_FINGERPRINT,
+            "strategy_fingerprint": br.STRATEGY_FINGERPRINT,
             "note": "Samples below minimum are reported but should not be used as primary buy evidence.",
         },
         "backtests": backtests,

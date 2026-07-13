@@ -13,12 +13,15 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.market_data_contract import read_checked_daily_csv
+from scripts.market_data_contract import extract_market_data_metadata, read_checked_daily_csv
 
 DATA = Path("data")
 OUT = Path("docs")
 TRADE_LOG = DATA / "trade_log.csv"
+MARKET_REPORT = OUT / "market_report.json"
 HORIZONS = [3, 10, 20]
+VALID_ACTIONS = {"BUY", "ADD", "COVER", "SELL", "TRIM", "REDUCE"}
+MIN_COMPLETED_20D_SAMPLE = 20
 
 
 def clean_float(value: Any, digits: int = 4) -> Any:
@@ -46,7 +49,9 @@ def load_price(ticker: str) -> pd.DataFrame:
     if df.empty:
         return df
     df["date"] = pd.to_datetime(df["date"]).dt.tz_localize(None)
-    price_col = "price" if "price" in df.columns else "adjClose" if "adjClose" in df.columns else "close"
+    if "close" not in df.columns:
+        raise ValueError(f"{ticker} price cache lacks unadjusted close required for actual fill review")
+    price_col = "close"
     out = df[["date", price_col]].rename(columns={price_col: "price"}).copy()
     out["price"] = pd.to_numeric(out["price"], errors="coerce")
     return out.dropna().sort_values("date").reset_index(drop=True)
@@ -62,10 +67,21 @@ def load_trade_log() -> pd.DataFrame:
         raise SystemExit("data/trade_log.csv must include date,ticker,action,fill_price columns")
     df["date"] = pd.to_datetime(df["date"], errors="coerce")
     df["fill_price"] = pd.to_numeric(df["fill_price"], errors="coerce")
-    df["shares"] = pd.to_numeric(df.get("shares", 0), errors="coerce").fillna(0)
-    df = df.dropna(subset=["date", "ticker", "action", "fill_price"])
+    df["shares"] = pd.to_numeric(df.get("shares", 0), errors="coerce")
+    df["fees"] = pd.to_numeric(df.get("fees", 0), errors="coerce")
+    if df[["date", "ticker", "action", "fill_price", "shares", "fees"]].isna().any().any():
+        raise SystemExit("data/trade_log.csv contains invalid or incomplete rows")
     df["ticker"] = df["ticker"].astype(str).str.upper().str.strip()
     df["action"] = df["action"].astype(str).str.upper().str.strip()
+    invalid_actions = sorted(set(df["action"]) - VALID_ACTIONS)
+    if invalid_actions:
+        raise SystemExit(f"data/trade_log.csv contains unsupported actions: {invalid_actions}")
+    if (~np.isfinite(df["fill_price"]) | (df["fill_price"] <= 0)).any():
+        raise SystemExit("data/trade_log.csv contains non-positive or non-finite fill prices")
+    if (~np.isfinite(df["shares"]) | (df["shares"] < 0)).any():
+        raise SystemExit("data/trade_log.csv contains invalid share quantities")
+    if (~np.isfinite(df["fees"]) | (df["fees"] < 0)).any():
+        raise SystemExit("data/trade_log.csv contains invalid fees")
     return df.sort_values("date").reset_index(drop=True)
 
 
@@ -93,7 +109,10 @@ def review_trade(row: pd.Series) -> dict:
         "date": date.date().isoformat(),
         "ticker": ticker,
         "action": action,
-        "shares": clean_float(row.get("shares"), 6),
+        "shares": None,
+        "shares_redacted": True,
+        "fees": None,
+        "fees_redacted": True,
         "fill_price": clean_float(fill, 4),
         "reason": row.get("reason") if pd.notna(row.get("reason")) else None,
         "signal_source": row.get("signal_source") if pd.notna(row.get("signal_source")) else None,
@@ -102,6 +121,8 @@ def review_trade(row: pd.Series) -> dict:
         "sell_risk_score": clean_float(row.get("sell_risk_score"), 1),
         "expected_thesis": row.get("expected_thesis") if pd.notna(row.get("expected_thesis")) else None,
         "invalidation_level": row.get("invalidation_level") if pd.notna(row.get("invalidation_level")) else None,
+        "price_basis": "unadjusted_close_matched_to_actual_fill",
+        "return_basis": "gross_mark_to_market_before_unknown_future_exit_costs",
     }
 
     if prices.empty:
@@ -172,9 +193,17 @@ def actual_vs_backtest(reviews: pd.DataFrame) -> dict:
             "reason": "No completed 20-trading-day outcomes yet.",
             "logged_trade_count": int(len(reviews)),
         }
+    if len(vals20) < MIN_COMPLETED_20D_SAMPLE:
+        return {
+            "available": False,
+            "reason": "Insufficient completed 20-trading-day sample for actual-vs-backtest inference.",
+            "completed_20d_trade_count": int(len(vals20)),
+            "minimum_completed_20d_sample": MIN_COMPLETED_20D_SAMPLE,
+        }
     return {
         "available": True,
         "completed_20d_trade_count": int(len(vals20)),
+        "minimum_completed_20d_sample": MIN_COMPLETED_20D_SAMPLE,
         "actual_avg_20d_outcome_pct": clean_float(vals20.mean(), 2),
         "actual_median_20d_outcome_pct": clean_float(vals20.median(), 2),
         "actual_20d_win_rate_pct": clean_float((vals20 > 0).mean() * 100, 2),
@@ -182,25 +211,71 @@ def actual_vs_backtest(reviews: pd.DataFrame) -> dict:
     }
 
 
-def main() -> None:
-    trades = load_trade_log()
-    reviews = pd.DataFrame([review_trade(row) for _, row in trades.iterrows()]) if not trades.empty else pd.DataFrame()
-
-    summary = {
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "trade-review-v3.0",
-        "purpose": "Review actual logged trades at 3/10/20 trading-day horizons and compare real execution with expected thesis.",
-        "privacy_warning": "This repo may be public. Do not log sensitive account details unless you accept they may be public.",
-        "trade_log_path": str(TRADE_LOG),
-        "summary": summarize_reviews(reviews),
-        "actual_vs_backtest": actual_vs_backtest(reviews),
+def review_metadata() -> dict[str, Any]:
+    if not MARKET_REPORT.exists() or MARKET_REPORT.stat().st_size == 0:
+        raise SystemExit("Missing docs/market_report.json; trade review metadata cannot be verified")
+    try:
+        report = json.loads(MARKET_REPORT.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Invalid docs/market_report.json: {exc}") from exc
+    metadata = extract_market_data_metadata(report)
+    if metadata.get("metadata_status") != "COMPLETE":
+        raise SystemExit("Market report metadata is incomplete; trade review was not published")
+    return {
+        "data_source": metadata["source"],
+        "market_timezone": metadata["market_timezone"],
+        "data_timestamp": metadata["data_timestamp"],
+        "data_timestamp_granularity": metadata["data_timestamp_granularity"],
+        "data_timestamp_status": metadata["data_timestamp_status"],
+        "price_frequency": metadata["price_frequency"],
+        "price_adjustment_policy": metadata["price_adjustment_policy"],
     }
 
+
+def main() -> None:
+    generated_at_utc = datetime.now(timezone.utc).isoformat()
+    metadata = review_metadata()
+    trades = load_trade_log()
+    reviews = pd.DataFrame([review_trade(row) for _, row in trades.iterrows()]) if not trades.empty else pd.DataFrame()
+    actual = actual_vs_backtest(reviews)
+
+    summary = {
+        "generated_at_utc": generated_at_utc,
+        **metadata,
+        "version": "trade-review-v3.1-unadjusted-redacted",
+        "review_price_basis": "unadjusted_close_matched_to_actual_fill",
+        "purpose": "Review actual logged trades at 3/10/20 trading-day horizons and compare real execution with expected thesis.",
+        "privacy_warning": "Public outputs always redact exact shares and fees. Broker/account truth belongs only in the local private IBKR layer.",
+        "trade_log_path": str(TRADE_LOG),
+        "summary": summarize_reviews(reviews),
+        "actual_vs_backtest": actual,
+    }
+
+    for field, value in {
+        "data_source": metadata["data_source"],
+        "market_timezone": metadata["market_timezone"],
+        "report_generated_at_utc": generated_at_utc,
+        "data_timestamp": metadata["data_timestamp"],
+        "price_frequency": metadata["price_frequency"],
+        "price_adjustment_policy": metadata["price_adjustment_policy"],
+    }.items():
+        reviews[field] = value
     reviews.to_csv(OUT / "trade_review.csv", index=False)
     with open(OUT / "trade_review.json", "w", encoding="utf-8") as f:
         json.dump(summary, f, indent=2, ensure_ascii=False, allow_nan=False)
     with open(OUT / "actual_vs_backtest.json", "w", encoding="utf-8") as f:
-        json.dump(summary["actual_vs_backtest"], f, indent=2, ensure_ascii=False, allow_nan=False)
+        json.dump(
+            {
+                "generated_at_utc": generated_at_utc,
+                **metadata,
+                "review_price_basis": "unadjusted_close_matched_to_actual_fill",
+                **actual,
+            },
+            f,
+            indent=2,
+            ensure_ascii=False,
+            allow_nan=False,
+        )
 
     print("Saved docs/trade_review.json, docs/trade_review.csv, docs/actual_vs_backtest.json")
 

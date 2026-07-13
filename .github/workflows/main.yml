@@ -9,6 +9,7 @@ on:
       - ".github/workflows/main.yml"
       - "scripts/**"
       - "config.py"
+      - "config/**"
       - "requirements.txt"
       - "requirements-dev.txt"
       - "schemas/**"
@@ -25,6 +26,7 @@ on:
       - ".github/workflows/main.yml"
       - "scripts/**"
       - "config.py"
+      - "config/**"
       - "requirements.txt"
       - "requirements-dev.txt"
       - "schemas/**"
@@ -66,9 +68,13 @@ jobs:
           python -m scripts.validate_generated_json
           python -m scripts.validate_decision_packet
           python -m scripts.validate_market_universe
+          python -m scripts.validate_model_artifacts
 
       - name: Compile Python sources
         run: python -m compileall -q scripts tests config.py
+
+      - name: Validate frozen train-validation-test split
+        run: python -m scripts.validate_validation_split
 
       - name: Run decision contract tests
         run: python -m unittest discover -s tests -p "test_*.py" -v
@@ -177,6 +183,9 @@ jobs:
       - name: Run decision contract tests before market-data requests
         run: python -m unittest discover -s tests -p "test_*.py" -v
 
+      - name: Validate frozen train-validation-test split
+        run: python -m scripts.validate_validation_split
+
       - name: Build broad US market universe
         timeout-minutes: 3
         env:
@@ -218,6 +227,7 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
+          NUMBA_DISABLE_JIT: "1"
         run: python -u scripts/build_vectorbt_validation.py
 
       - name: Build vectorbt evidence layer
@@ -225,6 +235,7 @@ jobs:
         env:
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
+          NUMBA_DISABLE_JIT: "1"
         run: python -u scripts/build_vectorbt_backtest.py
 
       - name: Build portfolio backtest
@@ -262,26 +273,36 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_action_board_v3.py
 
+      - name: Record immutable prospective signal ledger
+        timeout-minutes: 4
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_forward_ledger.py
+
       - name: Validate final decision packet contract
         timeout-minutes: 2
         run: |
           test -s docs/decision_packet.json
+          test -s docs/forward_validation_status.json
           test -s schemas/decision_packet.schema.json
           python -m scripts.validate_decision_packet
+          python -m scripts.validate_validation_split
+          python -m scripts.validate_model_artifacts
           python -m scripts.validate_generated_json
+
+      - name: Enforce operational market-data health before publication
+        timeout-minutes: 2
+        run: python -m scripts.validate_operational_health
 
       - name: Commit updated reports
         run: |
           git config user.name "eason-quant-bot"
           git config user.email "actions@github.com"
-          git add docs/*.json docs/*.csv docs/*.html docs/*.txt
+          git add docs/*.json docs/*.jsonl docs/*.csv docs/*.html docs/*.txt
           if git diff --cached --quiet; then
             echo "No report changes to commit"
           else
             git commit -m "Update daily quant report"
             git push
           fi
-
-      - name: Enforce operational market-data health
-        timeout-minutes: 2
-        run: python -m scripts.validate_operational_health

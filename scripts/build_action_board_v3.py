@@ -10,6 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.market_clock import MARKET_TIMEZONE
+from scripts.market_data_contract import PRICE_ADJUSTMENT_POLICY, PRICE_FREQUENCY
+from scripts.strategy_contract import RULE_FINGERPRINT, STRATEGY_CONTRACT_VERSION, STRATEGY_FINGERPRINT
 from scripts.validate_decision_packet import validate_invariants, validate_schema
 
 OUT = Path("docs")
@@ -123,6 +126,12 @@ def compact_vectorbt_validation(vbt_validation: dict[str, Any]) -> dict[str, Any
         "version": vbt_validation.get("version"),
         "vectorbt_version": vbt_validation.get("vectorbt_version"),
         "purpose": vbt_validation.get("purpose"),
+        "strategy_contract_version": vbt_validation.get("strategy_contract_version"),
+        "rule_fingerprint": vbt_validation.get("rule_fingerprint"),
+        "strategy_fingerprint": vbt_validation.get("strategy_fingerprint"),
+        "data_source": vbt_validation.get("data_source"),
+        "market_timezone": vbt_validation.get("market_timezone"),
+        "data_timestamp": vbt_validation.get("data_timestamp"),
         "data": vbt_validation.get("data", {}),
         "assumptions": vbt_validation.get("assumptions", {}),
         "top_by_sharpe": vbt_validation.get("top_by_sharpe", [])[:15],
@@ -139,6 +148,12 @@ def compact_vectorbt_report(vbt_report: dict[str, Any]) -> dict[str, Any]:
         "version": vbt_report.get("version"),
         "engine": vbt_report.get("engine"),
         "execution_assumption": vbt_report.get("execution_assumption"),
+        "strategy_contract_version": vbt_report.get("strategy_contract_version"),
+        "rule_fingerprint": vbt_report.get("rule_fingerprint"),
+        "strategy_fingerprint": vbt_report.get("strategy_fingerprint"),
+        "data_source": vbt_report.get("data_source"),
+        "market_timezone": vbt_report.get("market_timezone"),
+        "data_timestamp": vbt_report.get("data_timestamp"),
         "loaded_ticker_count": vbt_report.get("loaded_ticker_count"),
         "configured_ticker_count": vbt_report.get("configured_ticker_count"),
         "minimum_valid_samples": vbt_report.get("minimum_valid_samples"),
@@ -154,6 +169,21 @@ def compact_vectorbt_report(vbt_report: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def evidence_artifact_contract_complete(report: dict[str, Any]) -> bool:
+    return bool(
+        report.get("strategy_contract_version") == STRATEGY_CONTRACT_VERSION
+        and report.get("rule_fingerprint") == RULE_FINGERPRINT
+        and report.get("strategy_fingerprint") == STRATEGY_FINGERPRINT
+        and isinstance(report.get("data_source"), str)
+        and report["data_source"].strip()
+        and report.get("market_timezone") == MARKET_TIMEZONE
+        and isinstance(report.get("data_timestamp"), str)
+        and report["data_timestamp"]
+        and report.get("price_frequency") == PRICE_FREQUENCY
+        and report.get("price_adjustment_policy") == PRICE_ADJUSTMENT_POLICY
+    )
+
+
 def final_gate(signal: dict[str, Any], overfit: dict[str, Any], trade_review: dict[str, Any], vectorbt_validation: dict[str, Any], vectorbt_report: dict[str, Any]) -> dict[str, Any]:
     base = get_signal_action(signal)
     warnings: list[str] = []
@@ -165,6 +195,7 @@ def final_gate(signal: dict[str, Any], overfit: dict[str, Any], trade_review: di
     vectorbt_validation_usable = bool(
         vectorbt_validation.get("available")
         and not vectorbt_validation.get("errors")
+        and evidence_artifact_contract_complete(vectorbt_validation)
         and validation_rows is not None
         and validation_rows > 0
         and isinstance(validation_tickers, list)
@@ -176,6 +207,7 @@ def final_gate(signal: dict[str, Any], overfit: dict[str, Any], trade_review: di
     required_complete = bool(required) and all(value is True for value in required.values())
     vectorbt_evidence_usable = bool(
         vectorbt_report.get("available")
+        and evidence_artifact_contract_complete(vectorbt_report)
         and vectorbt_loaded is not None
         and vectorbt_loaded > 0
         and required_complete
@@ -189,8 +221,10 @@ def final_gate(signal: dict[str, Any], overfit: dict[str, Any], trade_review: di
         warnings.append("model-portfolio data is stale or missing; refresh before any decision")
 
     overfit_verdict = overfit.get("verdict")
-    if overfit_verdict in {"FAIL_OR_OVERFIT_RISK", "MIXED_NEEDS_CAUTION"}:
+    if overfit_verdict != "PASS_STABILITY_CHECK":
         warnings.append(f"overfitting_check={overfit_verdict}")
+    if overfit.get("evidence_classification") == "RETROSPECTIVE_CONTAMINATED":
+        warnings.append("historical stability evidence is retrospective and cannot validate V6")
 
     if not vectorbt_validation_usable:
         warnings.append("independent vectorbt validation unavailable or incomplete; refresh before using the decision")

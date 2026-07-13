@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-12T04:40:02.187536+00:00",
+  "generated_at_utc": "2026-07-12T11:53:30.014666+00:00",
   "summary_type": "decision",
   "source_file": "eason_signal.json",
   "decision_packet_file": "decision_packet.json",
@@ -11,7 +11,7 @@
   "market_data": {
     "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "report_generated_at_utc": "2026-07-11T15:32:37.269656+00:00",
+    "report_generated_at_utc": "2026-07-12T11:51:50.511707+00:00",
     "data_timestamp": "2026-07-10",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
@@ -41,11 +41,11 @@
       "below MA200",
       "drawdown from 52w high <= -12%"
     ],
-    "failed_rebound_samples_20d": 730,
+    "failed_rebound_samples_20d": 158,
     "failed_rebound_valid_20d": true,
-    "failed_rebound_avg_return_pct": 1.23,
-    "failed_rebound_median_return_pct": 1.02,
-    "failed_rebound_worst_mae_pct": -19.83,
+    "failed_rebound_avg_return_pct": 0.72,
+    "failed_rebound_median_return_pct": 0.82,
+    "failed_rebound_worst_mae_pct": -20.09,
     "ret_5d_pct": -0.3,
     "ret_20d_pct": 0.65,
     "drawdown_from_52w_high_pct": -23.97,
@@ -58,11 +58,11 @@
   "default_human_action_before_chatgpt_review": "NO_TRADE",
   "portfolio_backtest_available": true,
   "freshness": {
-    "source_report_generated_at_utc": "2026-07-11T15:32:37.269656+00:00",
+    "source_report_generated_at_utc": "2026-07-12T11:51:50.511707+00:00",
     "market_data": {
       "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
       "market_timezone": "America/New_York",
-      "report_generated_at_utc": "2026-07-11T15:32:37.269656+00:00",
+      "report_generated_at_utc": "2026-07-12T11:51:50.511707+00:00",
       "data_timestamp": "2026-07-10",
       "data_timestamp_granularity": "market_date",
       "data_timestamp_status": "AVAILABLE",
