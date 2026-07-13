@@ -3,8 +3,6 @@ name: Eason Quant Daily
 on:
   workflow_dispatch:
   pull_request:
-    branches:
-      - main
     paths:
       - ".github/workflows/main.yml"
       - "scripts/**"
