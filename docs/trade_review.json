@@ -1,9 +1,17 @@
 {
-  "generated_at_utc": "2026-07-11T01:11:13.811289+00:00",
-  "version": "trade-review-v3.0",
+  "generated_at_utc": "2026-07-12T11:53:20.469000+00:00",
+  "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+  "market_timezone": "America/New_York",
+  "data_timestamp": "2026-07-10",
+  "data_timestamp_granularity": "market_date",
+  "data_timestamp_status": "AVAILABLE",
+  "price_frequency": "end_of_day_daily",
+  "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+  "version": "trade-review-v3.1-unadjusted-redacted",
+  "review_price_basis": "unadjusted_close_matched_to_actual_fill",
   "purpose": "Review actual logged trades at 3/10/20 trading-day horizons and compare real execution with expected thesis.",
-  "privacy_warning": "This repo may be public. Do not log sensitive account details unless you accept they may be public.",
-  "trade_log_path": "data/trade_log.csv",
+  "privacy_warning": "Public outputs always redact exact shares and fees. Broker/account truth belongs only in the local private IBKR layer.",
+  "trade_log_path": "data\\trade_log.csv",
   "summary": {
     "trade_count": 0,
     "message": "No real trades logged yet. Fill data/trade_log.csv after actual IBKR executions if you want 3/10/20-day review."

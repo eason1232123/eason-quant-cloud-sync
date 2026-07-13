@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib
 import json
 import sys
 from datetime import datetime, timezone
@@ -8,27 +9,50 @@ from typing import Any
 
 import numpy as np
 import pandas as pd
-import vectorbt as vbt
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from scripts.market_data_contract import read_checked_daily_csv
+from scripts.market_clock import MARKET_TIMEZONE, latest_completed_us_market_weekday
+from scripts.market_data_contract import (
+    DATA_TIMESTAMP_GRANULARITY,
+    PRICE_ADJUSTMENT_POLICY,
+    PRICE_FREQUENCY,
+    read_checked_daily_csv,
+)
+from scripts.strategy_contract import (
+    COMMISSION_RATE,
+    ENTRY_RULE_SPECS,
+    EXECUTION_IMPACT_RATE,
+    EXECUTION_SHIFT_BARS,
+    RULE_FINGERPRINT,
+    STRATEGY_CONTRACT_VERSION,
+    STRATEGY_FINGERPRINT,
+    benchmark_for_ticker,
+    execution_cost_assumptions,
+    exit_signals,
+    relative_20d_frame,
+    relative_20d_series,
+    rule_signals,
+    shift_for_execution,
+)
 
 OUT = Path("docs")
 INITIAL_CASH = 10000.0
-FEES = 0.0005
-SLIPPAGE = 0.0005
-
-# Signals are calculated from end-of-day close data. To avoid same-close look-ahead,
-# vectorbt execution uses next bar by shifting entries/exits by one trading day.
-EXECUTION_SHIFT_DAYS = 1
+vbt: Any | None = None
 
 VALIDATION_TICKERS = [
     "SPY", "QQQ", "SMH", "SOXX", "MSFT", "NVDA", "AAPL", "GOOGL", "AMZN", "META", "AVGO",
     "AMD", "ASML", "TSM", "PLTR", "CRWD", "PANW", "VRT", "CEG", "GLD", "TLT", "SGOV",
 ]
+
+
+def vectorbt_module() -> Any:
+    global vbt
+    if vbt is None:
+        vbt = importlib.import_module("vectorbt")
+    return vbt
 
 
 def clean_float(value: Any, digits: int = 4) -> Any:
@@ -59,7 +83,28 @@ def load_price(ticker: str) -> pd.DataFrame:
     price_col = "price" if "price" in df.columns else "adjClose" if "adjClose" in df.columns else "close"
     out = df[["date", price_col]].rename(columns={price_col: ticker}).copy()
     out[ticker] = pd.to_numeric(out[ticker], errors="coerce")
-    return out.dropna().sort_values("date").drop_duplicates("date", keep="last")
+    if out["date"].duplicated().any():
+        raise ValueError(f"{ticker} price cache contains duplicate market dates")
+    invalid = out[ticker].isna() | ~np.isfinite(out[ticker]) | (out[ticker] <= 0)
+    if invalid.any():
+        raise ValueError(f"{ticker} price cache contains invalid close prices")
+    out = out.sort_values("date").reset_index(drop=True)
+    out.attrs["price_basis"] = "adjusted" if "adjClose" in df.columns else "unadjusted"
+    return out
+
+
+def load_native_price_map() -> tuple[dict[str, pd.Series], dict[str, str], list[str]]:
+    prices: dict[str, pd.Series] = {}
+    price_basis: dict[str, str] = {}
+    missing: list[str] = []
+    for ticker in VALIDATION_TICKERS:
+        frame = load_price(ticker)
+        if frame.empty:
+            missing.append(ticker)
+            continue
+        prices[ticker] = frame.set_index("date")[ticker].astype(float)
+        price_basis[ticker] = str(frame.attrs.get("price_basis") or "unknown")
+    return prices, price_basis, missing
 
 
 def load_price_matrix() -> pd.DataFrame:
@@ -71,58 +116,35 @@ def load_price_matrix() -> pd.DataFrame:
         merged = df if merged is None else merged.merge(df, on="date", how="outer")
     if merged is None:
         raise SystemExit("No price data found for vectorbt validation")
-    merged = merged.sort_values("date").set_index("date")
-    merged = merged.ffill().dropna(axis=1, how="all").dropna(axis=0, how="all")
-    return merged
+    # This compatibility view intentionally preserves gaps. Forward filling would
+    # manufacture bars for suspended, missing, or stale tickers.
+    return merged.sort_values("date").set_index("date").dropna(axis=1, how="all").dropna(axis=0, how="all")
 
 
-def rsi(close: pd.DataFrame, period: int = 14) -> pd.DataFrame:
-    delta = close.diff()
-    gain = delta.clip(lower=0)
-    loss = -delta.clip(upper=0)
-    avg_gain = gain.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
-    avg_loss = loss.ewm(alpha=1 / period, min_periods=period, adjust=False).mean()
-    return 100 - (100 / (1 + avg_gain / avg_loss.replace(0, np.nan)))
-
-
-def make_rules(close: pd.DataFrame) -> dict[str, tuple[pd.DataFrame, pd.DataFrame]]:
-    ma5 = close.rolling(5).mean()
-    ma20 = close.rolling(20).mean()
-    ma50 = close.rolling(50).mean()
-    ma200 = close.rolling(200).mean()
-    ret5 = close.pct_change(5)
-    ret20 = close.pct_change(20)
-    rsi14 = rsi(close)
-
-    rules = {}
-
-    entries = (ret5 <= -0.04) & (close > ma5)
-    exits = (close < ma20) | (close < ma5)
-    rules["pullback_reclaim_5dma"] = (entries.fillna(False), exits.fillna(False))
-
-    entries = (rsi14.rolling(5).min().shift(1) < 35) & (rsi14 >= 40) & (close > ma5)
-    exits = (close < ma20) | (rsi14 > 70)
-    rules["rsi_oversold_reclaim_40"] = (entries.fillna(False), exits.fillna(False))
-
-    entries = (close.shift(1) < ma20.shift(1)) & (close > ma20) & (close > ma50)
-    exits = close < ma20
-    rules["ma20_reclaim_bullish"] = (entries.fillna(False), exits.fillna(False))
-
-    entries = (close.shift(1) < ma50.shift(1)) & (close > ma50) & (close > ma200)
-    exits = close < ma50
-    rules["ma50_reclaim_bullish"] = (entries.fillna(False), exits.fillna(False))
-
-    entries = (close > ma20) & (close > ma50) & (ret20 > 0.05) & (rsi14 < 78)
-    exits = (close < ma20) | (rsi14 > 82)
-    rules["momentum_leader"] = (entries.fillna(False), exits.fillna(False))
-
-    return rules
+def make_rules(
+    close: pd.Series | pd.DataFrame,
+    relative_20d: pd.Series | pd.DataFrame | None = None,
+) -> dict[str, tuple[pd.Series | pd.DataFrame, pd.Series | pd.DataFrame]]:
+    if relative_20d is None and isinstance(close, pd.DataFrame):
+        relative_20d = relative_20d_frame(close)
+    entries = rule_signals(close, relative_20d)
+    exits = exit_signals(close)
+    return {
+        rule_name: (
+            entries[rule_name],
+            exits[spec["exit_rule"]],
+        )
+        for rule_name, spec in ENTRY_RULE_SPECS.items()
+    }
 
 
 def execution_signals(entries: pd.DataFrame, exits: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame]:
-    entries_exec = entries.shift(EXECUTION_SHIFT_DAYS).fillna(False).astype(bool)
-    exits_exec = exits.shift(EXECUTION_SHIFT_DAYS).fillna(False).astype(bool)
-    return entries_exec, exits_exec
+    return shift_for_execution(entries), shift_for_execution(exits)
+
+
+def percent_metric(values: dict[str, Any], ticker: str, digits: int = 2) -> float | None:
+    value = values.get(ticker)
+    return clean_float(float(value) * 100, digits) if value is not None else None
 
 
 def to_series_dict(x: Any) -> dict[str, Any]:
@@ -135,13 +157,14 @@ def to_series_dict(x: Any) -> dict[str, Any]:
 
 def build_rows(rule_name: str, close: pd.DataFrame, raw_entries: pd.DataFrame, raw_exits: pd.DataFrame) -> list[dict]:
     entries, exits = execution_signals(raw_entries, raw_exits)
-    pf = vbt.Portfolio.from_signals(
+    pf = vectorbt_module().Portfolio.from_signals(
         close,
         entries,
         exits,
         init_cash=INITIAL_CASH,
-        fees=FEES,
-        slippage=SLIPPAGE,
+        fees=COMMISSION_RATE,
+        slippage=EXECUTION_IMPACT_RATE,
+        upon_long_conflict="exit",
         freq="1D",
     )
 
@@ -150,10 +173,9 @@ def build_rows(rule_name: str, close: pd.DataFrame, raw_entries: pd.DataFrame, r
     sharpe = to_series_dict(pf.sharpe_ratio())
     final_value = to_series_dict(pf.final_value())
 
-    try:
-        trade_count = to_series_dict(pf.trades.count())
-    except Exception:
-        trade_count = {ticker: None for ticker in close.columns}
+    trade_count = to_series_dict(pf.trades.count())
+    closed_trade_count = to_series_dict(pf.trades.closed.count())
+    open_trade_count = to_series_dict(pf.trades.open.count())
 
     rows = []
     for ticker in close.columns:
@@ -162,59 +184,146 @@ def build_rows(rule_name: str, close: pd.DataFrame, raw_entries: pd.DataFrame, r
                 "ticker": ticker,
                 "rule": rule_name,
                 "engine": "vectorbt",
-                "execution_assumption": "signals are shifted 1 trading day to avoid same-close look-ahead",
-                "vectorbt_total_return_pct": clean_float((total_return.get(ticker) or 0) * 100, 2),
-                "vectorbt_max_drawdown_pct": clean_float((max_drawdown.get(ticker) or 0) * 100, 2),
+                "execution_assumption": "end-of-day signal executed at the next trading bar close",
+                "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
+                "rule_fingerprint": RULE_FINGERPRINT,
+                "strategy_fingerprint": STRATEGY_FINGERPRINT,
+                "cost_assumption_source": "configured_not_observed",
+                "vectorbt_total_return_pct": percent_metric(total_return, ticker),
+                "vectorbt_max_drawdown_pct": percent_metric(max_drawdown, ticker),
                 "vectorbt_sharpe": clean_float(sharpe.get(ticker), 3),
                 "vectorbt_final_value": clean_float(final_value.get(ticker), 2),
                 "vectorbt_trade_count": clean_float(trade_count.get(ticker), 0),
+                "vectorbt_closed_trade_count": clean_float(closed_trade_count.get(ticker), 0),
+                "vectorbt_open_trade_count": clean_float(open_trade_count.get(ticker), 0),
                 "raw_entry_signal_count": int(raw_entries[ticker].sum()) if ticker in raw_entries else 0,
-                "executed_entry_count": int(entries[ticker].sum()) if ticker in entries else 0,
+                "shifted_entry_signal_count": int(entries[ticker].sum()) if ticker in entries else 0,
+                "executed_entry_count": clean_float(trade_count.get(ticker), 0),
                 "raw_exit_signal_count": int(raw_exits[ticker].sum()) if ticker in raw_exits else 0,
-                "executed_exit_count": int(exits[ticker].sum()) if ticker in exits else 0,
+                "shifted_exit_signal_count": int(exits[ticker].sum()) if ticker in exits else 0,
+                "executed_exit_count": clean_float(closed_trade_count.get(ticker), 0),
             }
         )
     return rows
 
 
 def main() -> None:
-    close = load_price_matrix()
-    rules = make_rules(close)
+    engine = vectorbt_module()
+    generated_at_utc = datetime.now(timezone.utc).isoformat()
+    prices, price_basis_by_ticker, missing_tickers = load_native_price_map()
+    if not prices:
+        raise SystemExit("No price data found for vectorbt validation")
     all_rows: list[dict] = []
-    errors = {}
+    errors: dict[str, str] = {}
 
-    for rule_name, (entries, exits) in rules.items():
-        try:
-            all_rows.extend(build_rows(rule_name, close, entries, exits))
-        except Exception as exc:
-            errors[rule_name] = str(exc)
+    for ticker, native_close in prices.items():
+        benchmark = benchmark_for_ticker(ticker)
+        benchmark_close = prices.get(benchmark)
+        if benchmark_close is None:
+            errors[f"{ticker}/benchmark"] = f"required benchmark {benchmark} is missing"
+        relative = relative_20d_series(native_close, benchmark_close)
+        close = native_close.to_frame(ticker)
+        rules = make_rules(close, relative.to_frame(ticker))
+        for rule_name, (entries, exits) in rules.items():
+            try:
+                all_rows.extend(build_rows(rule_name, close, entries, exits))
+            except Exception as exc:
+                errors[f"{ticker}/{rule_name}"] = f"{type(exc).__name__}: {exc}"
 
     df = pd.DataFrame(all_rows)
     if not df.empty:
-        df = df.sort_values(["rule", "vectorbt_sharpe", "vectorbt_total_return_pct"], ascending=[True, False, False])
+        data_timestamp_by_ticker = {
+            ticker: series.index.max().date().isoformat()
+            for ticker, series in sorted(prices.items())
+        }
+        df["data_source"] = "Tiingo daily local CSV cache"
+        df["market_timezone"] = MARKET_TIMEZONE
+        df["report_generated_at_utc"] = generated_at_utc
+        df["data_timestamp"] = df["ticker"].map(data_timestamp_by_ticker)
+        df["price_frequency"] = PRICE_FREQUENCY
+        df["price_adjustment_policy"] = PRICE_ADJUSTMENT_POLICY
+        df["price_basis"] = df["ticker"].map(price_basis_by_ticker)
+        df = df.sort_values(["ticker", "rule"], ascending=[True, True])
 
+    data_timestamp_by_ticker = {
+        ticker: series.index.max().date().isoformat()
+        for ticker, series in sorted(prices.items())
+    }
+    expected_market_date = latest_completed_us_market_weekday().isoformat()
+    stale_tickers = sorted(
+        ticker
+        for ticker, timestamp in data_timestamp_by_ticker.items()
+        if timestamp < expected_market_date
+    )
+    ranked = (
+        df.dropna(subset=["vectorbt_sharpe"])
+        .sort_values(
+            ["vectorbt_sharpe", "vectorbt_total_return_pct", "ticker", "rule"],
+            ascending=[False, False, True, True],
+        )
+        if not df.empty
+        else df
+    )
+    complete_row_count = len(prices) * len(ENTRY_RULE_SPECS)
+    current_data_complete = not missing_tickers and not stale_tickers
+
+    available = bool(
+            not errors
+            and not missing_tickers
+            and not df.empty
+            and len(df) == complete_row_count
+    )
     summary = {
-        "available": True,
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "vectorbt-validation-v3.6-next-bar-execution",
+        "available": available,
+        "generated_at_utc": generated_at_utc,
+        "version": "vectorbt-validation-v4.1-native-calendars",
         "purpose": "Independent vectorbt validation layer for signal rules. It does not replace pandas portfolio backtest or ChatGPT live review.",
-        "vectorbt_version": getattr(vbt, "__version__", None),
-        "execution_assumption": "End-of-day signals are executed on the next bar by shifting entries/exits 1 trading day.",
+        "vectorbt_version": getattr(engine, "__version__", None),
+        "execution_assumption": "End-of-day signals are executed at the next trading bar close.",
+        "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
+        "rule_fingerprint": RULE_FINGERPRINT,
+        "strategy_fingerprint": STRATEGY_FINGERPRINT,
+        "data_source": "Tiingo daily local CSV cache",
+        "market_timezone": MARKET_TIMEZONE,
+        "data_timestamp": max(data_timestamp_by_ticker.values()) if data_timestamp_by_ticker else None,
+        "data_timestamp_granularity": DATA_TIMESTAMP_GRANULARITY,
+        "data_timestamp_status": "AVAILABLE" if data_timestamp_by_ticker else "MISSING",
+        "price_frequency": PRICE_FREQUENCY,
+        "price_adjustment_policy": PRICE_ADJUSTMENT_POLICY,
+        "bias_controls": {
+            "look_ahead_bias": "CONTROLLED_BY_NEXT_BAR_EXECUTION",
+            "survivorship_bias": "KNOWN_UNCONTROLLED_CURRENT_VALIDATION_UNIVERSE",
+            "selection_bias": "KNOWN_UNCONTROLLED_FIXED_VALIDATION_TICKERS",
+        },
         "data": {
-            "loaded_tickers": list(close.columns),
-            "start_date": close.index.min().date().isoformat(),
-            "end_date": close.index.max().date().isoformat(),
-            "rows": int(len(close)),
+            "calendar_policy": "each_ticker_native_valid_dates_no_forward_fill",
+            "loaded_tickers": sorted(prices),
+            "rows": int(sum(len(series) for series in prices.values())),
+            "start_date": min(series.index.min() for series in prices.values()).date().isoformat(),
+            "end_date": max(series.index.max() for series in prices.values()).date().isoformat(),
+            "missing_tickers": sorted(missing_tickers),
+            "stale_tickers": stale_tickers,
+            "expected_latest_market_date": expected_market_date,
+            "current_data_status": "COMPLETE" if current_data_complete else "INCOMPLETE_OR_STALE",
+            "data_timestamp_by_ticker": data_timestamp_by_ticker,
+            "price_basis_by_ticker": dict(sorted(price_basis_by_ticker.items())),
+            "start_date_by_ticker": {
+                ticker: series.index.min().date().isoformat()
+                for ticker, series in sorted(prices.items())
+            },
+            "rows_by_ticker": {
+                ticker: int(len(series))
+                for ticker, series in sorted(prices.items())
+            },
         },
         "assumptions": {
             "init_cash_per_column": INITIAL_CASH,
-            "fees": FEES,
-            "slippage": SLIPPAGE,
+            **execution_cost_assumptions(),
             "freq": "1D",
-            "execution_shift_days": EXECUTION_SHIFT_DAYS,
+            "execution_shift_bars": EXECUTION_SHIFT_BARS,
             "meaning": "Each ticker/rule column is independently backtested, not a real combined portfolio allocation.",
         },
-        "top_by_sharpe": df.head(25).to_dict(orient="records") if not df.empty else [],
+        "top_by_sharpe": ranked.head(25).to_dict(orient="records") if not ranked.empty else [],
         "errors": errors,
         "important_limit": "Vectorbt results are a fast validation/audit layer. Final trade decisions still require portfolio-level backtest, walk-forward stability, live market/news checks, real account constraints, and human confirmation.",
     }
@@ -225,6 +334,11 @@ def main() -> None:
         json.dump(summary, f, indent=2, ensure_ascii=False, allow_nan=False)
 
     print("Saved docs/vectorbt_validation.json and docs/vectorbt_signal_stats.csv")
+    if not available:
+        raise SystemExit(
+            f"Vectorbt validation incomplete: missing={missing_tickers}, errors={errors}, "
+            f"rows={len(df)}/{complete_row_count}"
+        )
 
 
 if __name__ == "__main__":

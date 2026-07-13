@@ -8,15 +8,39 @@ from typing import Any
 import numpy as np
 import pandas as pd
 
+from scripts.market_clock import MARKET_TIMEZONE
+from scripts.market_data_contract import (
+    DATA_TIMESTAMP_GRANULARITY,
+    PRICE_ADJUSTMENT_POLICY,
+    PRICE_FREQUENCY,
+)
+from scripts.strategy_contract import RULE_FINGERPRINT, STRATEGY_CONTRACT_VERSION, STRATEGY_FINGERPRINT
+from scripts.validate_validation_split import (
+    DEFAULT_MANIFEST,
+    load_strict_json,
+    split_manifest_fingerprint,
+    validate_split_manifest,
+)
+
 OUT = Path("docs")
 PORTFOLIO_VS_PATH = OUT / "portfolio_vs_benchmark.csv"
 EQUITY_PATH = OUT / "portfolio_equity_curve.csv"
+PORTFOLIO_REPORT_PATH = OUT / "portfolio_backtest.json"
+REBASED_INITIAL_VALUE = 10000.0
 
-PERIODS = [
-    {"name": "train_2005_2016", "start": "2005-01-01", "end": "2016-12-31", "purpose": "training / long-cycle sanity check"},
-    {"name": "validation_2017_2021", "start": "2017-01-01", "end": "2021-12-31", "purpose": "validation / bull-cycle and covid shock check"},
-    {"name": "test_2022_latest", "start": "2022-01-01", "end": None, "purpose": "out-of-sample style test / inflation-rate-hike-AI cycle"},
-]
+
+def validation_periods(manifest: dict[str, Any]) -> list[dict[str, Any]]:
+    return [
+        {
+            "name": item["name"],
+            "start": item["signal_start_market_date"],
+            "end": item["signal_end_market_date"],
+            "classification": item["classification"],
+            "label_maturation_end_market_date": item["label_maturation_end_market_date"],
+            "purpose": "retrospective fixed-rule stability diagnostic; not pristine out-of-sample evidence",
+        }
+        for item in manifest["historical_partitions"]
+    ]
 
 
 def clean_float(value: Any, digits: int = 4) -> Any:
@@ -41,11 +65,34 @@ def load_csv(path: Path) -> pd.DataFrame:
     return df.sort_values("date").reset_index(drop=True)
 
 
+def load_portfolio_report(path: Path = PORTFOLIO_REPORT_PATH) -> dict[str, Any]:
+    if not path.exists() or path.stat().st_size == 0:
+        raise SystemExit(f"Missing required file: {path}. Run scripts/build_portfolio_backtest.py first.")
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise SystemExit(f"Invalid portfolio report {path}: {exc}") from exc
+    if not isinstance(value, dict) or value.get("available") is not True:
+        raise SystemExit("Portfolio report is unavailable; retrospective diagnostics cannot be published")
+    expected_contract = {
+        "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
+        "rule_fingerprint": RULE_FINGERPRINT,
+        "strategy_fingerprint": STRATEGY_FINGERPRINT,
+    }
+    actual_contract = {key: value.get(key) for key in expected_contract}
+    if actual_contract != expected_contract:
+        raise SystemExit("Portfolio report strategy fingerprints do not match the running contract")
+    return value
+
+
 def metrics(values: pd.Series, dates: pd.Series) -> dict:
-    v = pd.to_numeric(values, errors="coerce").dropna()
+    v = pd.to_numeric(values, errors="coerce")
+    if v.isna().any() or not np.isfinite(v).all() or (v <= 0).any():
+        return {"available": False, "reason": "missing, non-finite, or non-positive values"}
     if len(v) < 3:
         return {"available": False, "reason": "insufficient rows"}
-    rets = v.pct_change().dropna()
+    rebased = v / v.iloc[0] * REBASED_INITIAL_VALUE
+    rets = v.pct_change(fill_method=None).dropna()
     years = len(rets) / 252
     total_return = v.iloc[-1] / v.iloc[0] - 1
     cagr = (v.iloc[-1] / v.iloc[0]) ** (1 / years) - 1 if years > 0 else np.nan
@@ -70,7 +117,11 @@ def metrics(values: pd.Series, dates: pd.Series) -> dict:
         "calmar": clean_float(calmar, 3),
         "max_drawdown_pct": clean_float(max_dd * 100, 2),
         "daily_win_rate_pct": clean_float((rets > 0).mean() * 100, 2),
-        "final_value": clean_float(v.iloc[-1], 2),
+        "source_series_start_value": clean_float(v.iloc[0], 2),
+        "source_series_end_value": clean_float(v.iloc[-1], 2),
+        "rebased_initial_value": REBASED_INITIAL_VALUE,
+        "final_value": clean_float(rebased.iloc[-1], 2),
+        "final_value_basis": "period_rebased_to_10000",
     }
 
 
@@ -81,14 +132,29 @@ def period_slice(df: pd.DataFrame, start: str, end: str | None) -> pd.DataFrame:
     return d.reset_index(drop=True)
 
 
-def build_walk_forward(vs: pd.DataFrame) -> dict:
+def build_walk_forward(
+    vs: pd.DataFrame,
+    periods: list[dict[str, Any]],
+    metadata: dict[str, Any],
+) -> dict:
     rows = []
     benchmark_cols = [c for c in vs.columns if c.startswith("buy_hold_")]
-    for p in PERIODS:
+    for p in periods:
         d = period_slice(vs, p["start"], p["end"])
         if d.empty or len(d) < 30:
-            rows.append({"period": p, "available": False, "reason": "insufficient data"})
+            rows.append(
+                {
+                    "period": p,
+                    "available": False,
+                    "coverage_status": "INSUFFICIENT_OR_MISSING",
+                    "reason": "insufficient data within the frozen signal partition",
+                }
+            )
             continue
+
+        actual_start = d["date"].min().date().isoformat()
+        actual_end = d["date"].max().date().isoformat()
+        coverage_complete = actual_start <= p["start"] and actual_end >= p["end"]
 
         strategy = metrics(d["strategy_value"], d["date"])
         benchmarks = {c.replace("buy_hold_", ""): metrics(d[c], d["date"]) for c in benchmark_cols}
@@ -96,43 +162,69 @@ def build_walk_forward(vs: pd.DataFrame) -> dict:
         for bench, m in benchmarks.items():
             if not strategy.get("available") or not m.get("available"):
                 continue
+            strategy_cagr = strategy.get("cagr_pct")
+            benchmark_cagr = m.get("cagr_pct")
+            strategy_drawdown = strategy.get("max_drawdown_pct")
+            benchmark_drawdown = m.get("max_drawdown_pct")
+            strategy_sharpe = strategy.get("sharpe")
+            benchmark_sharpe = m.get("sharpe")
+            strategy_final = strategy.get("final_value")
+            benchmark_final = m.get("final_value")
             comparisons.append(
                 {
                     "benchmark": bench,
-                    "strategy_cagr_minus_benchmark_pct": clean_float(strategy.get("cagr_pct", 0) - m.get("cagr_pct", 0), 2),
-                    "strategy_maxdd_minus_benchmark_pct": clean_float(strategy.get("max_drawdown_pct", 0) - m.get("max_drawdown_pct", 0), 2),
-                    "strategy_sharpe_minus_benchmark": clean_float(strategy.get("sharpe", 0) - m.get("sharpe", 0), 3),
-                    "strategy_final_minus_benchmark_dollars": clean_float(strategy.get("final_value", 0) - m.get("final_value", 0), 2),
+                    "strategy_cagr_minus_benchmark_pct": clean_float(strategy_cagr - benchmark_cagr, 2)
+                    if strategy_cagr is not None and benchmark_cagr is not None
+                    else None,
+                    "strategy_maxdd_minus_benchmark_pct": clean_float(strategy_drawdown - benchmark_drawdown, 2)
+                    if strategy_drawdown is not None and benchmark_drawdown is not None
+                    else None,
+                    "strategy_sharpe_minus_benchmark": clean_float(strategy_sharpe - benchmark_sharpe, 3)
+                    if strategy_sharpe is not None and benchmark_sharpe is not None
+                    else None,
+                    "strategy_final_minus_benchmark_dollars": clean_float(strategy_final - benchmark_final, 2)
+                    if strategy_final is not None and benchmark_final is not None
+                    else None,
                 }
             )
         rows.append(
             {
                 "period": p,
                 "available": True,
+                "coverage_status": "COMPLETE" if coverage_complete else "PARTIAL",
+                "eligible_for_validation_claim": False,
+                "actual_coverage_start": actual_start,
+                "actual_coverage_end": actual_end,
                 "strategy_metrics": strategy,
                 "benchmark_metrics": benchmarks,
                 "strategy_vs_benchmarks": comparisons,
             }
         )
     return {
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "walk-forward-v2.5",
-        "purpose": "Check whether the portfolio model works across train/validation/test-style periods instead of only one lucky historical window.",
-        "important_limit": "This is not true machine-learning walk-forward optimization. It is a fixed-rule period stability check.",
+        **metadata,
+        "version": "retrospective-period-stability-v3.0",
+        "purpose": "Describe fixed-rule historical stability inside frozen, purged partitions without claiming pristine out-of-sample validation.",
+        "evidence_classification": "RETROSPECTIVE_CONTAMINATED",
+        "eligible_as_pristine_out_of_sample": False,
+        "important_limit": "This is a retrospective fixed-rule period diagnostic, not true walk-forward optimization and not pristine out-of-sample evidence.",
         "periods": rows,
     }
 
 
-def regime_report(equity: pd.DataFrame) -> dict:
+def regime_report(equity: pd.DataFrame, metadata: dict[str, Any]) -> dict:
     if "regime" not in equity.columns:
-        return {"available": False, "reason": "regime column missing"}
+        return {**metadata, "available": False, "reason": "regime column missing"}
     d = equity.copy()
-    d["ret"] = d["strategy_value"].pct_change()
+    d["ret"] = d["strategy_value"].pct_change(fill_method=None)
+    d["regime_episode"] = d["regime"].ne(d["regime"].shift()).cumsum()
     rows = []
     for regime, g in d.groupby("regime"):
-        v = g["strategy_value"]
         rets = g["ret"].dropna()
-        dd = v / v.cummax() - 1 if len(v) else pd.Series(dtype=float)
+        episode_drawdowns = []
+        for _, episode in g.groupby("regime_episode"):
+            values = episode["strategy_value"]
+            if not values.empty:
+                episode_drawdowns.append(float((values / values.cummax() - 1).min()))
         rows.append(
             {
                 "regime": regime,
@@ -140,20 +232,23 @@ def regime_report(equity: pd.DataFrame) -> dict:
                 "share_of_history_pct": clean_float(len(g) / len(d) * 100, 2),
                 "avg_daily_return_pct": clean_float(rets.mean() * 100, 4) if len(rets) else None,
                 "daily_win_rate_pct": clean_float((rets > 0).mean() * 100, 2) if len(rets) else None,
-                "max_regime_drawdown_pct": clean_float(dd.min() * 100, 2) if len(dd) else None,
+                "max_regime_drawdown_pct": clean_float(min(episode_drawdowns) * 100, 2)
+                if episode_drawdowns
+                else None,
+                "drawdown_definition": "minimum drawdown within contiguous regime episodes",
                 "avg_cash_weight_pct": clean_float(g.get("cash_weight", pd.Series(dtype=float)).mean() * 100, 2),
                 "avg_tech_ai_concentration_pct": clean_float(g.get("tech_ai_concentration", pd.Series(dtype=float)).mean() * 100, 2),
             }
         )
     return {
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "market-regime-v2.5",
+        **metadata,
+        "version": "market-regime-v3.0-contiguous-episodes",
         "purpose": "Show how often the model is in base/defensive/severe defensive mode and how strategy returns behaved in each regime.",
         "regimes": sorted(rows, key=lambda x: x["trading_days"], reverse=True),
     }
 
 
-def overfitting_check(walk: dict) -> dict:
+def overfitting_check(walk: dict, metadata: dict[str, Any]) -> dict:
     warnings = []
     scores = []
     available_periods = [p for p in walk.get("periods", []) if p.get("available")]
@@ -182,7 +277,12 @@ def overfitting_check(walk: dict) -> dict:
 
         comps = p.get("strategy_vs_benchmarks", [])
         if comps:
-            better_cagr_count = sum(1 for c in comps if (c.get("strategy_cagr_minus_benchmark_pct") or -999) > -3)
+            better_cagr_count = sum(
+                1
+                for c in comps
+                if c.get("strategy_cagr_minus_benchmark_pct") is not None
+                and float(c["strategy_cagr_minus_benchmark_pct"]) > -3
+            )
             if better_cagr_count >= 1:
                 scores.append(1)
             else:
@@ -191,29 +291,83 @@ def overfitting_check(walk: dict) -> dict:
 
     score_pct = round(sum(scores) / len(scores) * 100, 1) if scores else 0.0
     if score_pct >= 75:
-        verdict = "PASS_STABILITY_CHECK"
+        heuristic_verdict = "PASS_STABILITY_CHECK"
     elif score_pct >= 50:
-        verdict = "MIXED_NEEDS_CAUTION"
+        heuristic_verdict = "MIXED_NEEDS_CAUTION"
     else:
-        verdict = "FAIL_OR_OVERFIT_RISK"
+        heuristic_verdict = "FAIL_OR_OVERFIT_RISK"
+
+    warnings.append(
+        "All scored periods were visible during model development; heuristic stability cannot validate V6."
+    )
 
     return {
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "overfitting-check-v2.5",
-        "purpose": "Flag whether the model only works in one historical window or remains acceptable across multiple periods.",
-        "verdict": verdict,
+        **metadata,
+        "version": "overfitting-check-v3.0-retrospective-only",
+        "purpose": "Report retrospective stability heuristics while preventing them from being mistaken for model validation.",
+        "verdict": "RETROSPECTIVE_ONLY_NOT_VALIDATED",
+        "raw_heuristic_verdict": heuristic_verdict,
         "score_0_100": score_pct,
+        "evidence_classification": "RETROSPECTIVE_CONTAMINATED",
+        "prospective_validation_status": "NOT_YET_SUFFICIENT",
         "warnings": warnings,
-        "important_limit": "This is a heuristic stability check, not a formal statistical proof.",
+        "important_limit": "This heuristic is descriptive only; a PASS-like raw score is not V6 validation and cannot authorize a trade.",
     }
 
 
 def main() -> None:
+    manifest = load_strict_json(DEFAULT_MANIFEST)
+    validate_split_manifest(manifest)
+    portfolio_report = load_portfolio_report()
     vs = load_csv(PORTFOLIO_VS_PATH)
     equity = load_csv(EQUITY_PATH)
-    walk = build_walk_forward(vs)
-    regime = regime_report(equity)
-    overfit = overfitting_check(walk)
+    generated_at_utc = datetime.now(timezone.utc).isoformat()
+    metadata = {
+        "generated_at_utc": generated_at_utc,
+        "data_source": portfolio_report.get("data_source"),
+        "market_timezone": portfolio_report.get("market_timezone"),
+        "data_timestamp": portfolio_report.get("data_timestamp"),
+        "data_timestamp_granularity": portfolio_report.get("data_timestamp_granularity"),
+        "data_timestamp_status": portfolio_report.get("data_timestamp_status"),
+        "price_frequency": portfolio_report.get("price_frequency"),
+        "price_adjustment_policy": portfolio_report.get("price_adjustment_policy"),
+        "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
+        "rule_fingerprint": RULE_FINGERPRINT,
+        "strategy_fingerprint": STRATEGY_FINGERPRINT,
+        "split_manifest_fingerprint": split_manifest_fingerprint(manifest),
+        "portfolio_contract_version": portfolio_report.get("portfolio_contract_version"),
+        "portfolio_contract_fingerprint": portfolio_report.get("portfolio_contract_fingerprint"),
+        "full_model_fingerprint": portfolio_report.get("full_model_fingerprint"),
+        "survivorship_bias_status": "KNOWN_UNCONTROLLED_CURRENT_FIXED_ASSET_SET",
+    }
+    required_metadata = {
+        "data_source": str,
+        "market_timezone": str,
+        "data_timestamp": str,
+        "data_timestamp_granularity": str,
+        "data_timestamp_status": str,
+        "price_frequency": str,
+        "price_adjustment_policy": str,
+    }
+    if any(not isinstance(metadata[key], expected) or not metadata[key] for key, expected in required_metadata.items()):
+        raise SystemExit("Portfolio report metadata is incomplete; retrospective reports were not published")
+    if metadata["market_timezone"] != MARKET_TIMEZONE:
+        raise SystemExit("Portfolio report market timezone is inconsistent")
+    if metadata["data_timestamp_granularity"] != DATA_TIMESTAMP_GRANULARITY:
+        raise SystemExit("Portfolio report timestamp granularity is inconsistent")
+    if metadata["price_frequency"] != PRICE_FREQUENCY or metadata["price_adjustment_policy"] != PRICE_ADJUSTMENT_POLICY:
+        raise SystemExit("Portfolio report price metadata is inconsistent")
+    if portfolio_report.get("split_manifest_fingerprint") != metadata["split_manifest_fingerprint"]:
+        raise SystemExit("Portfolio report belongs to a different validation split")
+    for field in ("portfolio_contract_fingerprint", "full_model_fingerprint"):
+        value = metadata.get(field)
+        if not isinstance(value, str) or len(value) != 64:
+            raise SystemExit(f"Portfolio report {field} is missing or invalid")
+
+    periods = validation_periods(manifest)
+    walk = build_walk_forward(vs, periods, metadata)
+    regime = regime_report(equity, metadata)
+    overfit = overfitting_check(walk, metadata)
 
     with open(OUT / "walk_forward_report.json", "w", encoding="utf-8") as f:
         json.dump(walk, f, indent=2, ensure_ascii=False, allow_nan=False)

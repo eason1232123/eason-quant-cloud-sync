@@ -1,0 +1,76 @@
+{
+  "schema_version": "v6-validation-split-v1",
+  "status": "FROZEN",
+  "frozen_on_date": "2026-07-12",
+  "amendment_policy": "Any date, rule, cost, horizon, or fingerprint change starts a new validation generation; do not rewrite an existing prospective ledger.",
+  "strategy_contract_version": "v6-rc2-shared-rules-next-close",
+  "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
+  "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
+  "historical_classification": {
+    "status": "RETROSPECTIVE_CONTAMINATED",
+    "contaminated_through_market_date": "2026-07-10",
+    "reason": "All market history visible when this model and its rules were developed is retrospective research data and is not pristine out-of-sample evidence.",
+    "prohibited_claim": "PRISTINE_OUT_OF_SAMPLE"
+  },
+  "label_contract": {
+    "signal_price_date_offset_bars": 0,
+    "entry_close_offset_bars": 1,
+    "forward_horizons_bars": [
+      5,
+      10,
+      20,
+      60
+    ],
+    "maximum_label_span_bars": 61,
+    "return_definition": "close[t+1+h] / close[t+1] - 1, then apply the frozen round-trip cost contract",
+    "boundary_policy": "No signal may enter a partition unless its full maximum-horizon label matures before the next partition begins. Boundary label rows are purge-only and are never signal samples in either adjacent partition."
+  },
+  "historical_partitions": [
+    {
+      "name": "train",
+      "classification": "RETROSPECTIVE_CONTAMINATED",
+      "signal_start_market_date": "2005-01-03",
+      "signal_end_market_date": "2016-09-30",
+      "label_maturation_end_market_date": "2016-12-28",
+      "boundary_purge": {
+        "trading_bars": 61,
+        "start_market_date": "2016-10-03",
+        "end_market_date": "2016-12-28"
+      }
+    },
+    {
+      "name": "validation",
+      "classification": "RETROSPECTIVE_CONTAMINATED",
+      "signal_start_market_date": "2017-01-03",
+      "signal_end_market_date": "2021-09-30",
+      "label_maturation_end_market_date": "2021-12-28",
+      "boundary_purge": {
+        "trading_bars": 61,
+        "start_market_date": "2021-10-01",
+        "end_market_date": "2021-12-28"
+      }
+    },
+    {
+      "name": "retrospective_test",
+      "classification": "RETROSPECTIVE_CONTAMINATED",
+      "signal_start_market_date": "2022-01-03",
+      "signal_end_market_date": "2026-04-13",
+      "label_maturation_end_market_date": "2026-07-10",
+      "boundary_purge": {
+        "trading_bars": 61,
+        "start_market_date": "2026-04-14",
+        "end_market_date": "2026-07-10"
+      }
+    }
+  ],
+  "prospective_partition": {
+    "name": "prospective_forward",
+    "classification": "PROSPECTIVE",
+    "start_rule": "STRICTLY_AFTER_LAST_SEEN_MARKET_DATE",
+    "last_seen_market_date": "2026-07-10",
+    "earliest_calendar_date": "2026-07-11",
+    "status_at_freeze": "NOT_YET_OBSERVED",
+    "prediction_frequency": "one immutable public-model prediction event per ticker per completed market date",
+    "private_account_data_allowed": false
+  }
+}

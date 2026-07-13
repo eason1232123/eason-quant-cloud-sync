@@ -19,14 +19,29 @@ from scripts.market_data_contract import (
     PRICE_FREQUENCY,
 )
 from scripts.market_clock import MARKET_TIMEZONE
+from scripts.strategy_contract import (
+    EXECUTION_SHIFT_BARS,
+    FORWARD_HORIZONS,
+    MIN_EFFECTIVE_SAMPLE,
+    RULE_FINGERPRINT,
+    STRATEGY_CONTRACT_VERSION,
+    STRATEGY_FINGERPRINT,
+    benchmark_for_ticker,
+    execution_cost_assumptions,
+    net_return_after_round_trip_costs,
+    next_close_forward_mae,
+    next_close_forward_return,
+    non_overlapping_signal_mask,
+    rule_signals,
+)
 
 API_KEY = os.getenv("TIINGO_API_KEY")
 
 OUT = Path("docs")
 OUT.mkdir(exist_ok=True)
 
-HORIZONS = [5, 10, 20, 60]
-MIN_SAMPLE = 20
+HORIZONS = list(FORWARD_HORIZONS)
+MIN_SAMPLE = MIN_EFFECTIVE_SAMPLE
 
 MAX_TIINGO_REQUESTS_PER_RUN = int(os.getenv("MAX_TIINGO_REQUESTS_PER_RUN", "35"))
 MAX_NEW_FULL_DOWNLOADS_PER_RUN = int(os.getenv("MAX_NEW_FULL_DOWNLOADS_PER_RUN", "8"))
@@ -114,6 +129,9 @@ def report_dataframe(rows: list[dict[str, Any]], report: dict[str, Any]) -> pd.D
         "data_timestamp": report.get("data_timestamp"),
         "price_frequency": report.get("price_frequency"),
         "price_adjustment_policy": report.get("price_adjustment_policy"),
+        "strategy_contract_version": report.get("strategy_contract_version"),
+        "rule_fingerprint": report.get("rule_fingerprint"),
+        "strategy_fingerprint": report.get("strategy_fingerprint"),
     }
     enriched = [{**metadata, **row} for row in rows]
     return pd.DataFrame(enriched) if enriched else pd.DataFrame(columns=list(metadata))
@@ -219,7 +237,7 @@ def add_indicators(df: pd.DataFrame) -> pd.DataFrame:
     d = d.dropna(subset=["price"]).sort_values("date").reset_index(drop=True)
 
     for n in [1, 5, 10, 20, 60]:
-        d[f"ret_{n}d"] = d["price"].pct_change(n)
+        d[f"ret_{n}d"] = d["price"].pct_change(n, fill_method=None)
 
     for n in [5, 10, 20, 50, 100, 200]:
         d[f"ma{n}"] = d["price"].rolling(n).mean()
@@ -254,24 +272,7 @@ def prepare_benchmarks(price_map: dict[str, pd.DataFrame]) -> dict[str, pd.DataF
 
 
 def choose_relative_benchmark(ticker: str) -> str:
-    semis = {
-        "SMH", "SOXX", "NVDA", "AVGO", "AMD", "ASML", "TSM", "MU", "LRCX", "AMAT",
-        "KLAC", "ARM", "INTC", "MRVL", "QCOM", "ON", "ADI", "TXN", "NXPI", "MCHP", "MPWR"
-    }
-    software = {
-        "IGV", "CRWD", "PLTR", "SNOW", "DDOG", "NET", "NOW", "PANW", "MDB", "ORCL",
-        "CRM", "ADBE", "ZS", "OKTA", "TEAM", "SHOP", "CFLT", "ESTC", "GTLB", "PATH"
-    }
-    defensive = {"GLD", "TLT", "IEF", "SHY", "XLV", "XLP", "XLU", "USMV", "VYM", "SGOV"}
-    if ticker in ["QQQ", "SPY"]:
-        return "SPY" if ticker == "QQQ" else "QQQ"
-    if ticker in semis:
-        return "SMH" if "SMH" in TICKERS else "QQQ"
-    if ticker in software:
-        return "QQQ"
-    if ticker in defensive:
-        return "SPY"
-    return "SPY"
+    return benchmark_for_ticker(ticker)
 
 
 def build_rule_frame(ticker: str, df: pd.DataFrame, price_map: dict[str, pd.DataFrame]) -> pd.DataFrame:
@@ -289,58 +290,14 @@ def build_rule_frame(ticker: str, df: pd.DataFrame, price_map: dict[str, pd.Data
         d["relative_20d"] = np.nan
         d["relative_60d"] = np.nan
 
-    d["rule_pullback_reclaim_5dma"] = (d["ret_5d"] <= -0.04) & (d["price"] > d["ma5"])
-
-    d["rule_rsi_oversold_reclaim_40"] = (
-        (d["rsi14"].rolling(5).min().shift(1) < 35)
-        & (d["rsi14"] >= 40)
-        & (d["price"] > d["ma5"])
-    )
-
-    d["rule_ma20_reclaim_bullish"] = (
-        (d["price"].shift(1) < d["ma20"].shift(1))
-        & (d["price"] > d["ma20"])
-        & (d["price"] > d["ma50"])
-        & (d["ma20_slope_10d"] > -0.01)
-    )
-
-    d["rule_ma50_reclaim_bullish"] = (
-        (d["price"].shift(1) < d["ma50"].shift(1))
-        & (d["price"] > d["ma50"])
-        & (d["price"] > d["ma200"])
-    )
-
-    d["rule_relative_strength_rebound"] = (
-        (d["ret_5d"] <= -0.035)
-        & (d["price"] > d["ma5"])
-        & (d["relative_20d"] > 0)
-    )
-
-    d["rule_momentum_leader"] = (
-        (d["price"] > d["ma20"])
-        & (d["price"] > d["ma50"])
-        & (d["ret_20d"] > 0.05)
-        & (d["relative_20d"] > 0)
-        & (d["rsi14"] < 78)
-    )
-
-    d["rule_failed_rebound_risk"] = (
-        (d["price"] < d["ma5"])
-        & (d["price"] < d["price"].rolling(10).min().shift(1))
-    )
+    for rule_name, signal in rule_signals(d["price"], d["relative_20d"]).items():
+        d[f"rule_{rule_name}"] = signal
 
     return d
 
 
 def max_adverse_excursion(df: pd.DataFrame, horizon: int) -> pd.Series:
-    maes = []
-    for i in range(len(df)):
-        if i + horizon >= len(df):
-            maes.append(np.nan)
-        else:
-            future_min = df.loc[i + 1: i + horizon, "low_price"].min()
-            maes.append(future_min / df.loc[i, "price"] - 1)
-    return pd.Series(maes, index=df.index)
+    return next_close_forward_mae(df["price"], df["low_price"], horizon)
 
 
 def attach_benchmark_forward_returns(df: pd.DataFrame, benchmarks: dict[str, pd.DataFrame], horizon: int) -> pd.DataFrame:
@@ -348,9 +305,24 @@ def attach_benchmark_forward_returns(df: pd.DataFrame, benchmarks: dict[str, pd.
     for bench_name, bench_df in benchmarks.items():
         b = bench_df.copy()
         price_col = f"{bench_name}_price"
-        b[f"{bench_name}_fwd_{horizon}d"] = b[price_col].shift(-horizon) / b[price_col] - 1
-        out = out.merge(b[["date", f"{bench_name}_fwd_{horizon}d"]], on="date", how="left")
+        gross_col = f"{bench_name}_gross_fwd_{horizon}d"
+        net_col = f"{bench_name}_fwd_{horizon}d"
+        b[gross_col] = next_close_forward_return(b[price_col], horizon)
+        b[net_col] = net_return_after_round_trip_costs(b[gross_col])
+        out = out.merge(b[["date", gross_col, net_col]], on="date", how="left")
     return out
+
+
+def prepare_forward_evidence_frame(
+    df: pd.DataFrame,
+    benchmarks: dict[str, pd.DataFrame],
+    horizon: int,
+) -> pd.DataFrame:
+    d = df.copy()
+    d[f"gross_fwd_{horizon}d"] = next_close_forward_return(d["price"], horizon)
+    d[f"fwd_{horizon}d"] = net_return_after_round_trip_costs(d[f"gross_fwd_{horizon}d"])
+    d[f"mae_{horizon}d"] = max_adverse_excursion(d, horizon)
+    return d.merge(attach_benchmark_forward_returns(d, benchmarks, horizon), on="date", how="left")
 
 
 def summarize_rule(
@@ -360,22 +332,39 @@ def summarize_rule(
     benchmarks: dict[str, pd.DataFrame],
     horizon: int,
 ) -> dict:
-    d = df.copy()
-    d[f"fwd_{horizon}d"] = d["price"].shift(-horizon) / d["price"] - 1
-    d[f"mae_{horizon}d"] = max_adverse_excursion(d, horizon)
+    required_columns = {
+        f"gross_fwd_{horizon}d",
+        f"fwd_{horizon}d",
+        f"mae_{horizon}d",
+    }
+    d = (
+        df.copy()
+        if required_columns.issubset(df.columns)
+        else prepare_forward_evidence_frame(df, benchmarks, horizon)
+    )
 
-    b_fwd = attach_benchmark_forward_returns(d, benchmarks, horizon)
-    d = d.merge(b_fwd, on="date", how="left")
-
-    sig = d[d[rule_col]].dropna(subset=[f"fwd_{horizon}d", f"mae_{horizon}d"])
+    raw_signal = d[rule_col].fillna(False).astype(bool)
+    raw_signal_count = int(raw_signal.sum())
+    required_result_columns = [
+        f"gross_fwd_{horizon}d",
+        f"fwd_{horizon}d",
+        f"mae_{horizon}d",
+    ]
+    completed_signal = raw_signal & d[required_result_columns].notna().all(axis=1)
+    independent_mask = non_overlapping_signal_mask(completed_signal, horizon)
+    sig = d[independent_mask]
 
     result = {
         "ticker": ticker,
         "rule": rule_col.replace("rule_", ""),
         "horizon_days": horizon,
+        "raw_signal_count": raw_signal_count,
+        "completed_signal_count": int(completed_signal.sum()),
+        "effective_sample_count": int(len(sig)),
         "samples": int(len(sig)),
         "valid": bool(len(sig) >= MIN_SAMPLE),
         "min_sample_required": MIN_SAMPLE,
+        "sample_independence": "chronological_non_overlapping_signal_windows",
     }
 
     if len(sig) == 0:
@@ -383,11 +372,13 @@ def summarize_rule(
         return result
 
     fwd = sig[f"fwd_{horizon}d"]
+    gross_fwd = sig[f"gross_fwd_{horizon}d"]
     mae = sig[f"mae_{horizon}d"]
 
     result.update(
         {
             "win_rate": clean_float((fwd > 0).mean()),
+            "avg_gross_return": clean_float(gross_fwd.mean()),
             "avg_return": clean_float(fwd.mean()),
             "median_return": clean_float(fwd.median()),
             "worst_return": clean_float(fwd.min()),
@@ -396,15 +387,26 @@ def summarize_rule(
             "worst_mae": clean_float(mae.min()),
             "lookback_start": d["date"].min().date().isoformat(),
             "lookback_end": d["date"].max().date().isoformat(),
+            "last_completed_signal_date": sig["date"].max().date().isoformat(),
         }
     )
 
     for bench_name in ["QQQ", "SPY", "SMH", "SOXX"]:
         col = f"{bench_name}_fwd_{horizon}d"
         if col in sig.columns and sig[col].notna().any():
-            bench_avg = float(sig[col].mean())
+            paired = sig[[f"fwd_{horizon}d", col]].dropna()
+            bench_avg = float(paired[col].mean())
+            strategy_avg = float(paired[f"fwd_{horizon}d"].mean())
+            result[f"paired_{bench_name}_sample_count"] = int(len(paired))
             result[f"avg_{bench_name}_same_dates"] = clean_float(bench_avg)
-            result[f"avg_alpha_vs_{bench_name}"] = clean_float(float(fwd.mean() - bench_avg))
+            result[f"avg_alpha_vs_{bench_name}"] = clean_float(strategy_avg - bench_avg)
+            gross_col = f"{bench_name}_gross_fwd_{horizon}d"
+            if gross_col in sig.columns:
+                gross_paired = sig[[f"gross_fwd_{horizon}d", gross_col]].dropna()
+                if not gross_paired.empty:
+                    result[f"avg_{bench_name}_gross_same_dates"] = clean_float(
+                        gross_paired[gross_col].mean()
+                    )
 
     return result
 
@@ -423,11 +425,21 @@ def summarize_all_rules(ticker: str, df: pd.DataFrame, price_map: dict[str, pd.D
 
     all_rows = []
     nested = {}
+    prepared_by_horizon = {
+        horizon: prepare_forward_evidence_frame(rule_frame, benchmarks, horizon)
+        for horizon in HORIZONS
+    }
 
     for rule_col in rule_cols:
         nested[rule_col.replace("rule_", "")] = {}
         for horizon in HORIZONS:
-            res = summarize_rule(ticker, rule_frame, rule_col, benchmarks, horizon)
+            res = summarize_rule(
+                ticker,
+                prepared_by_horizon[horizon],
+                rule_col,
+                benchmarks,
+                horizon,
+            )
             nested[rule_col.replace("rule_", "")][f"{horizon}d"] = res
             all_rows.append(res)
 
@@ -500,20 +512,27 @@ def corr_90d(price_map: dict[str, pd.DataFrame]) -> dict:
         df = df.rename(columns={"price": t})
         merged = df if merged is None else merged.merge(df, on="date", how="inner")
 
-    rets = merged.set_index("date").pct_change().dropna().tail(90)
+    rets = merged.set_index("date").pct_change(fill_method=None).dropna().tail(90)
     return rets.corr().round(4).to_dict()
 
 
-def evidence_score(row: dict) -> float:
-    samples = row.get("samples", 0) or 0
+def evidence_score(row: dict) -> float | None:
+    samples = row.get("samples")
     win_rate = row.get("win_rate")
     median_ret = row.get("median_return")
     worst_mae = row.get("worst_mae")
-    if win_rate is None or median_ret is None:
-        return 0.0
+    if (
+        isinstance(samples, bool)
+        or not isinstance(samples, (int, float))
+        or not np.isfinite(float(samples))
+        or float(samples) < 0
+        or win_rate is None
+        or median_ret is None
+    ):
+        return None
 
     score = 0.0
-    score += min(samples, 80) / 80 * 30
+    score += min(float(samples), 80) / 80 * 30
     score += max(0, float(win_rate) - 0.5) / 0.3 * 30
     score += max(0, float(median_ret)) / 0.08 * 25
     if worst_mae is not None:
@@ -554,7 +573,17 @@ def rank_rule_evidence(backtests: dict) -> dict:
                     "evidence_score_0_100": score,
                 }
             )
-        rows = sorted(rows, key=lambda x: (x["valid"], x["active_latest_day"], x["evidence_score_0_100"]), reverse=True)
+        rows = sorted(
+            rows,
+            key=lambda x: (
+                x["valid"],
+                x["active_latest_day"],
+                x["evidence_score_0_100"]
+                if x["evidence_score_0_100"] is not None
+                else float("-inf"),
+            ),
+            reverse=True,
+        )
         ranking[ticker] = rows
     return ranking
 
@@ -661,7 +690,10 @@ def main():
             "large universe, capped Tiingo requests per run, capped new full-history downloads, "
             "cached data used when request cap or Tiingo 429 occurs"
         ),
-        "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.0 large-universe-cache-safe",
+        "strategy_version": "Eason Master US Market Monitor Cloud Sync v5.1 shared-execution-contract",
+        "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
+        "rule_fingerprint": RULE_FINGERPRINT,
+        "strategy_fingerprint": STRATEGY_FINGERPRINT,
         "privacy_mode": "sanitized_public_report_no_cash_no_shares_no_account_value",
         "universe": {
             "configured_ticker_count": len(TICKERS),
@@ -692,6 +724,16 @@ def main():
             ],
             "horizons_days": HORIZONS,
             "minimum_valid_samples": MIN_SAMPLE,
+            "sample_independence": "chronological non-overlapping signal windows",
+            "execution": {
+                "signal_time": "end_of_day_close",
+                "entry_time": "next_trading_bar_close",
+                "execution_shift_bars": EXECUTION_SHIFT_BARS,
+            },
+            "cost_assumptions": execution_cost_assumptions(),
+            "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
+            "rule_fingerprint": RULE_FINGERPRINT,
+            "strategy_fingerprint": STRATEGY_FINGERPRINT,
             "note": "Samples below minimum are reported but should not be used as primary buy evidence.",
         },
         "backtests": backtests,

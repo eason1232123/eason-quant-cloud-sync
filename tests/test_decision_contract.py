@@ -20,6 +20,7 @@ from scripts import build_report as base_report
 from scripts import build_report_safe as safe_report
 from scripts import market_clock
 from scripts import market_data_contract
+from scripts import strategy_contract
 from scripts import validate_decision_packet as contract_validator
 from scripts import validate_generated_json as generated_json_validator
 from scripts import validate_market_universe as universe_validator
@@ -444,6 +445,14 @@ class DecisionContractTests(unittest.TestCase):
         }
         vectorbt_report = {
             "available": True,
+            "strategy_contract_version": strategy_contract.STRATEGY_CONTRACT_VERSION,
+            "rule_fingerprint": strategy_contract.RULE_FINGERPRINT,
+            "strategy_fingerprint": strategy_contract.STRATEGY_FINGERPRINT,
+            "data_source": "fixture source",
+            "market_timezone": market_clock.MARKET_TIMEZONE,
+            "data_timestamp": AS_OF,
+            "price_frequency": market_data_contract.PRICE_FREQUENCY,
+            "price_adjustment_policy": market_data_contract.PRICE_ADJUSTMENT_POLICY,
             "loaded_ticker_count": 6,
             "configured_ticker_count": 6,
             "required_evidence_fields": {"sample_count": True},
@@ -453,6 +462,14 @@ class DecisionContractTests(unittest.TestCase):
         }
         valid_validation = {
             "available": True,
+            "strategy_contract_version": strategy_contract.STRATEGY_CONTRACT_VERSION,
+            "rule_fingerprint": strategy_contract.RULE_FINGERPRINT,
+            "strategy_fingerprint": strategy_contract.STRATEGY_FINGERPRINT,
+            "data_source": "fixture source",
+            "market_timezone": market_clock.MARKET_TIMEZONE,
+            "data_timestamp": AS_OF,
+            "price_frequency": market_data_contract.PRICE_FREQUENCY,
+            "price_adjustment_policy": market_data_contract.PRICE_ADJUSTMENT_POLICY,
             "data": {"rows": 300, "loaded_tickers": ["SPY"]},
             "top_by_sharpe": [{"rule": "fixture"}],
             "errors": {},
@@ -719,9 +736,14 @@ class DecisionContractTests(unittest.TestCase):
             "scripts/build_action_board_v3.py",
             "scripts/build_portfolio_backtest.py",
             "scripts/build_trade_review.py",
+            "scripts/build_vectorbt_backtest.py",
             "scripts/build_vectorbt_validation.py",
+            "scripts/build_walk_forward_report.py",
+            "scripts/build_forward_ledger.py",
             "scripts/validate_decision_packet.py",
+            "scripts/validate_model_artifacts.py",
             "scripts/validate_operational_health.py",
+            "scripts/validate_validation_split.py",
         ]
         code = (
             "import runpy, sys, types\n"
