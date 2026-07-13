@@ -1,0 +1,61 @@
+{
+  "automatic_order_allowed": false,
+  "blockers": [
+    "PUBLIC_SIGNAL_PRIMARY_OUTCOMES_BELOW_MINIMUM",
+    "MODEL_GOVERNANCE_PAIRED_SAMPLES_BELOW_PROMOTION_THRESHOLD",
+    "LIVE_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM",
+    "IBKR_TO_CHATGPT_RUNTIME_NOT_YET_EVIDENCED"
+  ],
+  "contains_private_account_data": false,
+  "contract_fingerprints": {
+    "full_model_fingerprint": "c7b581f73487289f6d6113d894a0149734c88bb76d3548fb8715dc91c906dac6",
+    "model_governance_fingerprint": "708ce0b7fa2edc93bbfdb6aa6e614c7665fda8b8ddfb0ee4fa5351cc253dd0fc",
+    "portfolio_contract_fingerprint": "e21f911c03d9c67f5650d874e7b6ce94d4a00a87a5dc9d48e1d5c0b1db2805f1",
+    "split_manifest_fingerprint": "f785a1c7fc63e21c6816be2017220219c619db543ffffdf5353fe70d8caff7ce",
+    "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807"
+  },
+  "current_data_quality_status": "PARTIAL_STALE_WATCHLIST",
+  "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+  "data_timestamp": "2026-07-10",
+  "evidence_counts": {
+    "minimum_governance_paired_samples": 0,
+    "public_signal_primary_horizon_outcomes": 0,
+    "sanitized_live_review_matured_outcomes": 0,
+    "sanitized_live_review_predictions": 0
+  },
+  "evidence_scope": {
+    "ibkr_runtime_evidence": "a sanitized prediction is created only after the private read-only IBKR context and live-review response validate; this is application-level, not broker-independent attestation",
+    "live_review_count": "sanitized outcomes with non-overlap enforced per public symbol",
+    "model_governance_count": "paired, chronologically non-overlapping incumbent/challenger cohorts",
+    "public_signal_count": "raw prospective primary-horizon outcomes; supporting evidence only, not an independence claim"
+  },
+  "evidence_thresholds": {
+    "governance_paired_samples_per_challenger": 48,
+    "ibkr_bound_sanitized_live_reviews": 1,
+    "public_signal_primary_horizon_outcomes": 20,
+    "sanitized_live_review_matured_outcomes": 20
+  },
+  "generated_at_utc": "2026-07-12T11:51:50.511707+00:00",
+  "human_confirmation_required": true,
+  "known_limitations": [
+    "SURVIVORSHIP_BIAS_REMAINS_UNCONTROLLED_FOR_THE_CURRENT_FIXED_ASSET_SET",
+    "CONFIGURED_COSTS_ARE_NOT_OBSERVED_LIVE_EXECUTION_COSTS",
+    "SANITIZED_RUNTIME_EVIDENCE_IS_NOT_AN_INDEPENDENT_BROKER_ATTESTATION",
+    "BACKTEST_OR_PROSPECTIVE_RESULTS_DO_NOT_GUARANTEE_FUTURE_PERFORMANCE"
+  ],
+  "market_timezone": "America/New_York",
+  "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+  "price_frequency": "end_of_day_daily",
+  "ready_for_human_pilot_review": false,
+  "release_gates": {
+    "ibkr_to_chatgpt_contract_evidenced": false,
+    "live_review_forward_artifacts_valid": true,
+    "live_review_minimum_sample_reached": false,
+    "model_artifacts_valid": true,
+    "model_governance_promotion_sample_reached": false,
+    "public_signal_minimum_sample_reached": false
+  },
+  "release_scope": "V6_DECISION_SUPPORT_HUMAN_PILOT_NOT_AUTOMATIC_EXECUTION",
+  "schema_version": "v6-release-readiness-status-v1",
+  "status": "PROSPECTIVE_VALIDATION_IN_PROGRESS"
+}
