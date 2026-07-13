@@ -73,6 +73,7 @@ python -m scripts.run_v6_live_cycle finalize
 1. 向 `docs/live_review_forward_ledger.jsonl` 追加脱敏不可变事件。
 2. 更新 `docs/live_review_forward_status.json`。
 3. 重算 `docs/v6_release_status.json`。
+4. 重算 `docs/v6_operating_status.json`，同步当前只读/人工试用运行边界。
 
 它不会自动提交或推送 Git，也不会生成订单。重复执行同一响应是幂等的。
 

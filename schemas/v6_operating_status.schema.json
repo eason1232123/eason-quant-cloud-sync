@@ -1,0 +1,203 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/schemas/v6_operating_status.schema.json",
+  "title": "V6 Operating Status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "generated_at_utc",
+    "operating_mode",
+    "next_operating_mode",
+    "source_release_status",
+    "data_source",
+    "market_timezone",
+    "data_timestamp",
+    "price_frequency",
+    "price_adjustment_policy",
+    "current_data_quality_status",
+    "capabilities",
+    "mode_gates",
+    "release_gates",
+    "release_blockers",
+    "evidence_thresholds",
+    "evidence_counts",
+    "contract_fingerprints",
+    "final_execution_layer",
+    "important_limit",
+    "contains_private_account_data",
+    "automatic_order_allowed",
+    "human_confirmation_required"
+  ],
+  "properties": {
+    "schema_version": {"const": "v6-operating-status-v1"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "operating_mode": {
+      "enum": ["UNAVAILABLE", "READ_ONLY_SHADOW", "HUMAN_PILOT_REVIEW_READY"]
+    },
+    "next_operating_mode": {
+      "type": ["string", "null"],
+      "enum": [null, "READ_ONLY_SHADOW", "HUMAN_PILOT_REVIEW_READY"]
+    },
+    "source_release_status": {
+      "enum": ["PROSPECTIVE_VALIDATION_IN_PROGRESS", "READY_FOR_HUMAN_PILOT_REVIEW"]
+    },
+    "data_source": {"type": "string", "minLength": 1},
+    "market_timezone": {"type": "string", "minLength": 1},
+    "data_timestamp": {"type": "string", "format": "date"},
+    "price_frequency": {"type": "string", "minLength": 1},
+    "price_adjustment_policy": {"type": "string", "minLength": 1},
+    "current_data_quality_status": {"type": "string", "minLength": 1},
+    "capabilities": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "github_public_evidence_available",
+        "chatgpt_live_review_available",
+        "ibkr_readonly_context_evidenced",
+        "human_decision_support_available",
+        "human_pilot_review_ready",
+        "automatic_order_allowed"
+      ],
+      "properties": {
+        "github_public_evidence_available": {"type": "boolean"},
+        "chatgpt_live_review_available": {"type": "boolean"},
+        "ibkr_readonly_context_evidenced": {"type": "boolean"},
+        "human_decision_support_available": {"type": "boolean"},
+        "human_pilot_review_ready": {"type": "boolean"},
+        "automatic_order_allowed": {"const": false}
+      }
+    },
+    "mode_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["read_only_shadow", "human_pilot_review", "automatic_execution"],
+      "properties": {
+        "read_only_shadow": {"$ref": "#/$defs/releaseGateSet"},
+        "human_pilot_review": {"$ref": "#/$defs/releaseGateSet"},
+        "automatic_execution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["passed", "reason_code"],
+          "properties": {
+            "passed": {"const": false},
+            "reason_code": {"const": "AUTOMATIC_EXECUTION_PERMANENTLY_PROHIBITED"}
+          }
+        }
+      }
+    },
+    "release_gates": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "model_artifacts_valid",
+        "live_review_forward_artifacts_valid",
+        "public_signal_minimum_sample_reached",
+        "model_governance_promotion_sample_reached",
+        "live_review_minimum_sample_reached",
+        "ibkr_to_chatgpt_contract_evidenced"
+      ],
+      "properties": {
+        "model_artifacts_valid": {"type": "boolean"},
+        "live_review_forward_artifacts_valid": {"type": "boolean"},
+        "public_signal_minimum_sample_reached": {"type": "boolean"},
+        "model_governance_promotion_sample_reached": {"type": "boolean"},
+        "live_review_minimum_sample_reached": {"type": "boolean"},
+        "ibkr_to_chatgpt_contract_evidenced": {"type": "boolean"}
+      }
+    },
+    "release_blockers": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "evidence_thresholds": {"$ref": "#/$defs/evidenceThresholds"},
+    "evidence_counts": {"$ref": "#/$defs/evidenceCounts"},
+    "contract_fingerprints": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "strategy_fingerprint",
+        "split_manifest_fingerprint",
+        "portfolio_contract_fingerprint",
+        "full_model_fingerprint",
+        "model_governance_fingerprint"
+      ],
+      "properties": {
+        "strategy_fingerprint": {"$ref": "#/$defs/fingerprint"},
+        "split_manifest_fingerprint": {"$ref": "#/$defs/fingerprint"},
+        "portfolio_contract_fingerprint": {"$ref": "#/$defs/fingerprint"},
+        "full_model_fingerprint": {"$ref": "#/$defs/fingerprint"},
+        "model_governance_fingerprint": {"$ref": "#/$defs/fingerprint"}
+      }
+    },
+    "final_execution_layer": {"const": "IBKR_MANUAL_WITH_EXPLICIT_HUMAN_CONFIRMATION"},
+    "important_limit": {"type": "string", "minLength": 1},
+    "contains_private_account_data": {"const": false},
+    "automatic_order_allowed": {"const": false},
+    "human_confirmation_required": {"const": true}
+  },
+  "$defs": {
+    "releaseGateName": {
+      "enum": [
+        "model_artifacts_valid",
+        "live_review_forward_artifacts_valid",
+        "public_signal_minimum_sample_reached",
+        "model_governance_promotion_sample_reached",
+        "live_review_minimum_sample_reached",
+        "ibkr_to_chatgpt_contract_evidenced"
+      ]
+    },
+    "releaseGateSet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["passed", "required_release_gates", "failed_release_gates"],
+      "properties": {
+        "passed": {"type": "boolean"},
+        "required_release_gates": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/releaseGateName"},
+          "uniqueItems": true
+        },
+        "failed_release_gates": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/releaseGateName"},
+          "uniqueItems": true
+        }
+      }
+    },
+    "evidenceThresholds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_signal_primary_horizon_outcomes",
+        "governance_paired_samples_per_challenger",
+        "sanitized_live_review_matured_outcomes",
+        "ibkr_bound_sanitized_live_reviews"
+      ],
+      "properties": {
+        "public_signal_primary_horizon_outcomes": {"type": "integer", "minimum": 0},
+        "governance_paired_samples_per_challenger": {"type": "integer", "minimum": 0},
+        "sanitized_live_review_matured_outcomes": {"type": "integer", "minimum": 0},
+        "ibkr_bound_sanitized_live_reviews": {"type": "integer", "minimum": 0}
+      }
+    },
+    "evidenceCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "public_signal_primary_horizon_outcomes",
+        "minimum_governance_paired_samples",
+        "sanitized_live_review_predictions",
+        "sanitized_live_review_matured_outcomes"
+      ],
+      "properties": {
+        "public_signal_primary_horizon_outcomes": {"type": "integer", "minimum": 0},
+        "minimum_governance_paired_samples": {"type": "integer", "minimum": 0},
+        "sanitized_live_review_predictions": {"type": "integer", "minimum": 0},
+        "sanitized_live_review_matured_outcomes": {"type": "integer", "minimum": 0}
+      }
+    },
+    "fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

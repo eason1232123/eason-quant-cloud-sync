@@ -29,6 +29,7 @@ scripts/build_action_board_v3.py
 scripts/build_forward_ledger.py
 scripts/build_live_review_forward_ledger.py
 scripts/audit_v6_release.py
+scripts/build_v6_operating_status.py
 scripts/run_v6_live_cycle.py
 config.py
 requirements.txt
@@ -61,6 +62,7 @@ build_decision_report.py
 -> build_live_review_forward_ledger.py update-outcomes
 -> validate_model_artifacts.py
 -> audit_v6_release.py
+-> build_v6_operating_status.py
 ```
 
 Private `record-private-review` ingestion is local-only and must never run in GitHub Actions.
@@ -71,6 +73,9 @@ When `IBKR_PORT` is absent or `auto`, the orchestrator may select exactly one
 reachable standard loopback Gateway/TWS port; zero or multiple listeners must fail
 closed. Account readiness requires the official matching `accountDownloadEnd`
 callback, and any explicit non-true `accountReady` value remains a hard failure.
+`docs/v6_operating_status.json` is the public machine-readable scope boundary:
+read-only shadow support may be available before the frozen human-pilot release
+gates mature, but automatic execution remains permanently prohibited.
 
 ## Mandatory workflow
 
