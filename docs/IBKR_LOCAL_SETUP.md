@@ -35,7 +35,7 @@ IBKR_TIMEOUT_SECONDS=15
 IBKR_PRIVATE_SNAPSHOT=private/ibkr/account_snapshot.json
 ```
 
-PowerShell 可临时设置 `$env:IBKR_PORT='7497'`。
+PowerShell 可临时设置 `$env:IBKR_PORT='7497'`。`run_v6_live_cycle` 在未设置端口或设为 `auto` 时，会只在 loopback 上探测标准 Gateway/TWS 端口；唯一命中才继续，多个命中会要求显式选择。独立的 `capture_ibkr_snapshot` 命令仍使用明确的 `IBKR_PORT`。
 
 ## 使用
 
@@ -65,4 +65,4 @@ python -m scripts.build_local_ibkr_context --max-snapshot-age-seconds 300
 
 输出固定为 `private/ibkr/chatgpt_account_context.json`。Git/GitHub 只保存代码、规则和脱敏验证证据；账户号、股数、余额、成本和盈亏只存在于 `private/`。
 
-若端口离线、官方 `ibapi` 未安装、`accountReady` 未明确为 `true`、回调超时、账户为空、关键数字无效或快照过期，命令会以非零状态显式失败。TWS 账户更新中的组合价格类型会标记为“未验证为实时”，不得当作实时行情信号。
+若端口离线、官方 `ibapi` 未安装、官方 `accountDownloadEnd` 未返回、Gateway 明确返回 `accountReady=false`/未知值、回调超时、账户为空、关键数字无效或快照过期，命令会以非零状态显式失败。`accountReady` 属于可选的客户端值；完全缺席时只能由官方 `accountDownloadEnd` 证明本轮账户下载完成。TWS 账户更新中的组合价格类型会标记为“未验证为实时”，不得当作实时行情信号。

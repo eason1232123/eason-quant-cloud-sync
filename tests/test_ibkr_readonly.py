@@ -18,7 +18,10 @@ from scripts.ibkr_readonly import (
     capture_private_snapshot,
     config_from_env,
     load_private_snapshot,
+    normalize_ibkr_error_callback,
     probe_endpoint,
+    resolve_runtime_endpoint,
+    validate_account_download_readiness,
     validate_config,
     validate_private_snapshot,
 )
@@ -131,6 +134,89 @@ class IbkrReadonlyTests(unittest.TestCase):
         self.assertFalse(result["reachable"])
         self.assertFalse(result["automatic_order_allowed"])
         self.assertNotIn("account", json.dumps(result).lower())
+
+    def test_runtime_endpoint_auto_discovers_one_standard_loopback_port(self) -> None:
+        def fake_probe(config: IbkrReadonlyConfig) -> dict:
+            reachable = config.port == 4001
+            return {
+                "status": "IBKR_ENDPOINT_REACHABLE" if reachable else "IBKR_ENDPOINT_OFFLINE",
+                "reachable": reachable,
+                "port": config.port,
+                "automatic_order_allowed": False,
+            }
+
+        with patch("scripts.ibkr_readonly.probe_endpoint", side_effect=fake_probe):
+            config, endpoint = resolve_runtime_endpoint(env={})
+
+        self.assertIsNotNone(config)
+        self.assertEqual(config.port, 4001)
+        self.assertEqual(endpoint["reachable_ports"], [4001])
+        self.assertEqual(endpoint["selection_mode"], "AUTO_STANDARD_PORT_DISCOVERY")
+        self.assertFalse(endpoint["automatic_order_allowed"])
+
+    def test_runtime_endpoint_fails_closed_when_discovery_is_ambiguous(self) -> None:
+        def fake_probe(config: IbkrReadonlyConfig) -> dict:
+            reachable = config.port in {4001, 7496}
+            return {
+                "status": "IBKR_ENDPOINT_REACHABLE" if reachable else "IBKR_ENDPOINT_OFFLINE",
+                "reachable": reachable,
+                "port": config.port,
+                "automatic_order_allowed": False,
+            }
+
+        with patch("scripts.ibkr_readonly.probe_endpoint", side_effect=fake_probe):
+            config, endpoint = resolve_runtime_endpoint(env={})
+
+        self.assertIsNone(config)
+        self.assertEqual(endpoint["status"], "IBKR_ENDPOINT_AMBIGUOUS")
+        self.assertEqual(endpoint["reachable_ports"], [4001, 7496])
+        self.assertFalse(endpoint["reachable"])
+
+    def test_runtime_endpoint_respects_explicit_environment_port(self) -> None:
+        with patch("scripts.ibkr_readonly.probe_endpoint") as probe:
+            probe.return_value = {
+                "status": "IBKR_ENDPOINT_REACHABLE",
+                "reachable": True,
+                "port": 4002,
+                "automatic_order_allowed": False,
+            }
+            config, endpoint = resolve_runtime_endpoint(env={"IBKR_PORT": "4002"})
+
+        self.assertEqual(config.port, 4002)
+        self.assertEqual(endpoint["selection_mode"], "ENV_FIXED_PORT")
+        probe.assert_called_once()
+
+    def test_account_download_callback_is_required_and_explicit_false_fails(self) -> None:
+        account_id = "PRIVATE_ACCOUNT_FIXTURE"
+        self.assertTrue(
+            validate_account_download_readiness(account_id, {}, {account_id})
+        )
+        with self.assertRaisesRegex(IbkrReadonlyError, "DOWNLOAD_INCOMPLETE"):
+            validate_account_download_readiness(account_id, {}, set())
+        with self.assertRaisesRegex(IbkrReadonlyError, "ACCOUNT_NOT_READY"):
+            validate_account_download_readiness(
+                account_id,
+                {account_id: False},
+                {account_id},
+            )
+        with self.assertRaisesRegex(IbkrReadonlyError, "ACCOUNT_NOT_READY"):
+            validate_account_download_readiness(
+                account_id,
+                {account_id: None},
+                {account_id},
+            )
+
+    def test_official_error_callback_supports_current_and_legacy_signatures(self) -> None:
+        current = normalize_ibkr_error_callback(
+            (1783953389144, 2104, "Market data farm connection is OK", "")
+        )
+        legacy = normalize_ibkr_error_callback(
+            (2106, "Historical data farm connection is OK", "")
+        )
+        self.assertEqual(current, (2104, "Market data farm connection is OK"))
+        self.assertEqual(legacy, (2106, "Historical data farm connection is OK"))
+        with self.assertRaisesRegex(IbkrReadonlyError, "unrecognized"):
+            normalize_ibkr_error_callback(("bad",))
 
     def test_private_capture_roundtrip_is_fresh_and_never_public(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
