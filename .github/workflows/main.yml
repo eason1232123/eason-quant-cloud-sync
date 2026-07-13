@@ -10,6 +10,10 @@ on:
       - "scripts/**"
       - "config.py"
       - "requirements.txt"
+      - "requirements-dev.txt"
+      - "schemas/**"
+      - "tests/**"
+      - "docs/**"
       - "README.md"
       - "THREE_TIER_UNIVERSE.md"
   schedule:
@@ -22,6 +26,9 @@ on:
       - "scripts/**"
       - "config.py"
       - "requirements.txt"
+      - "requirements-dev.txt"
+      - "schemas/**"
+      - "tests/**"
       - "README.md"
       - "THREE_TIER_UNIVERSE.md"
 
@@ -30,12 +37,13 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   pr-smoke-test:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
 
@@ -49,10 +57,21 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Validate committed generated artifacts before rebuild
+        run: |
+          python -m scripts.validate_generated_json
+          python -m scripts.validate_decision_packet
+          python -m scripts.validate_market_universe
 
       - name: Compile Python sources
-        run: python -m compileall -q scripts config.py
+        run: python -m compileall -q scripts tests config.py
+
+      - name: Run decision contract tests
+        run: python -m unittest discover -s tests -p "test_*.py" -v
 
       - name: Build broad US market universe
         timeout-minutes: 3
@@ -68,6 +87,14 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_dynamic_candidates.py
 
+      - name: Build v5 decision contract from repository caches
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python -u scripts/build_decision_report.py
+          python -u scripts/build_action_board_v3.py
+
       - name: Verify expected outputs
         run: |
           test -s docs/market_universe.csv
@@ -76,28 +103,59 @@ jobs:
           test -s docs/dynamic_candidates.json
           test -s docs/promotion_queue.csv
           test -s docs/promotion_queue.json
+          test -s docs/decision_packet.json
+          python -m scripts.validate_market_universe
+          python -m scripts.validate_decision_packet
+          python -m scripts.validate_generated_json
           python - <<'PY'
           import json
           from pathlib import Path
+
+
           universe = json.loads(Path('docs/market_universe_summary.json').read_text())
           candidates = json.loads(Path('docs/dynamic_candidates.json').read_text())
           promotion = json.loads(Path('docs/promotion_queue.json').read_text())
-          assert universe['eligible_ticker_count'] > 1000, universe
-          assert candidates['version'] == 'dynamic-candidates-v2-promotion-gates', candidates['version']
+          assert candidates['version'] == 'dynamic-candidates-v3-freshness-gates', candidates['version']
           assert candidates['coverage']['configured_core_count'] == 94, candidates['coverage']
-          assert candidates['coverage']['cached_tickers_scored'] > 0, candidates['coverage']
+          reference_status = candidates['promotion_gates']['reference_status']
+          assert reference_status in {
+              'ALIGNED',
+              'REPORTED_EXPECTED_DATE_MISSING',
+              'REPORTED_EXPECTED_DATE_MISMATCH',
+          }, candidates['promotion_gates']
+          metadata_status = candidates['promotion_gates']['market_data_metadata_status']
+          assert metadata_status in {'COMPLETE', 'MISSING_OR_INVALID'}, candidates['promotion_gates']
+          context_eligible = reference_status == 'ALIGNED' and metadata_status == 'COMPLETE'
+          if context_eligible:
+              assert candidates['coverage']['cached_tickers_scored'] <= candidates['coverage']['fresh_ticker_count'], candidates['coverage']
+              if candidates['coverage']['fresh_ticker_count'] == 0:
+                  assert candidates['coverage']['cached_tickers_scored'] == 0, candidates['coverage']
+                  assert candidates['top_candidates'] == [], candidates['top_candidates']
+          else:
+              assert candidates['coverage']['cached_tickers_scored'] == 0, candidates['coverage']
+              assert candidates['coverage']['dynamic_candidate_count'] == 0, candidates['coverage']
+              assert candidates['coverage']['promotion_queue_count'] == 0, candidates['coverage']
+              assert candidates['top_candidates'] == [], candidates['top_candidates']
+              assert candidates['promotion_queue'] == [], candidates['promotion_queue']
           assert candidates['coverage']['deep_pool_count'] >= 94, candidates['coverage']
           assert promotion['count'] == candidates['coverage']['promotion_queue_count']
+          if not context_eligible:
+              assert promotion['count'] == 0, promotion
+              assert promotion['candidates'] == [], promotion
           for row in promotion['candidates']:
               assert row['promotion_eligible'] is True, row
+              assert row['data_fresh'] is True, row
               assert row['is_core_94'] is False, row
               assert row['gate_reasons'] == [], row
           print({'universe': universe['eligible_ticker_count'], **candidates['coverage']})
           PY
 
   build-report:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    timeout-minutes: 120
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -109,7 +167,15 @@ jobs:
           python-version: "3.11"
 
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+
+      - name: Compile Python sources
+        run: python -m compileall -q scripts tests config.py
+
+      - name: Run decision contract tests before market-data requests
+        run: python -m unittest discover -s tests -p "test_*.py" -v
 
       - name: Build broad US market universe
         timeout-minutes: 3
@@ -117,6 +183,9 @@ jobs:
           PYTHONPATH: ${{ github.workspace }}
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_market_universe.py
+
+      - name: Validate complete market universe
+        run: python -m scripts.validate_market_universe
 
       - name: Build market report tiered cache-safe append-only
         timeout-minutes: 35
@@ -193,10 +262,26 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_action_board_v3.py
 
+      - name: Validate final decision packet contract
+        timeout-minutes: 2
+        run: |
+          test -s docs/decision_packet.json
+          test -s schemas/decision_packet.schema.json
+          python -m scripts.validate_decision_packet
+          python -m scripts.validate_generated_json
+
       - name: Commit updated reports
         run: |
           git config user.name "eason-quant-bot"
           git config user.email "actions@github.com"
           git add docs/*.json docs/*.csv docs/*.html docs/*.txt
-          git commit -m "Update daily quant report" || echo "No changes to commit"
-          git push
+          if git diff --cached --quiet; then
+            echo "No report changes to commit"
+          else
+            git commit -m "Update daily quant report"
+            git push
+          fi
+
+      - name: Enforce operational market-data health
+        timeout-minutes: 2
+        run: python -m scripts.validate_operational_health

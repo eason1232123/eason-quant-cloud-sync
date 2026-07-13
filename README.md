@@ -2,12 +2,14 @@
 
 目标：部署一次，以后 ChatGPT 可以读取固定公开链接里的量化报告。这个仓库不负责自动下单，只负责生成可核验的行情、技术指标、单信号回测、vectorbt 验证/证据层、组合级回测、样本外稳定性检查、交易复盘和风险候选。
 
-## 当前 v4.5 结构
+## 当前 v5.0 结构
 
 ```text
 .github/workflows/main.yml
 scripts/build_report_safe.py
 scripts/build_report.py
+scripts/market_clock.py
+scripts/market_data_contract.py
 scripts/build_latest_summary.py
 scripts/build_vectorbt_validation.py
 scripts/build_vectorbt_backtest.py
@@ -16,9 +18,14 @@ scripts/build_walk_forward_report.py
 scripts/build_trade_review.py
 scripts/build_decision_report.py
 scripts/build_action_board_v3.py
+scripts/validate_decision_packet.py
+scripts/validate_market_universe.py
+schemas/decision_packet.schema.json
+tests/test_decision_contract.py
 data/trade_log.csv
 config.py
 requirements.txt
+requirements-dev.txt
 docs/
 ```
 
@@ -36,7 +43,24 @@ build_report_safe.py
 → build_action_board_v3.py
 ```
 
-## v4.5 核心修复点
+## v5.0 决策契约
+
+`docs/decision_packet.json` 是 GitHub 证据层交给 ChatGPT 的首要入口。它只包含公开模型组合的 ticker 范围，不包含真实股数、现金或账户价值。
+
+```text
+1. 只有公开模型组合（默认 QQQ/SMH/MSFT/SPY）的新鲜高风险信号可以封锁 GitHub 全局闸门
+2. 非模型组合的观察池高风险只作为 advisory，必须由 ChatGPT/IBKR 确认真实持仓
+3. 买入候选的技术日期和实际信号日期都必须与预期行情日完全一致；旧行情只进入 stale_excluded
+4. 观察池落后超过 2 个工作日、长尾超过 5 个工作日时，跳过轮转并强制刷新
+5. market_regime、buy_permission、data_status 和 portfolio_scope 不再为空
+6. PR 与每日任务都会运行无网络单元测试，并验证 decision_packet JSON Schema
+7. automatic_order_allowed 永远为 false
+8. 每份核心报告显式记录数据源、America/New_York、数据日期、EOD 频率和复权策略；缺失时保留 null 并阻断
+```
+
+行情参考日和工作日差统一由 `scripts/market_clock.py` 提供；行情元信息契约统一由 `scripts/market_data_contract.py` 提供；Schema 与跨字段不变量统一由 `scripts/validate_decision_packet.py` 验证，生产任务和测试不再各复制一套规则。当前日期基准是美国市场时区下的工作日保守门，尚未接入交易所节假日日历；节假日前后可能多阻断一天，但不会据此自动下单。
+
+## v4.5 基础修复点
 
 ```text
 1. Workflow 实际路径是 .github/workflows/main.yml
@@ -55,6 +79,8 @@ build_report_safe.py
 docs/latest_market_summary.json   # 市场/技术/信号轻量摘要，由 build_latest_summary.py 生成
 docs/latest_market_summary.txt    # 同上，纯文本版
 docs/latest_decision_summary.json # 决策层摘要，由 build_decision_report.py 生成
+docs/decision_packet.json         # GitHub → ChatGPT 的稳定 v5 决策契约（优先读取）
+docs/eason_signal.txt             # 当前阻断/许可的人类可读快照；机器仍优先读取 decision_packet.json
 ```
 
 请不要再使用：
@@ -74,11 +100,11 @@ docs/latest_summary.txt
 1. 读取 docs/*_daily.csv 作为本地价格缓存
 2. 如果缓存已经覆盖预期最新交易日，直接跳过 Tiingo 请求
 3. 已有缓存的 ticker 只从最新日期的下一天开始增量拉取
-4. 新 ticker 才做完整历史下载，而且每次运行最多 3 个
-5. 每次运行最多 10 个 Tiingo 请求
+4. 新 ticker 才做完整历史下载；上限由 `MAX_NEW_FULL_DOWNLOADS_PER_RUN` 控制（代码默认 8，当前工作流 40）
+5. 请求上限由 `MAX_TIINGO_REQUESTS_PER_RUN` 控制（代码默认 35，当前工作流 50）
 6. 核心 ticker 每天尝试刷新：SPY, QQQ, SMH, MSFT, SGOV, NVDA 等
-7. 观察池 ticker 每 3 天轮流刷新
-8. 长尾 ticker 每周轮流刷新
+7. 观察池 ticker 每 3 天轮流刷新；落后超过 2 个工作日时强制刷新
+8. 长尾 ticker 每周轮流刷新；落后超过 5 个工作日时强制刷新
 9. 遇到 Tiingo 429 会打开 circuit breaker，后续 ticker 直接用缓存或 defer
 10. append-only：已有历史行不覆盖，只追加新日期
 ```
@@ -129,6 +155,7 @@ Actions
 跑完后，优先打开：
 
 ```text
+https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/decision_packet.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/action_board.json
 ```
 

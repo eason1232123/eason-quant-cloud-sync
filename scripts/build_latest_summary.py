@@ -225,6 +225,11 @@ def build_text_summary(summary: dict[str, Any]) -> str:
     lines.append("Eason Quant Latest MARKET Summary")
     lines.append("=" * 40)
     lines.append(f"generated_at_utc: {summary.get('generated_at_utc')}")
+    lines.append(f"data_source: {summary.get('data_source')}")
+    lines.append(f"market_timezone: {summary.get('market_timezone')}")
+    lines.append(f"data_timestamp: {summary.get('data_timestamp')}")
+    lines.append(f"price_frequency: {summary.get('price_frequency')}")
+    lines.append(f"price_adjustment_policy: {summary.get('price_adjustment_policy')}")
     lines.append(f"strategy_version: {summary.get('strategy_version')}")
     lines.append(f"privacy_mode: {summary.get('privacy_mode')}")
     lines.append(f"ticker_count: {summary.get('ticker_count')}")
@@ -279,6 +284,11 @@ def main() -> None:
         "summary_file_version": "v4.4-latest-market-summary-no-name-conflict",
         "summary_type": "market",
         "data_source": report.get("data_source"),
+        "market_timezone": report.get("market_timezone"),
+        "data_timestamp": report.get("data_timestamp"),
+        "data_timestamp_status": report.get("data_timestamp_status"),
+        "price_frequency": report.get("price_frequency"),
+        "price_adjustment_policy": report.get("price_adjustment_policy"),
         "update_mode": report.get("update_mode"),
         "strategy_version": report.get("strategy_version"),
         "privacy_mode": report.get("privacy_mode"),
@@ -293,11 +303,10 @@ def main() -> None:
         "note": "Market-only summary for ChatGPT reading. Decision summary is latest_decision_summary.json.",
     }
     summary = clean_value(summary)
+    summary_json = json.dumps(summary, ensure_ascii=False, indent=2, allow_nan=False)
 
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
-    with MARKET_SUMMARY_JSON_PATH.open("w", encoding="utf-8") as f:
-        json.dump(summary, f, ensure_ascii=False, indent=2, allow_nan=False)
-        f.write("\n")
+    MARKET_SUMMARY_JSON_PATH.write_text(summary_json + "\n", encoding="utf-8")
 
     with MARKET_SUMMARY_TXT_PATH.open("w", encoding="utf-8") as f:
         f.write(build_text_summary(summary))

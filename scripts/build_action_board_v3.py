@@ -1,16 +1,25 @@
 from __future__ import annotations
 
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from scripts.validate_decision_packet import validate_invariants, validate_schema
+
 OUT = Path("docs")
+DECISION_PACKET_SCHEMA_PATH = Path(__file__).resolve().parents[1] / "schemas" / "decision_packet.schema.json"
 
 # Important: do NOT read docs/action_board.json here.
 # This script writes action_board.json, so reading it as an input creates a recursive
 # self-nesting file that grows on every run.
 FILES = {
+    "decision_packet": OUT / "decision_packet.json",
     "eason_signal": OUT / "eason_signal.json",
     "portfolio_backtest": OUT / "portfolio_backtest.json",
     "walk_forward_report": OUT / "walk_forward_report.json",
@@ -50,12 +59,15 @@ def first_item(*values: Any) -> Any:
     return None
 
 
-def as_int(value: Any, default: int = 0) -> int:
+def as_int(value: Any, default: int | None = None) -> int | None:
     try:
-        if value is None:
+        if value is None or isinstance(value, bool):
             return default
-        return int(value)
-    except Exception:
+        parsed = int(value)
+        if float(value) != parsed or parsed < 0:
+            return default
+        return parsed
+    except (TypeError, ValueError, OverflowError):
         return default
 
 
@@ -145,32 +157,59 @@ def compact_vectorbt_report(vbt_report: dict[str, Any]) -> dict[str, Any]:
 def final_gate(signal: dict[str, Any], overfit: dict[str, Any], trade_review: dict[str, Any], vectorbt_validation: dict[str, Any], vectorbt_report: dict[str, Any]) -> dict[str, Any]:
     base = get_signal_action(signal)
     warnings: list[str] = []
+    validation_data = vectorbt_validation.get("data", {})
+    if not isinstance(validation_data, dict):
+        validation_data = {}
+    validation_rows = as_int(validation_data.get("rows"))
+    validation_tickers = validation_data.get("loaded_tickers")
+    vectorbt_validation_usable = bool(
+        vectorbt_validation.get("available")
+        and not vectorbt_validation.get("errors")
+        and validation_rows is not None
+        and validation_rows > 0
+        and isinstance(validation_tickers, list)
+        and validation_tickers
+        and vectorbt_validation.get("top_by_sharpe")
+    )
+    vectorbt_loaded = as_int(vectorbt_report.get("loaded_ticker_count"))
+    required = vectorbt_report.get("required_evidence_fields", {})
+    required_complete = bool(required) and all(value is True for value in required.values())
+    vectorbt_evidence_usable = bool(
+        vectorbt_report.get("available")
+        and vectorbt_loaded is not None
+        and vectorbt_loaded > 0
+        and required_complete
+        and vectorbt_report.get("top_strategy_results")
+        and vectorbt_report.get("top_entry_forward_evidence_20d")
+    )
 
     if not signal.get("available"):
         warnings.append("eason_signal.json unavailable; decision layer did not complete")
+    if signal.get("data_status") == "STALE_MODEL_PORTFOLIO_DATA":
+        warnings.append("model-portfolio data is stale or missing; refresh before any decision")
 
     overfit_verdict = overfit.get("verdict")
     if overfit_verdict in {"FAIL_OR_OVERFIT_RISK", "MIXED_NEEDS_CAUTION"}:
         warnings.append(f"overfitting_check={overfit_verdict}")
 
-    if vectorbt_validation.get("available") and vectorbt_validation.get("errors"):
-        warnings.append("vectorbt validation has rule-level errors; inspect vectorbt_validation.json")
+    if not vectorbt_validation_usable:
+        warnings.append("independent vectorbt validation unavailable or incomplete; refresh before using the decision")
 
-    if not vectorbt_report.get("available"):
-        warnings.append("vectorbt evidence layer unavailable; do not treat GitHub signal as fully vectorbt-validated")
+    if not vectorbt_evidence_usable:
+        warnings.append("vectorbt evidence layer unavailable or incomplete; refresh before treating a buy candidate as validated")
     else:
-        required = vectorbt_report.get("required_evidence_fields", {})
-        if required and not all(required.values()):
-            warnings.append("vectorbt required evidence fields incomplete")
         if vectorbt_report.get("errors"):
             warnings.append("vectorbt evidence layer has ticker-level errors; inspect vectorbt_report.json")
 
     actual = trade_review.get("actual_vs_backtest", {}) if isinstance(trade_review, dict) else {}
     if actual.get("available") and actual.get("actual_20d_win_rate_pct") is not None:
-        if float(actual.get("actual_20d_win_rate_pct", 0)) < 45:
+        if float(actual["actual_20d_win_rate_pct"]) < 45:
             warnings.append("actual 20d trade win rate <45%; reduce confidence until reviewed")
 
-    if base == "NO_TRADE":
+    critical_evidence_usable = vectorbt_validation_usable and vectorbt_evidence_usable
+    if base == "DATA_REVIEW_REQUIRED" or not critical_evidence_usable:
+        recommended = "REFRESH_DATA_BEFORE_DECISION"
+    elif base == "NO_TRADE":
         recommended = "NO_TRADE_UNLESS_LIVE_RISK_OVERRIDE"
     elif base in {"RISK_REVIEW_REQUIRED", "WAIT_OR_REDUCE"}:
         recommended = "REVIEW_DEFENSE_FIRST"
@@ -203,8 +242,11 @@ def signal_summary(signal: dict[str, Any]) -> dict[str, Any]:
         "market_regime": signal.get("market_regime"),
         "buy_permission": signal.get("buy_permission"),
         "data_status": signal.get("data_status"),
+        "portfolio_scope": signal.get("portfolio_scope"),
         "top_actionable_buy": first_item(buys),
         "top_risk": first_item(risks),
+        "top_model_portfolio_risk": first_item(signal.get("model_portfolio_high_risks")),
+        "top_watchlist_risk_advisory": first_item(signal.get("watchlist_high_risks_advisory")),
         "freshness": signal.get("freshness"),
         "universe": signal.get("universe"),
     }
@@ -212,26 +254,50 @@ def signal_summary(signal: dict[str, Any]) -> dict[str, Any]:
 
 def market_report_status(market_report: dict[str, Any]) -> dict[str, Any]:
     universe = market_report.get("universe", {}) if isinstance(market_report.get("universe"), dict) else {}
+    errors = market_report.get("errors")
     return {
         "available": market_report.get("available", False),
         "generated_at_utc": market_report.get("generated_at_utc"),
+        "data_source": market_report.get("data_source"),
+        "market_timezone": market_report.get("market_timezone"),
+        "data_timestamp": market_report.get("data_timestamp"),
+        "data_timestamp_status": market_report.get("data_timestamp_status"),
+        "price_frequency": market_report.get("price_frequency"),
+        "price_adjustment_policy": market_report.get("price_adjustment_policy"),
         "strategy_version": market_report.get("strategy_version"),
         "universe": universe,
-        "errors_count": len(market_report.get("errors", {}) or {}) if isinstance(market_report.get("errors", {}), dict) else None,
+        "errors_count": len(errors) if isinstance(errors, dict) else None,
     }
 
 
-def score_github_data_quality(market_report: dict[str, Any], vectorbt_report: dict[str, Any]) -> dict[str, Any]:
+def score_github_data_quality(
+    market_report: dict[str, Any],
+    vectorbt_report: dict[str, Any],
+    decision_packet: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     universe = market_report.get("universe", {}) if isinstance(market_report.get("universe"), dict) else {}
-    configured = as_int(universe.get("configured_ticker_count")) or as_int(vectorbt_report.get("configured_ticker_count"))
-    loaded = as_int(universe.get("loaded_ticker_count")) or as_int(vectorbt_report.get("loaded_ticker_count"))
+    configured = as_int(universe.get("configured_ticker_count"))
+    if configured is None:
+        configured = as_int(vectorbt_report.get("configured_ticker_count"))
+    loaded = as_int(universe.get("loaded_ticker_count"))
+    if loaded is None:
+        loaded = as_int(vectorbt_report.get("loaded_ticker_count"))
     fresh = as_int(universe.get("fresh_request_count"))
     errors = as_int(universe.get("errors_count"))
     coverage_gaps = as_int(universe.get("coverage_gaps_count"))
     tiingo_circuit_open = bool(universe.get("tiingo_circuit_open"))
     vbt_available = bool(vectorbt_report.get("available"))
-    coverage_ratio = round(loaded / configured, 4) if configured else None
+    coverage_ratio = round(loaded / configured, 4) if loaded is not None and configured else None
+    packet_quality = (decision_packet or {}).get("data_quality", {}) if isinstance(decision_packet, dict) else {}
+    stale_ticker_count = as_int(packet_quality.get("stale_ticker_count"))
+    packet_data_status = packet_quality.get("data_status")
+    latest_price_date_max = packet_quality.get("latest_price_date_max")
+    if latest_price_date_max is None:
+        latest_price_date_max = market_report.get("data_timestamp")
     reasons: list[str] = []
+    count_metadata_missing = any(
+        value is None for value in (configured, loaded, fresh, errors, coverage_gaps, stale_ticker_count)
+    )
 
     if not market_report.get("available"):
         reasons.append("market_report unavailable")
@@ -245,14 +311,20 @@ def score_github_data_quality(market_report: dict[str, Any], vectorbt_report: di
         reasons.append(f"coverage_gaps={coverage_gaps}")
     if coverage_ratio is not None and coverage_ratio < 0.70:
         reasons.append(f"coverage_ratio={coverage_ratio:.0%} below 70%")
+    if stale_ticker_count:
+        reasons.append(f"stale_tickers={stale_ticker_count}")
+    if packet_data_status == "STALE_MODEL_PORTFOLIO_DATA":
+        reasons.append("model-portfolio data stale")
+    if count_metadata_missing:
+        reasons.append("required data-quality count metadata missing or invalid")
 
-    if not market_report.get("available") or not vbt_available:
+    if not market_report.get("available") or not vbt_available or count_metadata_missing:
         grade = "Unusable"
-    elif tiingo_circuit_open or errors >= 10:
+    elif tiingo_circuit_open or (errors is not None and errors >= 10) or packet_data_status == "STALE_MODEL_PORTFOLIO_DATA":
         grade = "Low"
     elif coverage_ratio is not None and coverage_ratio < 0.70:
         grade = "Medium-Low"
-    elif coverage_gaps or fresh == 0:
+    elif coverage_gaps or fresh == 0 or stale_ticker_count:
         grade = "Medium"
     else:
         grade = "High"
@@ -266,8 +338,10 @@ def score_github_data_quality(market_report: dict[str, Any], vectorbt_report: di
         "coverage_gaps_count": coverage_gaps,
         "errors_count": errors,
         "tiingo_circuit_open": tiingo_circuit_open,
-        "latest_price_date_max": universe.get("latest_price_date_max") or universe.get("expected_latest_market_date"),
+        "latest_price_date_max": latest_price_date_max,
         "expected_latest_market_date": universe.get("expected_latest_market_date"),
+        "stale_ticker_count": stale_ticker_count,
+        "decision_data_status": packet_data_status,
         "reasons": reasons,
         "usage_rule": "Use High/Medium as evidence; Medium-Low only as auxiliary evidence; Low/Unusable cannot justify trades by itself.",
     }
@@ -294,7 +368,36 @@ def compact_active_signals(vbt_report: dict[str, Any], limit: int = 30) -> dict[
     return compact
 
 
-def build_chatgpt_snapshot(loaded: dict[str, dict[str, Any]], gate: dict[str, Any], sig_summary: dict[str, Any]) -> dict[str, Any]:
+def finalize_decision_packet(packet: dict[str, Any], gate: dict[str, Any]) -> dict[str, Any]:
+    if not isinstance(packet, dict) or not packet.get("schema_version"):
+        return {
+            "schema_version": "decision-packet-v5.0",
+            "available": False,
+            "reason": "decision packet was not produced by build_decision_report.py",
+        }
+
+    finalized = dict(packet)
+    finalized.pop("available", None)
+    finalized["evidence_gate"] = {
+        "quant_signal": gate.get("quant_signal"),
+        "recommended_default_action": gate.get("recommended_default_action"),
+        "warnings": gate.get("warnings", []),
+        "automatic_order_allowed": False,
+    }
+    decision = dict(finalized.get("decision", {}))
+    decision["chatgpt_review_required"] = bool(gate.get("chatgpt_review_required", True))
+    decision["default_human_action"] = str(gate.get("recommended_default_action") or "WAIT_FOR_CHATGPT_LIVE_REVIEW")
+    decision["automatic_order_allowed"] = False
+    finalized["decision"] = decision
+    return finalized
+
+
+def build_chatgpt_snapshot(
+    loaded: dict[str, dict[str, Any]],
+    gate: dict[str, Any],
+    sig_summary: dict[str, Any],
+    decision_packet: dict[str, Any],
+) -> dict[str, Any]:
     market_report = loaded.get("market_report", {})
     vectorbt_report = loaded.get("vectorbt_report", {})
     signal = loaded.get("eason_signal", {})
@@ -305,15 +408,18 @@ def build_chatgpt_snapshot(loaded: dict[str, dict[str, Any]], gate: dict[str, An
 
     return {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "chatgpt-compact-snapshot-v1.0",
+        "version": "chatgpt-compact-snapshot-v2.0-decision-contract",
         "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
         "read_priority_for_chatgpt": [
+            "docs/decision_packet.json",
             "docs/chatgpt_snapshot.json",
             "docs/eason_master_status.json",
             "docs/action_board.json",
             "docs/market_report.json",
         ],
-        "github_data_quality": score_github_data_quality(market_report, vectorbt_report),
+        "decision_contract": decision_packet,
+        "market_data": decision_packet.get("market_data"),
+        "github_data_quality": score_github_data_quality(market_report, vectorbt_report, decision_packet),
         "final_gate": gate,
         "signal_summary": sig_summary,
         "market_report_status": market_report_status(market_report),
@@ -369,6 +475,11 @@ def write_snapshot_txt(snapshot: dict[str, Any]) -> str:
         f"coverage_gaps_count: {quality.get('coverage_gaps_count')}",
         f"errors_count: {quality.get('errors_count')}",
         f"market_report_generated_at_utc: {market.get('generated_at_utc')}",
+        f"data_source: {market.get('data_source')}",
+        f"market_timezone: {market.get('market_timezone')}",
+        f"data_timestamp: {market.get('data_timestamp')}",
+        f"price_frequency: {market.get('price_frequency')}",
+        f"price_adjustment_policy: {market.get('price_adjustment_policy')}",
         f"quant_signal: {gate.get('quant_signal')}",
         f"recommended_default_action: {gate.get('recommended_default_action')}",
         f"signal_final_action: {signal.get('final_action')}",
@@ -381,6 +492,7 @@ def write_snapshot_txt(snapshot: dict[str, Any]) -> str:
 
 def main() -> None:
     loaded = {name: load_json(path) for name, path in FILES.items()}
+    decision_packet_input = loaded.get("decision_packet", {})
     signal = loaded.get("eason_signal", {})
     portfolio = loaded.get("portfolio_backtest", {})
     walk = loaded.get("walk_forward_report", {})
@@ -394,10 +506,11 @@ def main() -> None:
 
     gate = final_gate(signal, overfit, trade, vectorbt_validation, vectorbt_report)
     sig_summary = signal_summary(signal)
+    decision_packet = finalize_decision_packet(decision_packet_input, gate)
 
     master = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "eason-master-action-board-v3.8-chatgpt-snapshot",
+        "version": "eason-master-action-board-v5.0-decision-contract",
         "purpose": "One compact file for ChatGPT to review GitHub quant evidence, vectorbt validation/evidence, portfolio backtest, walk-forward stability, regime behavior, and actual trade review before live-market judgment.",
         "roles": {
             "github": "data, backtest, vectorbt validation/evidence, stability, risk, and trade-review evidence layer",
@@ -405,6 +518,8 @@ def main() -> None:
             "human": "final broker confirmation and order execution",
         },
         "final_gate": gate,
+        "decision_contract": decision_packet,
+        "market_data": decision_packet.get("market_data"),
         "signal_summary": sig_summary,
         "market_report_status": market_report_status(market_report),
         "vectorbt_validation": compact_vectorbt_validation(vectorbt_validation),
@@ -426,7 +541,13 @@ def main() -> None:
         ],
     }
 
-    snapshot = build_chatgpt_snapshot(loaded, gate, sig_summary)
+    snapshot = build_chatgpt_snapshot(loaded, gate, sig_summary, decision_packet)
+
+    schema = json.loads(DECISION_PACKET_SCHEMA_PATH.read_text(encoding="utf-8"))
+    validate_schema(decision_packet, schema)
+    validate_invariants(decision_packet)
+    json.dumps(master, allow_nan=False)
+    json.dumps(snapshot, allow_nan=False)
 
     OUT.mkdir(exist_ok=True)
     with open(OUT / "eason_master_status.json", "w", encoding="utf-8") as f:
@@ -441,7 +562,11 @@ def main() -> None:
     with open(OUT / "chatgpt_snapshot.txt", "w", encoding="utf-8") as f:
         f.write(write_snapshot_txt(snapshot))
 
-    print("Saved docs/eason_master_status.json, docs/action_board.json, docs/chatgpt_snapshot.json, and docs/chatgpt_snapshot.txt without recursive self-nesting")
+    with open(OUT / "decision_packet.json", "w", encoding="utf-8") as f:
+        json.dump(decision_packet, f, indent=2, ensure_ascii=False, allow_nan=False)
+        f.write("\n")
+
+    print("Saved docs/decision_packet.json, docs/eason_master_status.json, docs/action_board.json, docs/chatgpt_snapshot.json, and docs/chatgpt_snapshot.txt without recursive self-nesting")
 
 
 if __name__ == "__main__":

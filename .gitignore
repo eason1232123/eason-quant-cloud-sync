@@ -1,0 +1,11 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.venv/
+.env
+
+# Never publish local broker/account material from adjacent tooling.
+private/
+account_snapshots/
+orders/

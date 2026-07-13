@@ -9,10 +9,15 @@ from zoneinfo import ZoneInfo
 import pandas as pd
 
 from scripts import build_report as br
+from scripts.market_clock import latest_completed_us_market_weekday, weekday_lag
 
 
 APPEND_ONLY_MODE = True
 COVERAGE_GAPS_FIRST = True
+WATCH_FORCE_REFRESH_LAG_BUSINESS_DAYS = 2
+LONG_TAIL_FORCE_REFRESH_LAG_BUSINESS_DAYS = 5
+CRITICAL_REFRESH_ANCHORS = {"SPY", "QQQ", "SMH", "MSFT"}
+FRESHNESS_CONTRACT_VERSION = "v5-freshness-contract"
 
 # API-saving refresh tiers. Existing cached data is always loaded into the report.
 # Important: no-cache tickers bypass tier rotation so coverage can move toward 94/94.
@@ -50,17 +55,7 @@ def stable_bucket(ticker: str, modulo: int) -> int:
 
 
 def expected_latest_market_date(now_utc: datetime | None = None) -> datetime.date:
-    """Best-effort latest U.S. daily bar date without using an exchange calendar."""
-    now_utc = now_utc or datetime.now(timezone.utc)
-    ny = now_utc.astimezone(ZoneInfo("America/New_York"))
-    candidate = ny.date()
-
-    if ny.weekday() >= 5 or ny.hour < 18:
-        candidate = candidate - timedelta(days=1)
-
-    while candidate.weekday() >= 5:
-        candidate = candidate - timedelta(days=1)
-    return candidate
+    return latest_completed_us_market_weekday(now_utc)
 
 
 def refresh_tier(ticker: str) -> str:
@@ -86,14 +81,36 @@ def tier_due_today(ticker: str, now_utc: datetime | None = None) -> bool:
     return ny.weekday() == stable_bucket(ticker, 5)
 
 
-def request_order_key(ticker: str) -> tuple:
-    """Close coverage gaps first: no-cache tickers outrank tier rotation."""
+def business_day_lag(latest_date, expected_date) -> int:
+    """Weekday-only lag; this is not an exchange-session calendar."""
+    lag = weekday_lag(latest_date, expected_date)
+    return 0 if lag is None else lag
+
+
+def force_refresh_lag_limit_business_days(ticker: str) -> int:
+    tier = refresh_tier(ticker)
+    if tier == "core_daily":
+        return 0
+    if tier == "watch_every_3d":
+        return WATCH_FORCE_REFRESH_LAG_BUSINESS_DAYS
+    return LONG_TAIL_FORCE_REFRESH_LAG_BUSINESS_DAYS
+
+
+def request_order_key(ticker: str, expected_date) -> tuple:
+    """Prioritize critical anchors, coverage gaps, and forced-overdue caches."""
     ticker = ticker.upper()
     last = br.cached_latest_date(ticker)
-    no_cache_rank = 0 if last is None else 1
+    if ticker in CRITICAL_REFRESH_ANCHORS and (last is None or last < expected_date):
+        priority = 0
+    elif last is None:
+        priority = 1
+    else:
+        lag = business_day_lag(last, expected_date) if last <= expected_date else 0
+        priority = 2 if lag > force_refresh_lag_limit_business_days(ticker) else 3
     tier_rank = {"core_daily": 0, "watch_every_3d": 1, "long_tail_weekly": 2}[refresh_tier(ticker)]
     last_for_sort = last if last is not None else datetime(1900, 1, 1).date()
-    return (no_cache_rank, tier_rank, last_for_sort, ticker)
+    lag_sort = -business_day_lag(last, expected_date) if last is not None and last <= expected_date else 0
+    return (priority, lag_sort, tier_rank, last_for_sort, ticker)
 
 
 def is_tiingo_rate_limit_error(error: Exception) -> bool:
@@ -182,11 +199,20 @@ def use_cache_or_defer(
     update_log: dict,
     reason: str,
     status: str | None = None,
+    expected_date=None,
+    quarantine: bool = False,
 ) -> None:
     if existing is not None and not existing.empty:
-        latest_date = pd.to_datetime(existing["date"]).max().date().isoformat()
+        latest = pd.to_datetime(existing["date"]).max().date()
+        latest_date = latest.isoformat()
         effective_status = status or ("cache_only_after_tiingo_circuit_breaker" if "429" in reason.lower() else "cache_only")
-        price_map[ticker] = existing
+        if not quarantine:
+            price_map[ticker] = existing
+        lag_business_days = (
+            business_day_lag(latest, expected_date)
+            if expected_date is not None and latest <= expected_date
+            else None
+        )
         update_log[ticker] = {
             "status": effective_status,
             "reason": reason,
@@ -194,6 +220,11 @@ def use_cache_or_defer(
             "append_only_mode": APPEND_ONLY_MODE,
             "coverage_gaps_first": COVERAGE_GAPS_FIRST,
             "latest_date": latest_date,
+            "expected_latest_market_date": expected_date.isoformat() if expected_date is not None else None,
+            "lag_business_days": lag_business_days,
+            "exact_date_fresh": bool(expected_date is not None and latest == expected_date and not quarantine),
+            "decision_eligible": bool(expected_date is not None and latest == expected_date and not quarantine),
+            "quarantined": quarantine,
             "total_rows_loaded": int(len(existing)),
             "tiingo_request_spent": False,
         }
@@ -207,6 +238,10 @@ def use_cache_or_defer(
             "refresh_tier": refresh_tier(ticker),
             "append_only_mode": APPEND_ONLY_MODE,
             "coverage_gaps_first": COVERAGE_GAPS_FIRST,
+            "expected_latest_market_date": expected_date.isoformat() if expected_date is not None else None,
+            "exact_date_fresh": False,
+            "decision_eligible": False,
+            "quarantined": quarantine,
             "tiingo_request_spent": False,
         }
         record_warning_error_or_gap(ticker, effective_status, reason, warnings, errors, coverage_gaps, has_cache=False)
@@ -222,11 +257,30 @@ def should_fetch_today(ticker: str, existing: pd.DataFrame, expected_date, now_u
         return True, "no cache; coverage gap priority full history download", "fetch"
 
     latest = pd.to_datetime(existing["date"]).max().date()
-    if latest >= expected_date:
+    if latest > expected_date:
+        return (
+            False,
+            f"future-dated cache {latest} is beyond expected market date {expected_date}; quarantine until rebuilt",
+            "cache_future_dated_quarantine",
+        )
+    if latest == expected_date:
         return False, f"cache already covers expected latest market date {expected_date}", "cache_fresh_enough_no_request"
 
+    lag_business_days = business_day_lag(latest, expected_date)
+    force_limit = force_refresh_lag_limit_business_days(ticker)
+    if lag_business_days > force_limit:
+        return (
+            True,
+            f"forced refresh: cache lags {lag_business_days} business days, above {refresh_tier(ticker)} limit {force_limit}",
+            "fetch",
+        )
+
     if not tier_due_today(ticker, now_utc):
-        return False, f"not due today by {refresh_tier(ticker)} rotation", "cache_only_tier_rotation"
+        return (
+            False,
+            f"not due today by {refresh_tier(ticker)} rotation; cache lag {lag_business_days} business days within limit {force_limit}",
+            "cache_only_tier_rotation",
+        )
 
     return True, f"due today by {refresh_tier(ticker)} rotation and cache is stale", "fetch"
 
@@ -239,16 +293,22 @@ def main() -> None:
     update_log: dict[str, dict] = {}
 
     requested = 0
+    successful_fresh_requests = 0
     skipped_fresh_enough = 0
     skipped_by_rotation = 0
     new_full_downloads = 0
     rows_appended_total = 0
+    forced_refresh_due = 0
+    forced_refresh_requested = 0
+    forced_refresh_succeeded = 0
+    forced_refresh_deferred = 0
+    future_quarantined = 0
     tiingo_circuit_open = False
     tiingo_circuit_reason = ""
     now_utc = datetime.now(timezone.utc)
     expected_date = expected_latest_market_date(now_utc)
 
-    ordered_tickers = sorted(br.TICKERS, key=request_order_key)
+    ordered_tickers = sorted(br.TICKERS, key=lambda ticker: request_order_key(ticker, expected_date))
 
     for ticker in ordered_tickers:
         existing = br.load_existing(ticker)
@@ -256,41 +316,154 @@ def main() -> None:
         is_new_full_download = not has_cache
 
         should_fetch, skip_reason, skip_status = should_fetch_today(ticker, existing, expected_date, now_utc)
+        is_forced_refresh = bool(should_fetch and skip_reason.startswith("forced refresh:"))
+        if is_forced_refresh:
+            forced_refresh_due += 1
+
         if not should_fetch:
             if skip_status == "cache_fresh_enough_no_request":
                 skipped_fresh_enough += 1
+            elif skip_status == "cache_future_dated_quarantine":
+                future_quarantined += 1
             else:
                 skipped_by_rotation += 1
-            use_cache_or_defer(ticker, existing, price_map, warnings, errors, coverage_gaps, update_log, skip_reason, skip_status)
+            use_cache_or_defer(
+                ticker,
+                existing,
+                price_map,
+                warnings,
+                errors,
+                coverage_gaps,
+                update_log,
+                skip_reason,
+                skip_status,
+                expected_date=expected_date,
+                quarantine=skip_status == "cache_future_dated_quarantine",
+            )
             continue
 
         if tiingo_circuit_open:
-            status = "fetch_failed_no_cache_rate_limit" if not has_cache else "cache_only_after_tiingo_circuit_breaker"
-            use_cache_or_defer(ticker, existing, price_map, warnings, errors, coverage_gaps, update_log, tiingo_circuit_reason, status)
+            if is_forced_refresh:
+                forced_refresh_deferred += 1
+                status = "forced_refresh_deferred_circuit_breaker"
+            else:
+                status = "fetch_failed_no_cache_rate_limit" if not has_cache else "cache_only_after_tiingo_circuit_breaker"
+            use_cache_or_defer(
+                ticker,
+                existing,
+                price_map,
+                warnings,
+                errors,
+                coverage_gaps,
+                update_log,
+                tiingo_circuit_reason,
+                status,
+                expected_date=expected_date,
+            )
             continue
 
         if requested >= br.MAX_TIINGO_REQUESTS_PER_RUN:
             reason = f"request cap reached ({br.MAX_TIINGO_REQUESTS_PER_RUN})"
-            use_cache_or_defer(ticker, existing, price_map, warnings, errors, coverage_gaps, update_log, reason)
+            if is_forced_refresh:
+                forced_refresh_deferred += 1
+                status = "forced_refresh_deferred_request_cap"
+            else:
+                status = None
+            use_cache_or_defer(
+                ticker,
+                existing,
+                price_map,
+                warnings,
+                errors,
+                coverage_gaps,
+                update_log,
+                reason,
+                status,
+                expected_date=expected_date,
+            )
             continue
 
         if is_new_full_download and new_full_downloads >= br.MAX_NEW_FULL_DOWNLOADS_PER_RUN:
             reason = f"new full download cap reached ({br.MAX_NEW_FULL_DOWNLOADS_PER_RUN})"
-            use_cache_or_defer(ticker, existing, price_map, warnings, errors, coverage_gaps, update_log, reason)
+            use_cache_or_defer(
+                ticker,
+                existing,
+                price_map,
+                warnings,
+                errors,
+                coverage_gaps,
+                update_log,
+                reason,
+                expected_date=expected_date,
+            )
             continue
 
         try:
             fetch_start = get_incremental_fetch_start(existing)
-            new_df = br.fetch_tiingo(ticker, fetch_start)
             requested += 1
+            if is_forced_refresh:
+                forced_refresh_requested += 1
             if is_new_full_download:
                 new_full_downloads += 1
+            new_df = br.fetch_tiingo(ticker, fetch_start)
+
+            downloaded_latest = pd.to_datetime(new_df["date"]).max().date()
+            if downloaded_latest > expected_date:
+                future_quarantined += 1
+                if is_forced_refresh:
+                    forced_refresh_deferred += 1
+                reason = (
+                    f"provider returned future-dated bar {downloaded_latest} beyond expected market date "
+                    f"{expected_date}; response quarantined without saving"
+                )
+                status = (
+                    "forced_refresh_future_data_quarantine"
+                    if is_forced_refresh
+                    else "provider_future_data_quarantine"
+                )
+                use_cache_or_defer(
+                    ticker,
+                    existing,
+                    price_map,
+                    warnings,
+                    errors,
+                    coverage_gaps,
+                    update_log,
+                    reason,
+                    status,
+                    expected_date=expected_date,
+                )
+                update_log[ticker]["provider_latest_date"] = downloaded_latest.isoformat()
+                update_log[ticker]["provider_response_quarantined"] = True
+                update_log[ticker]["tiingo_request_spent"] = True
+                time.sleep(br.REQUEST_SLEEP_SECONDS)
+                continue
 
             merged, downloaded_rows, appended_rows = save_append_only(ticker, existing, new_df)
             rows_appended_total += appended_rows
             price_map[ticker] = merged
+            merged_latest = pd.to_datetime(merged["date"]).max().date()
+            exact_date_fresh = merged_latest == expected_date
+            lag_business_days = business_day_lag(merged_latest, expected_date) if merged_latest < expected_date else 0
+            if exact_date_fresh:
+                successful_fresh_requests += 1
+                status = "fresh_from_tiingo_append_only" if appended_rows else "fresh_checked_expected_date_append_only"
+                if is_forced_refresh:
+                    forced_refresh_succeeded += 1
+            else:
+                status = (
+                    "forced_refresh_incomplete_still_lagging"
+                    if is_forced_refresh
+                    else "updated_but_still_lagging"
+                )
+                if is_forced_refresh:
+                    forced_refresh_deferred += 1
+                warnings[ticker] = (
+                    f"fetch completed but cache remains {lag_business_days} business days behind "
+                    f"expected market date {expected_date}"
+                )
             update_log[ticker] = {
-                "status": "fresh_from_tiingo_append_only" if appended_rows else "fresh_checked_no_new_rows_append_only",
+                "status": status,
                 "refresh_tier": refresh_tier(ticker),
                 "coverage_gaps_first": COVERAGE_GAPS_FIRST,
                 "fetch_start": fetch_start,
@@ -299,8 +472,12 @@ def main() -> None:
                 "historical_rows_overwritten": 0,
                 "append_only_mode": APPEND_ONLY_MODE,
                 "total_rows_saved": int(len(merged)),
-                "latest_date": pd.to_datetime(merged["date"]).max().date().isoformat(),
+                "latest_date": merged_latest.isoformat(),
                 "expected_latest_market_date": expected_date.isoformat(),
+                "lag_business_days": lag_business_days,
+                "exact_date_fresh": exact_date_fresh,
+                "decision_eligible": exact_date_fresh,
+                "forced_refresh": is_forced_refresh,
                 "tiingo_request_spent": True,
             }
             print(
@@ -309,44 +486,61 @@ def main() -> None:
             )
 
         except Exception as e:
-            requested += 1
-            rate_limited = is_tiingo_rate_limit_error(e)
+            error_message = br.redact_sensitive_text(e)
+            rate_limited = is_tiingo_rate_limit_error(RuntimeError(error_message))
+            if is_forced_refresh:
+                forced_refresh_deferred += 1
             if rate_limited:
                 tiingo_circuit_open = True
-                tiingo_circuit_reason = f"Tiingo 429 circuit breaker opened after {ticker}: {e}"
+                tiingo_circuit_reason = f"Tiingo 429 circuit breaker opened after {ticker}: {error_message}"
                 print(f"[CIRCUIT_OPEN] {tiingo_circuit_reason}")
 
             if has_cache:
                 price_map[ticker] = existing
+                latest = pd.to_datetime(existing["date"]).max().date()
+                lag_business_days = business_day_lag(latest, expected_date) if latest < expected_date else 0
                 update_log[ticker] = {
-                    "status": "cache_after_fetch_error_append_only",
+                    "status": (
+                        "forced_refresh_deferred_rate_limit"
+                        if is_forced_refresh and rate_limited
+                        else "forced_refresh_deferred_fetch_error"
+                        if is_forced_refresh
+                        else "cache_after_fetch_error_append_only"
+                    ),
                     "refresh_tier": refresh_tier(ticker),
                     "coverage_gaps_first": COVERAGE_GAPS_FIRST,
-                    "fetch_error": str(e),
+                    "fetch_error": error_message,
                     "append_only_mode": APPEND_ONLY_MODE,
                     "historical_rows_overwritten": 0,
-                    "latest_date": pd.to_datetime(existing["date"]).max().date().isoformat(),
+                    "latest_date": latest.isoformat(),
                     "expected_latest_market_date": expected_date.isoformat(),
+                    "lag_business_days": lag_business_days,
+                    "exact_date_fresh": latest == expected_date,
+                    "decision_eligible": latest == expected_date,
+                    "forced_refresh": is_forced_refresh,
                     "total_rows_loaded": int(len(existing)),
                     "tiingo_request_spent": True,
                 }
-                warnings[ticker] = f"using cached data after fetch error: {e}"
-                print(f"[CACHE_AFTER_FAIL] {ticker}: {e}")
+                warnings[ticker] = f"using cached data after fetch error: {error_message}"
+                print(f"[CACHE_AFTER_FAIL] {ticker}: {error_message}")
             else:
                 status = "fetch_failed_no_cache_rate_limit" if rate_limited else "fetch_failed_no_cache"
                 update_log[ticker] = {
                     "status": status,
                     "refresh_tier": refresh_tier(ticker),
                     "coverage_gaps_first": COVERAGE_GAPS_FIRST,
-                    "fetch_error": str(e),
+                    "fetch_error": error_message,
                     "expected_latest_market_date": expected_date.isoformat(),
+                    "exact_date_fresh": False,
+                    "decision_eligible": False,
+                    "forced_refresh": False,
                     "tiingo_request_spent": True,
                 }
                 if rate_limited:
-                    coverage_gaps[ticker] = str(e)
+                    coverage_gaps[ticker] = error_message
                 else:
-                    errors[ticker] = str(e)
-                print(f"[FAIL] {ticker}: {e}")
+                    errors[ticker] = error_message
+                print(f"[FAIL] {ticker}: {error_message}")
 
         time.sleep(br.REQUEST_SLEEP_SECONDS)
 
@@ -366,24 +560,79 @@ def main() -> None:
             all_rows.extend(rows)
             technicals[ticker] = br.latest_technical(df, price_map, ticker)
         except Exception as e:
-            errors[ticker] = f"analysis_error: {e}"
+            errors[ticker] = f"analysis_error: {br.redact_sensitive_text(e)}"
+
+    exact_fresh_tickers: list[str] = []
+    lagging_tickers: dict[str, int] = {}
+    future_quarantined_tickers: list[str] = []
+    missing_tickers: list[str] = []
+    for ticker in br.TICKERS:
+        item = update_log.get(ticker, {})
+        status = str(item.get("status") or "")
+        latest_value = item.get("latest_date")
+        if "future" in status:
+            future_quarantined_tickers.append(ticker)
+            continue
+        if not latest_value:
+            missing_tickers.append(ticker)
+            continue
+        latest = pd.to_datetime(latest_value).date()
+        if latest == expected_date and item.get("decision_eligible", True):
+            exact_fresh_tickers.append(ticker)
+        elif latest < expected_date:
+            lagging_tickers[ticker] = business_day_lag(latest, expected_date)
+        else:
+            future_quarantined_tickers.append(ticker)
+
+    freshness_contract = {
+        "version": FRESHNESS_CONTRACT_VERSION,
+        "date_basis": "weekday_business_days_not_exchange_sessions",
+        "exact_expected_date_required_for_decisions": True,
+        "expected_latest_market_date": expected_date.isoformat(),
+        "exact_fresh_ticker_count": len(exact_fresh_tickers),
+        "lagging_ticker_count": len(lagging_tickers),
+        "future_quarantine_ticker_count": len(future_quarantined_tickers),
+        "missing_ticker_count": len(missing_tickers),
+        "exact_fresh_tickers": sorted(exact_fresh_tickers),
+        "lagging_tickers_business_days": dict(sorted(lagging_tickers.items())),
+        "future_quarantined_tickers": sorted(future_quarantined_tickers),
+        "missing_tickers": sorted(missing_tickers),
+    }
+
+    market_data_fields = br.market_data_report_fields(
+        price_map,
+        "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+    )
+    report_generated_at_utc = datetime.now(timezone.utc).isoformat()
 
     report = {
-        "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+        "generated_at_utc": report_generated_at_utc,
+        "freshness_contract_version": FRESHNESS_CONTRACT_VERSION,
+        **market_data_fields,
         "update_mode": (
             "large universe with coverage-gaps-first hydration: no-cache tickers are downloaded before tier rotation; "
-            "cached data is always loaded; stale cached data still follows tier rotation; "
+            "critical anchors and caches beyond business-day lag limits bypass tier rotation; "
+            "future-dated caches/provider responses are quarantined; "
             "existing historical CSV rows are not overwritten, only new dates are appended"
         ),
-        "strategy_version": "Eason Master US Market Monitor Cloud Sync v4.5.3 coverage-gaps-first",
+        "strategy_version": "Eason Master US Market Monitor Cloud Sync v5 freshness-contract",
         "privacy_mode": "sanitized_public_report_no_cash_no_shares_no_account_value",
         "universe": {
             "configured_ticker_count": len(br.TICKERS),
             "loaded_ticker_count": len(price_map),
-            "fresh_request_count": requested,
+            "tiingo_request_attempt_count": requested,
+            "fresh_request_count": successful_fresh_requests,
+            "exact_fresh_ticker_count": len(exact_fresh_tickers),
+            "lagging_ticker_count": len(lagging_tickers),
+            "future_quarantine_ticker_count": len(future_quarantined_tickers),
+            "missing_ticker_count": len(missing_tickers),
             "skipped_fresh_enough_no_request": skipped_fresh_enough,
             "skipped_by_tier_rotation": skipped_by_rotation,
+            "forced_refresh_due_count": forced_refresh_due,
+            "forced_refresh_requested_count": forced_refresh_requested,
+            "forced_refresh_succeeded_count": forced_refresh_succeeded,
+            "forced_refresh_deferred_count": forced_refresh_deferred,
+            "future_quarantine_event_count": future_quarantined,
             "rows_appended_total": rows_appended_total,
             "append_only_mode": APPEND_ONLY_MODE,
             "coverage_gaps_first": COVERAGE_GAPS_FIRST,
@@ -392,7 +641,10 @@ def main() -> None:
             "refresh_policy": {
                 "core_daily": sorted(CORE_DAILY_REFRESH),
                 "watch_every_3d": sorted(WATCH_EVERY_3D_REFRESH),
-                "long_tail_weekly": "cached stale tickers still use deterministic weekday rotation; no-cache tickers bypass rotation",
+                "long_tail_weekly": "deterministic weekday rotation; no-cache tickers bypass rotation",
+                "lag_basis": "weekday_business_days_not_exchange_sessions",
+                "force_refresh_watch_lag_business_days": WATCH_FORCE_REFRESH_LAG_BUSINESS_DAYS,
+                "force_refresh_long_tail_lag_business_days": LONG_TAIL_FORCE_REFRESH_LAG_BUSINESS_DAYS,
             },
             "max_tiingo_requests_per_run": br.MAX_TIINGO_REQUESTS_PER_RUN,
             "max_new_full_downloads_per_run": br.MAX_NEW_FULL_DOWNLOADS_PER_RUN,
@@ -403,6 +655,7 @@ def main() -> None:
             "errors_count": len(errors),
             "note": "coverage_gaps are tickers without usable cache yet; errors are true processing/fetch failures not classified as rotation/rate-limit coverage gaps.",
         },
+        "freshness_contract": freshness_contract,
         "new_listing_policy": {
             "rule": "Short-history stocks are not rejected automatically.",
             "how_to_use": (
@@ -437,16 +690,16 @@ def main() -> None:
     }
 
     br.OUT.mkdir(exist_ok=True)
-    with open(br.OUT / "market_report.json", "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=2, allow_nan=False)
+    report_json = json.dumps(report, indent=2, allow_nan=False)
+    (br.OUT / "market_report.json").write_text(report_json, encoding="utf-8")
 
-    pd.DataFrame(all_rows).to_csv(br.OUT / "backtest_summary.csv", index=False)
+    br.report_dataframe(all_rows, report).to_csv(br.OUT / "backtest_summary.csv", index=False)
 
     ranking_rows = []
     for ticker, rows in report["rule_evidence_ranking"].items():
         for row in rows:
             ranking_rows.append({"ticker": ticker, **row})
-    pd.DataFrame(ranking_rows).to_csv(br.OUT / "rule_evidence_ranking.csv", index=False)
+    br.report_dataframe(ranking_rows, report).to_csv(br.OUT / "rule_evidence_ranking.csv", index=False)
 
     with open(br.OUT / "index.html", "w", encoding="utf-8") as f:
         f.write(

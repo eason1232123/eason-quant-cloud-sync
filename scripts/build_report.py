@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import time
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -12,10 +13,14 @@ import pandas as pd
 import requests
 
 from config import TICKERS, START_DATE
+from scripts.market_data_contract import (
+    DATA_TIMESTAMP_GRANULARITY,
+    PRICE_ADJUSTMENT_POLICY,
+    PRICE_FREQUENCY,
+)
+from scripts.market_clock import MARKET_TIMEZONE
 
 API_KEY = os.getenv("TIINGO_API_KEY")
-if not API_KEY:
-    raise SystemExit("Missing TIINGO_API_KEY GitHub Secret.")
 
 OUT = Path("docs")
 OUT.mkdir(exist_ok=True)
@@ -50,6 +55,15 @@ def clean_float(value: Any, digits: int = 4) -> Any:
         return None
 
 
+def redact_sensitive_text(value: Any) -> str:
+    text = str(value)
+    if API_KEY:
+        text = text.replace(API_KEY, "[REDACTED]")
+    text = re.sub(r"(?i)(token=)[^&\s]+", r"\1[REDACTED]", text)
+    text = re.sub(r"(?i)(authorization\s*:\s*(?:bearer|token)\s+)[^\s]+", r"\1[REDACTED]", text)
+    return text
+
+
 def normalize(df: pd.DataFrame, ticker: str) -> pd.DataFrame:
     if df.empty:
         return df
@@ -67,6 +81,42 @@ def normalize(df: pd.DataFrame, ticker: str) -> pd.DataFrame:
     df["high_price"] = pd.to_numeric(df[high_col], errors="coerce")
 
     return df.dropna(subset=["date", "price"]).sort_values("date").reset_index(drop=True)
+
+
+def market_data_report_fields(price_map: dict[str, pd.DataFrame], data_source: str) -> dict[str, Any]:
+    data_timestamp_by_ticker = {
+        ticker: pd.to_datetime(frame["date"]).max().date().isoformat()
+        for ticker, frame in sorted(price_map.items())
+        if not frame.empty and "date" in frame.columns
+    }
+    observed_latest_market_date = max(data_timestamp_by_ticker.values()) if data_timestamp_by_ticker else None
+    return {
+        "data_source": data_source,
+        "market_timezone": MARKET_TIMEZONE,
+        "data_timestamp": observed_latest_market_date,
+        "data_timestamp_granularity": DATA_TIMESTAMP_GRANULARITY,
+        "data_timestamp_status": "AVAILABLE" if observed_latest_market_date else "MISSING",
+        "data_timestamp_by_ticker": data_timestamp_by_ticker,
+        "price_frequency": PRICE_FREQUENCY,
+        "price_adjustment_policy": PRICE_ADJUSTMENT_POLICY,
+        "price_basis_by_ticker": {
+            ticker: "adjusted" if "adjClose" in frame.columns else "unadjusted"
+            for ticker, frame in sorted(price_map.items())
+        },
+    }
+
+
+def report_dataframe(rows: list[dict[str, Any]], report: dict[str, Any]) -> pd.DataFrame:
+    metadata = {
+        "data_source": report.get("data_source"),
+        "market_timezone": report.get("market_timezone"),
+        "report_generated_at_utc": report.get("generated_at_utc"),
+        "data_timestamp": report.get("data_timestamp"),
+        "price_frequency": report.get("price_frequency"),
+        "price_adjustment_policy": report.get("price_adjustment_policy"),
+    }
+    enriched = [{**metadata, **row} for row in rows]
+    return pd.DataFrame(enriched) if enriched else pd.DataFrame(columns=list(metadata))
 
 
 def load_existing(ticker: str) -> pd.DataFrame:
@@ -103,6 +153,8 @@ def get_fetch_start_date(ticker: str) -> str:
 
 
 def fetch_tiingo(ticker: str, start_date: str) -> pd.DataFrame:
+    if not API_KEY:
+        raise RuntimeError("Missing TIINGO_API_KEY GitHub Secret.")
     url = f"https://api.tiingo.com/tiingo/daily/{ticker}/prices"
     params = {
         "startDate": start_date,
@@ -110,9 +162,12 @@ def fetch_tiingo(ticker: str, start_date: str) -> pd.DataFrame:
         "token": API_KEY,
     }
 
-    r = requests.get(url, params=params, timeout=45)
+    try:
+        r = requests.get(url, params=params, timeout=45)
+    except requests.RequestException as exc:
+        raise RuntimeError(f"{ticker} Tiingo request failed: {type(exc).__name__}") from exc
     if r.status_code != 200:
-        raise RuntimeError(f"{ticker} HTTP {r.status_code}: {r.text[:240]}")
+        raise RuntimeError(f"{ticker} Tiingo HTTP {r.status_code}: {r.reason or 'request failed'}")
 
     df = pd.DataFrame(r.json())
     if df.empty:
@@ -560,19 +615,20 @@ def main():
 
         except Exception as e:
             requested += 1
+            error_message = redact_sensitive_text(e)
             if has_cache:
                 price_map[ticker] = existing
                 update_log[ticker] = {
                     "status": "cache_after_fetch_error",
-                    "fetch_error": str(e),
+                    "fetch_error": error_message,
                     "latest_date": pd.to_datetime(existing["date"]).max().date().isoformat(),
                     "total_rows_loaded": int(len(existing)),
                 }
-                errors[ticker] = f"using cached data after fetch error: {e}"
-                print(f"[CACHE_AFTER_FAIL] {ticker}: {e}")
+                errors[ticker] = f"using cached data after fetch error: {error_message}"
+                print(f"[CACHE_AFTER_FAIL] {ticker}: {error_message}")
             else:
-                errors[ticker] = str(e)
-                print(f"[FAIL] {ticker}: {e}")
+                errors[ticker] = error_message
+                print(f"[FAIL] {ticker}: {error_message}")
 
         time.sleep(REQUEST_SLEEP_SECONDS)
 
@@ -592,11 +648,15 @@ def main():
             all_rows.extend(rows)
             technicals[ticker] = latest_technical(df, price_map, ticker)
         except Exception as e:
-            errors[ticker] = f"analysis_error: {e}"
+            errors[ticker] = f"analysis_error: {redact_sensitive_text(e)}"
 
+    market_data_fields = market_data_report_fields(
+        price_map,
+        "Tiingo Free API with local CSV cache fallback",
+    )
     report = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "data_source": "Tiingo Free API with local CSV cache fallback",
+        **market_data_fields,
         "update_mode": (
             "large universe, capped Tiingo requests per run, capped new full-history downloads, "
             "cached data used when request cap or Tiingo 429 occurs"
@@ -642,16 +702,16 @@ def main():
         "errors": errors,
     }
 
-    with open(OUT / "market_report.json", "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=2, allow_nan=False)
+    report_json = json.dumps(report, indent=2, allow_nan=False)
+    (OUT / "market_report.json").write_text(report_json, encoding="utf-8")
 
-    pd.DataFrame(all_rows).to_csv(OUT / "backtest_summary.csv", index=False)
+    report_dataframe(all_rows, report).to_csv(OUT / "backtest_summary.csv", index=False)
 
     ranking_rows = []
     for ticker, rows in report["rule_evidence_ranking"].items():
         for row in rows:
             ranking_rows.append({"ticker": ticker, **row})
-    pd.DataFrame(ranking_rows).to_csv(OUT / "rule_evidence_ranking.csv", index=False)
+    report_dataframe(ranking_rows, report).to_csv(OUT / "rule_evidence_ranking.csv", index=False)
 
     with open(OUT / "index.html", "w", encoding="utf-8") as f:
         f.write(

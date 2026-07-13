@@ -41,7 +41,10 @@ def main() -> None:
     errors, sources, all_rows = [], {}, []
     for label, url in (("NASDAQ", NASDAQ_URL), ("OTHER", OTHER_URL)):
         try:
-            all_rows.extend(parse_pipe_file(fetch_text(url), label)); sources[label] = url
+            source_rows = parse_pipe_file(fetch_text(url), label)
+            if not source_rows:
+                raise RuntimeError("source returned no eligible tickers")
+            all_rows.extend(source_rows); sources[label] = url
         except Exception as exc:
             errors.append(f"{label}: {type(exc).__name__}: {exc}")
     rows = sorted({r["ticker"]: r for r in all_rows}.values(), key=lambda r: r["ticker"])
@@ -53,7 +56,9 @@ def main() -> None:
         raise RuntimeError("Unable to build market universe and no prior cache exists")
     counts = {}
     for row in rows: counts[row["exchange"]] = counts.get(row["exchange"], 0) + 1
-    payload = {"generated_at_utc":datetime.now(timezone.utc).isoformat(),"version":"market-universe-v1","eligible_ticker_count":len(rows),"exchange_counts":dict(sorted(counts.items())),"sources":sources,"errors":errors}
+    source_counts = {}
+    for row in rows: source_counts[row["source"]] = source_counts.get(row["source"], 0) + 1
+    payload = {"generated_at_utc":datetime.now(timezone.utc).isoformat(),"version":"market-universe-v1","eligible_ticker_count":len(rows),"exchange_counts":dict(sorted(counts.items())),"source_counts":dict(sorted(source_counts.items())),"sources":sources,"errors":errors}
     json_path.write_text(json.dumps(payload, indent=2, ensure_ascii=False), encoding="utf-8")
     print(json.dumps(payload, ensure_ascii=False))
 

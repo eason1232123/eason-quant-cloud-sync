@@ -1,30 +1,12 @@
-Eason Quant Final Signal
-==============================
-generated_at_utc: 2026-07-08T08:11:00.423333+00:00
-today_action: WAIT
-market_regime: CAUTION
-buy_permission: SMALL_BUY_OR_WAIT
-data_status: partial_check_errors
-
-Top buy candidates:
-- {"active_signals": {"momentum_leader": true}, "best_evidence_score_0_100": 52.3, "best_rule": "momentum_leader", "latest_price": 194.62, "note": "normal evidence candidate", "short_history": false, "ticker": "CRWD", "trading_days": 1776, "valid_backtest": true}
-- {"active_signals": {"momentum_leader": true}, "best_evidence_score_0_100": 51.3, "best_rule": "momentum_leader", "latest_price": 81.19, "note": "normal evidence candidate", "short_history": false, "ticker": "ARKK", "trading_days": 2935, "valid_backtest": true}
-- {"active_signals": {"momentum_leader": true}, "best_evidence_score_0_100": 47.7, "best_rule": "momentum_leader", "latest_price": 256.81, "note": "normal evidence candidate", "short_history": false, "ticker": "DDOG", "trading_days": 1707, "valid_backtest": true}
-- {"active_signals": {"momentum_leader": true}, "best_evidence_score_0_100": 47.0, "best_rule": "momentum_leader", "latest_price": 268.83, "note": "normal evidence candidate", "short_history": false, "ticker": "NET", "trading_days": 1711, "valid_backtest": true}
-- {"active_signals": {"momentum_leader": true}, "best_evidence_score_0_100": 46.5, "best_rule": "momentum_leader", "latest_price": 164.44, "note": "normal evidence candidate", "short_history": false, "ticker": "XLV", "trading_days": 5410, "valid_backtest": true}
-- {"active_signals": {"momentum_leader": true}, "best_evidence_score_0_100": 45.6, "best_rule": "momentum_leader", "latest_price": 337.04, "note": "normal evidence candidate", "short_history": false, "ticker": "PANW", "trading_days": 3509, "valid_backtest": true}
-- {"active_signals": {"momentum_leader": true}, "best_evidence_score_0_100": 37.2, "best_rule": "momentum_leader", "latest_price": 262.74, "note": "normal evidence candidate", "short_history": false, "ticker": "SNOW", "trading_days": 1457, "valid_backtest": true}
-
-New listing / short-history candidates:
-
-Risk candidates:
-- {"above_ma50": false, "latest_price": 581.45, "ret_5d": -0.08, "risk": "failed_rebound_risk", "ticker": "SMH"}
-- {"above_ma50": true, "latest_price": 551.69, "ret_5d": -0.102, "risk": "failed_rebound_risk", "ticker": "SOXX"}
-- {"above_ma50": false, "latest_price": 84.55, "ret_5d": -0.0296, "risk": "failed_rebound_risk", "ticker": "TLT"}
-- {"above_ma50": false, "latest_price": 179.18, "ret_5d": -0.0336, "risk": "failed_rebound_risk", "ticker": "XLK"}
-- {"above_ma50": true, "latest_price": 516.11, "ret_5d": -0.0433, "risk": "failed_rebound_risk", "ticker": "AMD"}
-- {"above_ma50": true, "latest_price": 1747.28, "ret_5d": -0.0721, "risk": "failed_rebound_risk", "ticker": "ASML"}
-- {"above_ma50": false, "latest_price": 300.43, "ret_5d": -0.1256, "risk": "failed_rebound_risk", "ticker": "ARM"}
-- {"above_ma50": true, "latest_price": 938.38, "ret_5d": -0.1805, "risk": "failed_rebound_risk", "ticker": "MU"}
-- {"above_ma50": true, "latest_price": 326.13, "ret_5d": -0.2063, "risk": "failed_rebound_risk", "ticker": "LRCX"}
-- {"above_ma50": true, "latest_price": 554.5, "ret_5d": -0.2017, "risk": "failed_rebound_risk", "ticker": "AMAT"}
+Eason Quant v5 Decision Status
+generated_at_utc: 2026-07-12T04:40:02.187536+00:00
+data_source: Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates
+market_timezone: America/New_York
+data_timestamp: 2026-07-10
+price_frequency: end_of_day_daily
+price_adjustment_policy: adjusted_ohlc_when_available_else_unadjusted
+final_action: NO_TRADE
+buy_permission: NO_QUANT_CANDIDATE
+reason: No fresh active signal passed the sample, return, alpha, and MAE filters.
+automatic_order_allowed: false
+Primary machine-readable file: docs/decision_packet.json
