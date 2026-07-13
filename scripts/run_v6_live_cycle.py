@@ -19,6 +19,7 @@ from scripts.audit_v6_release import (  # noqa: E402
 from scripts.build_live_review_forward_ledger import (  # noqa: E402
     DEFAULT_LEDGER as DEFAULT_LIVE_REVIEW_LEDGER,
     DEFAULT_SUMMARY as DEFAULT_LIVE_REVIEW_STATUS,
+    live_review_due_status,
     record_private_review_from_files,
 )
 from scripts.build_local_ibkr_context import (  # noqa: E402
@@ -106,6 +107,18 @@ def prepare_live_cycle(
         "max_context_age_seconds",
     )
     model_validation = validate_model_artifacts()
+    due_status = live_review_due_status()
+    if not due_status["review_due"]:
+        return {
+            "status": "V6_LIVE_CYCLE_CURRENT_MARKET_DATE_ALREADY_RECORDED",
+            "model_artifacts_status": model_validation["status"],
+            "evidence_status": due_status["status"],
+            "data_timestamp": due_status["data_timestamp"],
+            "broker_snapshot_collected": False,
+            "next_command": None,
+            "automatic_order_allowed": False,
+            "human_confirmation_required": True,
+        }
     active_config, endpoint = resolve_runtime_endpoint(config=config)
     if active_config is None or not endpoint["reachable"]:
         raise V6LiveCycleError(
