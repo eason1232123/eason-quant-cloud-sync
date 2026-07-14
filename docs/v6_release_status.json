@@ -29,7 +29,7 @@
     "ibkr_runtime_evidence": "a sanitized prediction is created only after the private read-only IBKR context and live-review response validate; this is application-level, not broker-independent attestation",
     "live_review_count": "sanitized outcomes with non-overlap enforced per public symbol",
     "model_governance_count": "paired, chronologically non-overlapping incumbent/challenger cohorts; sample sufficiency alone is not a promotion approval",
-    "public_signal_count": "raw prospective primary-horizon outcomes; supporting evidence only, not an independence claim"
+    "public_signal_count": "matured primary-horizon outcomes whose immutable source prediction state is ACTIVE; supporting evidence only, not an independence claim"
   },
   "evidence_thresholds": {
     "governance_paired_samples_per_challenger": 48,

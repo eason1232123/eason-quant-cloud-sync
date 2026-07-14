@@ -2,6 +2,9 @@ from __future__ import annotations
 
 import copy
 import unittest
+from unittest.mock import patch
+
+import scripts.audit_v6_release as release_audit
 
 from scripts.audit_v6_release import (
     BLOCKER_BY_GATE,
@@ -61,6 +64,37 @@ class V6ReleaseAuditTests(unittest.TestCase):
             "PROSPECTIVE_FROZEN_UNIVERSE_DOES_NOT_SUPPORT_MARKET_WIDE_GENERALIZATION",
             payload["known_limitations"],
         )
+
+    def test_public_signal_gate_counts_only_active_primary_outcomes(self) -> None:
+        events: list[dict] = []
+        for index in range(20):
+            prediction_id = f"no_signal_{index}"
+            events.extend(
+                [
+                    {
+                        "event_type": "PREDICTION",
+                        "event_id": prediction_id,
+                        "prediction": {"state": "NO_SIGNAL"},
+                    },
+                    {
+                        "event_type": "OUTCOME",
+                        "prediction_event_id": prediction_id,
+                        "outcome": {"horizon_bars": 20},
+                    },
+                ]
+            )
+
+        with patch.object(release_audit, "load_ledger", return_value=events):
+            payload = audit_v6_release(output_path=None)
+
+        self.assertEqual(
+            payload["evidence_counts"]["public_signal_primary_horizon_outcomes"],
+            0,
+        )
+        self.assertFalse(
+            payload["release_gates"]["public_signal_minimum_sample_reached"]
+        )
+        self.assertIn("ACTIVE", payload["evidence_scope"]["public_signal_count"])
 
     def test_human_pilot_and_challenger_promotion_tracks_are_independent(self) -> None:
         payload = audit_v6_release(output_path=None)

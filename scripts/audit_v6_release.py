@@ -142,6 +142,35 @@ def _canonical_evidence_thresholds() -> dict[str, int]:
     }
 
 
+def _active_primary_signal_outcome_count(signal_events: list[dict[str, Any]]) -> int:
+    predictions = {
+        event["event_id"]: event
+        for event in signal_events
+        if event.get("event_type") == "PREDICTION"
+    }
+    count = 0
+    for event in signal_events:
+        if event.get("event_type") != "OUTCOME":
+            continue
+        outcome = event.get("outcome")
+        prediction = predictions.get(event.get("prediction_event_id"))
+        if not isinstance(outcome, dict) or prediction is None:
+            raise V6ReleaseAuditError(
+                "public signal outcome is missing its immutable prediction lineage"
+            )
+        prediction_payload = prediction.get("prediction")
+        if not isinstance(prediction_payload, dict):
+            raise V6ReleaseAuditError(
+                "public signal prediction payload is missing"
+            )
+        if (
+            outcome.get("horizon_bars") == PRIMARY_EVALUATION_HORIZON
+            and prediction_payload.get("state") == "ACTIVE"
+        ):
+            count += 1
+    return count
+
+
 def validate_v6_release_status(payload: dict[str, Any]) -> dict[str, Any]:
     if payload.get("schema_version") != SCHEMA_VERSION:
         raise V6ReleaseAuditError("unsupported v6 release status schema")
@@ -268,11 +297,7 @@ def audit_v6_release(
     market_report = load_public_json(docs / "market_report.json", "market_report")
     decision_packet = load_public_json(docs / "decision_packet.json", "decision_packet")
 
-    primary_signal_outcomes = sum(
-        event["event_type"] == "OUTCOME"
-        and event["outcome"]["horizon_bars"] == PRIMARY_EVALUATION_HORIZON
-        for event in signal_events
-    )
+    primary_signal_outcomes = _active_primary_signal_outcome_count(signal_events)
     challenger_metrics = governance_report.get("challenger_metrics")
     if not isinstance(challenger_metrics, dict) or not challenger_metrics:
         raise V6ReleaseAuditError("model governance has no challenger metrics")
@@ -357,8 +382,8 @@ def audit_v6_release(
         },
         "evidence_scope": {
             "public_signal_count": (
-                "raw prospective primary-horizon outcomes; supporting evidence only, "
-                "not an independence claim"
+                "matured primary-horizon outcomes whose immutable source prediction "
+                "state is ACTIVE; supporting evidence only, not an independence claim"
             ),
             "model_governance_count": (
                 "paired, chronologically non-overlapping incumbent/challenger cohorts; "

@@ -66,6 +66,7 @@ SUMMARY_SCHEMA_VERSION = "v6-forward-validation-status-v1"
 PREDICTION_NAMESPACE = "eason-v6-public-forward-prediction-v1"
 OUTCOME_NAMESPACE = "eason-v6-public-forward-outcome-v1"
 TICKER_PATTERN = re.compile(r"^[A-Z0-9][A-Z0-9.-]{0,19}$")
+PREDICTION_STATES = {"ACTIVE", "NO_SIGNAL", "SKIPPED"}
 FORBIDDEN_PRIVATE_KEYS = {
     "account",
     "account_id",
@@ -444,6 +445,38 @@ def _prediction_event(
     )
 
 
+def _validate_prediction_state(prediction: dict[str, Any], event_id: str) -> None:
+    state = prediction.get("state")
+    if state not in PREDICTION_STATES:
+        raise ForwardLedgerError(f"prediction state is invalid: {event_id}")
+    active_entry_signals = prediction.get("active_entry_signals")
+    if not isinstance(active_entry_signals, list) or any(
+        not isinstance(signal, str) or signal not in ENTRY_RULE_SPECS
+        for signal in active_entry_signals
+    ):
+        raise ForwardLedgerError(
+            f"prediction active entry signals are invalid: {event_id}"
+        )
+    if active_entry_signals != sorted(active_entry_signals) or len(
+        active_entry_signals
+    ) != len(set(active_entry_signals)):
+        raise ForwardLedgerError(
+            f"prediction active entry signals are invalid: {event_id}"
+        )
+    if state == "ACTIVE" and not active_entry_signals:
+        raise ForwardLedgerError(
+            f"prediction ACTIVE state requires active entry signals: {event_id}"
+        )
+    if state != "ACTIVE" and active_entry_signals:
+        raise ForwardLedgerError(
+            f"prediction non-ACTIVE state cannot have active entry signals: {event_id}"
+        )
+    if prediction.get("decision_eligible") is not (state != "SKIPPED"):
+        raise ForwardLedgerError(
+            f"prediction decision eligibility does not match state: {event_id}"
+        )
+
+
 def _validate_event(event: dict[str, Any]) -> None:
     try:
         assert_finite_json(event)
@@ -466,6 +499,7 @@ def _validate_event(event: dict[str, Any]) -> None:
         prediction = event.get("prediction")
         if not isinstance(prediction, dict):
             raise ForwardLedgerError(f"prediction payload is missing: {event_id}")
+        _validate_prediction_state(prediction, event_id)
         expected_id = _prediction_event_id(
             split_fingerprint=str(event.get("split_manifest_fingerprint")),
             strategy_fingerprint=str(event.get("strategy_fingerprint")),
@@ -487,6 +521,51 @@ def _validate_event(event: dict[str, Any]) -> None:
             raise ForwardLedgerError(f"outcome event identity is invalid: {event_id}")
     else:
         raise ForwardLedgerError(f"unsupported forward ledger event type: {event_type}")
+
+
+def _validate_outcome_lineage(
+    outcome_event: dict[str, Any],
+    prediction_event: dict[str, Any],
+) -> None:
+    event_id = outcome_event["event_id"]
+    outcome = outcome_event.get("outcome")
+    prediction = prediction_event.get("prediction")
+    if not isinstance(outcome, dict) or not isinstance(prediction, dict):
+        raise ForwardLedgerError(f"outcome lineage payload is missing: {event_id}")
+    if outcome_event.get("evidence_classification") != "PROSPECTIVE":
+        raise ForwardLedgerError(f"outcome evidence classification is invalid: {event_id}")
+    for field in (
+        "split_manifest_fingerprint",
+        "strategy_contract_version",
+        "rule_fingerprint",
+        "strategy_fingerprint",
+    ):
+        if outcome_event.get(field) != prediction_event.get(field):
+            raise ForwardLedgerError(
+                f"outcome {field} does not match prediction: {event_id}"
+            )
+    if prediction.get("state") == "SKIPPED":
+        raise ForwardLedgerError(
+            f"outcome cannot reference a skipped prediction: {event_id}"
+        )
+    for field in ("ticker", "observation_market_date", "price_basis"):
+        if outcome.get(field) != prediction.get(field):
+            raise ForwardLedgerError(
+                f"outcome {field.replace('_', ' ')} does not match prediction: {event_id}"
+            )
+    if outcome.get("status") != "MATURED":
+        raise ForwardLedgerError(f"outcome status must be MATURED: {event_id}")
+    expected_outcomes = prediction.get("expected_outcomes")
+    horizon = outcome.get("horizon_bars")
+    if not isinstance(expected_outcomes, list) or not any(
+        isinstance(expected, dict)
+        and expected.get("horizon_bars") == horizon
+        and expected.get("status") == "PENDING"
+        for expected in expected_outcomes
+    ):
+        raise ForwardLedgerError(
+            f"outcome horizon was not pending in its prediction: {event_id}"
+        )
 
 
 def load_ledger(path: Path) -> list[dict[str, Any]]:
@@ -517,10 +596,20 @@ def load_ledger(path: Path) -> list[dict[str, Any]]:
             raise ForwardLedgerError(f"duplicate forward ledger event_id: {event_id}")
         seen.add(event_id)
         events.append(event)
-    prediction_ids = {event["event_id"] for event in events if event["event_type"] == "PREDICTION"}
+    predictions = {
+        event["event_id"]: event
+        for event in events
+        if event["event_type"] == "PREDICTION"
+    }
     for event in events:
-        if event["event_type"] == "OUTCOME" and event["prediction_event_id"] not in prediction_ids:
-            raise ForwardLedgerError(f"outcome references unknown prediction: {event['event_id']}")
+        if event["event_type"] != "OUTCOME":
+            continue
+        prediction = predictions.get(event["prediction_event_id"])
+        if prediction is None:
+            raise ForwardLedgerError(
+                f"outcome references unknown prediction: {event['event_id']}"
+            )
+        _validate_outcome_lineage(event, prediction)
     return events
 
 
