@@ -75,4 +75,6 @@ python -m scripts.audit_v6_release
 - 至少 20 个脱敏实时审查到期结果
 - 至少一个经过私有 IBKR 上下文绑定的脱敏实时审查事件
 
-未满足时状态保持 `PROSPECTIVE_VALIDATION_IN_PROGRESS` 并列出具体 blocker。全部满足后也只允许进入 `READY_FOR_HUMAN_PILOT_REVIEW`；`automatic_order_allowed` 始终为 `false`，仍要求人工确认。
+审计把门槛分成两条独立轨道：人工试用审核使用公开策略 20 个结果、脱敏实时审查 20 个结果、模型/账本有效性和 IBKR→ChatGPT 脱敏证据；挑战模型晋升证据使用模型有效性和每个挑战模型 48 个配对样本。后者不再阻塞现有模型的人工试用审核。
+
+人工试用轨道未满足时状态保持 `PROSPECTIVE_VALIDATION_IN_PROGRESS` 并列出具体 blocker；满足后也只允许进入 `READY_FOR_HUMAN_PILOT_REVIEW`。挑战模型样本达标只表示晋升证据可供审核，仍必须通过冻结的收益、胜率、回撤门槛和人工审核。`automatic_order_allowed` 始终为 `false`，仍要求人工确认。

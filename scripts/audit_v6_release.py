@@ -35,7 +35,7 @@ from scripts.validate_validation_split import assert_finite_json  # noqa: E402
 
 DEFAULT_DOCS = ROOT / "docs"
 DEFAULT_OUTPUT = DEFAULT_DOCS / "v6_release_status.json"
-SCHEMA_VERSION = "v6-release-readiness-status-v1"
+SCHEMA_VERSION = "v6-release-readiness-status-v2"
 RELEASE_GATE_ORDER = (
     "model_artifacts_valid",
     "live_review_forward_artifacts_valid",
@@ -43,6 +43,17 @@ RELEASE_GATE_ORDER = (
     "model_governance_promotion_sample_reached",
     "live_review_minimum_sample_reached",
     "ibkr_to_chatgpt_contract_evidenced",
+)
+HUMAN_PILOT_REQUIRED_GATES = (
+    "model_artifacts_valid",
+    "live_review_forward_artifacts_valid",
+    "public_signal_minimum_sample_reached",
+    "live_review_minimum_sample_reached",
+    "ibkr_to_chatgpt_contract_evidenced",
+)
+CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES = (
+    "model_artifacts_valid",
+    "model_governance_promotion_sample_reached",
 )
 EVIDENCE_COUNT_FIELDS = (
     "public_signal_primary_horizon_outcomes",
@@ -161,9 +172,20 @@ def validate_v6_release_status(payload: dict[str, Any]) -> dict[str, Any]:
             raise V6ReleaseAuditError(
                 f"v6 release gate {gate} does not match its evidence count and threshold"
             )
-    expected_ready = all(gate_values)
+    expected_ready = all(gates[name] for name in HUMAN_PILOT_REQUIRED_GATES)
     if payload.get("ready_for_human_pilot_review") is not expected_ready:
         raise V6ReleaseAuditError("v6 release readiness does not match its gates")
+    expected_promotion_evidence_ready = all(
+        gates[name]
+        for name in CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES
+    )
+    if (
+        payload.get("challenger_model_promotion_evidence_ready")
+        is not expected_promotion_evidence_ready
+    ):
+        raise V6ReleaseAuditError(
+            "v6 challenger model promotion evidence readiness does not match its gates"
+        )
     expected_status = (
         "READY_FOR_HUMAN_PILOT_REVIEW"
         if expected_ready
@@ -177,10 +199,30 @@ def validate_v6_release_status(payload: dict[str, Any]) -> dict[str, Any]:
     ):
         raise V6ReleaseAuditError("v6 release blockers must be a string list")
     expected_blockers = [
-        BLOCKER_BY_GATE[name] for name in RELEASE_GATE_ORDER if not gates[name]
+        BLOCKER_BY_GATE[name]
+        for name in HUMAN_PILOT_REQUIRED_GATES
+        if not gates[name]
     ]
     if blockers != expected_blockers:
-        raise V6ReleaseAuditError("v6 release blocker list does not match failed gates")
+        raise V6ReleaseAuditError(
+            "v6 human-pilot blocker list does not match failed gates"
+        )
+    promotion_blockers = payload.get("challenger_model_promotion_blockers")
+    if not isinstance(promotion_blockers, list) or any(
+        not isinstance(item, str) or not item for item in promotion_blockers
+    ):
+        raise V6ReleaseAuditError(
+            "v6 challenger model promotion blockers must be a string list"
+        )
+    expected_promotion_blockers = [
+        BLOCKER_BY_GATE[name]
+        for name in CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES
+        if not gates[name]
+    ]
+    if promotion_blockers != expected_promotion_blockers:
+        raise V6ReleaseAuditError(
+            "v6 challenger model promotion blocker list does not match failed gates"
+        )
     if payload.get("automatic_order_allowed") is not False:
         raise V6ReleaseAuditError("v6 release status must not allow automatic orders")
     if payload.get("human_confirmation_required") is not True:
@@ -251,8 +293,18 @@ def audit_v6_release(
         "ibkr_to_chatgpt_contract_evidenced": live_predictions
         >= thresholds["ibkr_bound_sanitized_live_reviews"],
     }
-    blockers = [BLOCKER_BY_GATE[name] for name in RELEASE_GATE_ORDER if not gates[name]]
+    blockers = [
+        BLOCKER_BY_GATE[name]
+        for name in HUMAN_PILOT_REQUIRED_GATES
+        if not gates[name]
+    ]
+    promotion_blockers = [
+        BLOCKER_BY_GATE[name]
+        for name in CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES
+        if not gates[name]
+    ]
     ready = not blockers
+    promotion_evidence_ready = not promotion_blockers
 
     packet_quality = decision_packet.get("data_quality")
     payload = {
@@ -264,6 +316,7 @@ def audit_v6_release(
             else "PROSPECTIVE_VALIDATION_IN_PROGRESS"
         ),
         "ready_for_human_pilot_review": ready,
+        "challenger_model_promotion_evidence_ready": promotion_evidence_ready,
         "release_scope": "V6_DECISION_SUPPORT_HUMAN_PILOT_NOT_AUTOMATIC_EXECUTION",
         "data_source": market_report.get("data_source"),
         "market_timezone": market_report.get("market_timezone"),
@@ -297,7 +350,8 @@ def audit_v6_release(
                 "not an independence claim"
             ),
             "model_governance_count": (
-                "paired, chronologically non-overlapping incumbent/challenger cohorts"
+                "paired, chronologically non-overlapping incumbent/challenger cohorts; "
+                "sample sufficiency alone is not a promotion approval"
             ),
             "live_review_count": (
                 "sanitized outcomes with non-overlap enforced per public symbol"
@@ -310,6 +364,7 @@ def audit_v6_release(
         },
         "release_gates": gates,
         "blockers": blockers,
+        "challenger_model_promotion_blockers": promotion_blockers,
         "known_limitations": [
             "SURVIVORSHIP_BIAS_REMAINS_UNCONTROLLED_FOR_THE_CURRENT_FIXED_ASSET_SET",
             "CONFIGURED_COSTS_ARE_NOT_OBSERVED_LIVE_EXECUTION_COSTS",
@@ -328,7 +383,9 @@ def audit_v6_release(
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Audit evidence required for a v6 human-pilot readiness claim."
+        description=(
+            "Audit v6 human-pilot and challenger-model promotion evidence readiness."
+        )
     )
     parser.add_argument("--docs", type=Path, default=DEFAULT_DOCS)
     parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
