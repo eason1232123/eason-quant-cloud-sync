@@ -36,6 +36,60 @@ from scripts.validate_validation_split import assert_finite_json  # noqa: E402
 DEFAULT_DOCS = ROOT / "docs"
 DEFAULT_OUTPUT = DEFAULT_DOCS / "v6_release_status.json"
 SCHEMA_VERSION = "v6-release-readiness-status-v1"
+RELEASE_GATE_ORDER = (
+    "model_artifacts_valid",
+    "live_review_forward_artifacts_valid",
+    "public_signal_minimum_sample_reached",
+    "model_governance_promotion_sample_reached",
+    "live_review_minimum_sample_reached",
+    "ibkr_to_chatgpt_contract_evidenced",
+)
+EVIDENCE_COUNT_FIELDS = (
+    "public_signal_primary_horizon_outcomes",
+    "minimum_governance_paired_samples",
+    "sanitized_live_review_predictions",
+    "sanitized_live_review_matured_outcomes",
+)
+EVIDENCE_THRESHOLD_FIELDS = (
+    "public_signal_primary_horizon_outcomes",
+    "governance_paired_samples_per_challenger",
+    "sanitized_live_review_matured_outcomes",
+    "ibkr_bound_sanitized_live_reviews",
+)
+COUNT_GATE_REQUIREMENTS = {
+    "public_signal_minimum_sample_reached": (
+        "public_signal_primary_horizon_outcomes",
+        "public_signal_primary_horizon_outcomes",
+    ),
+    "model_governance_promotion_sample_reached": (
+        "minimum_governance_paired_samples",
+        "governance_paired_samples_per_challenger",
+    ),
+    "live_review_minimum_sample_reached": (
+        "sanitized_live_review_matured_outcomes",
+        "sanitized_live_review_matured_outcomes",
+    ),
+    "ibkr_to_chatgpt_contract_evidenced": (
+        "sanitized_live_review_predictions",
+        "ibkr_bound_sanitized_live_reviews",
+    ),
+}
+BLOCKER_BY_GATE = {
+    "model_artifacts_valid": "MODEL_ARTIFACT_VALIDATION_FAILED",
+    "live_review_forward_artifacts_valid": "LIVE_REVIEW_ARTIFACT_VALIDATION_FAILED",
+    "public_signal_minimum_sample_reached": (
+        "PUBLIC_SIGNAL_PRIMARY_OUTCOMES_BELOW_MINIMUM"
+    ),
+    "model_governance_promotion_sample_reached": (
+        "MODEL_GOVERNANCE_PAIRED_SAMPLES_BELOW_PROMOTION_THRESHOLD"
+    ),
+    "live_review_minimum_sample_reached": (
+        "LIVE_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM"
+    ),
+    "ibkr_to_chatgpt_contract_evidenced": (
+        "IBKR_TO_CHATGPT_RUNTIME_NOT_YET_EVIDENCED"
+    ),
+}
 
 
 class V6ReleaseAuditError(ValueError):
@@ -48,16 +102,65 @@ def _non_negative_int(value: Any, field: str) -> int:
     return value
 
 
+def _positive_int(value: Any, field: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
+        raise V6ReleaseAuditError(f"{field} must be a positive integer")
+    return value
+
+
+def _canonical_evidence_thresholds() -> dict[str, int]:
+    governance_config = load_governance_config()
+    promotion_threshold = _positive_int(
+        governance_config["allocation_gates"][
+            "minimum_paired_samples_for_promotion_review"
+        ],
+        "model governance promotion threshold",
+    )
+    return {
+        "public_signal_primary_horizon_outcomes": MIN_EFFECTIVE_SAMPLE,
+        "governance_paired_samples_per_challenger": promotion_threshold,
+        "sanitized_live_review_matured_outcomes": MIN_EFFECTIVE_SAMPLE,
+        "ibkr_bound_sanitized_live_reviews": 1,
+    }
+
+
 def validate_v6_release_status(payload: dict[str, Any]) -> dict[str, Any]:
     if payload.get("schema_version") != SCHEMA_VERSION:
         raise V6ReleaseAuditError("unsupported v6 release status schema")
     gates = payload.get("release_gates")
     evidence = payload.get("evidence_counts")
-    if not isinstance(gates, dict) or not isinstance(evidence, dict):
-        raise V6ReleaseAuditError("v6 release gates and evidence counts are required")
-    gate_values = list(gates.values())
-    if not gate_values or any(not isinstance(value, bool) for value in gate_values):
+    thresholds = payload.get("evidence_thresholds")
+    if (
+        not isinstance(gates, dict)
+        or not isinstance(evidence, dict)
+        or not isinstance(thresholds, dict)
+    ):
+        raise V6ReleaseAuditError(
+            "v6 release gates, evidence counts, and evidence thresholds are required"
+        )
+    if set(gates) != set(RELEASE_GATE_ORDER):
+        raise V6ReleaseAuditError("v6 release gate membership changed")
+    if set(evidence) != set(EVIDENCE_COUNT_FIELDS):
+        raise V6ReleaseAuditError("v6 release evidence count membership changed")
+    if set(thresholds) != set(EVIDENCE_THRESHOLD_FIELDS):
+        raise V6ReleaseAuditError("v6 release evidence threshold membership changed")
+    gate_values = [gates[name] for name in RELEASE_GATE_ORDER]
+    if any(not isinstance(value, bool) for value in gate_values):
         raise V6ReleaseAuditError("v6 release gates must be booleans")
+    for field in EVIDENCE_COUNT_FIELDS:
+        _non_negative_int(evidence[field], f"evidence_counts.{field}")
+    for field in EVIDENCE_THRESHOLD_FIELDS:
+        _positive_int(thresholds[field], f"evidence_thresholds.{field}")
+    if thresholds != _canonical_evidence_thresholds():
+        raise V6ReleaseAuditError(
+            "v6 release evidence thresholds changed from the frozen contract"
+        )
+    for gate, (count_field, threshold_field) in COUNT_GATE_REQUIREMENTS.items():
+        expected_passed = evidence[count_field] >= thresholds[threshold_field]
+        if gates[gate] is not expected_passed:
+            raise V6ReleaseAuditError(
+                f"v6 release gate {gate} does not match its evidence count and threshold"
+            )
     expected_ready = all(gate_values)
     if payload.get("ready_for_human_pilot_review") is not expected_ready:
         raise V6ReleaseAuditError("v6 release readiness does not match its gates")
@@ -69,17 +172,15 @@ def validate_v6_release_status(payload: dict[str, Any]) -> dict[str, Any]:
     if payload.get("status") != expected_status:
         raise V6ReleaseAuditError("v6 release status does not match its gates")
     blockers = payload.get("blockers")
-    if not isinstance(blockers, list) or any(not isinstance(item, str) or not item for item in blockers):
-        raise V6ReleaseAuditError("v6 release blockers must be a string list")
-    if bool(blockers) is expected_ready:
-        raise V6ReleaseAuditError("v6 release blocker list is inconsistent")
-    for field in (
-        "public_signal_primary_horizon_outcomes",
-        "minimum_governance_paired_samples",
-        "sanitized_live_review_predictions",
-        "sanitized_live_review_matured_outcomes",
+    if not isinstance(blockers, list) or any(
+        not isinstance(item, str) or not item for item in blockers
     ):
-        _non_negative_int(evidence.get(field), f"evidence_counts.{field}")
+        raise V6ReleaseAuditError("v6 release blockers must be a string list")
+    expected_blockers = [
+        BLOCKER_BY_GATE[name] for name in RELEASE_GATE_ORDER if not gates[name]
+    ]
+    if blockers != expected_blockers:
+        raise V6ReleaseAuditError("v6 release blocker list does not match failed gates")
     if payload.get("automatic_order_allowed") is not False:
         raise V6ReleaseAuditError("v6 release status must not allow automatic orders")
     if payload.get("human_confirmation_required") is not True:
@@ -113,7 +214,6 @@ def audit_v6_release(
     governance_report = load_public_json(docs / "model_governance.json", "model_governance")
     market_report = load_public_json(docs / "market_report.json", "market_report")
     decision_packet = load_public_json(docs / "decision_packet.json", "decision_packet")
-    governance_config = load_governance_config()
 
     primary_signal_outcomes = sum(
         event["event_type"] == "OUTCOME"
@@ -138,17 +238,7 @@ def audit_v6_release(
         event["event_type"] == "LIVE_REVIEW_OUTCOME" for event in live_events
     )
 
-    promotion_threshold = int(
-        governance_config["allocation_gates"][
-            "minimum_paired_samples_for_promotion_review"
-        ]
-    )
-    thresholds = {
-        "public_signal_primary_horizon_outcomes": MIN_EFFECTIVE_SAMPLE,
-        "governance_paired_samples_per_challenger": promotion_threshold,
-        "sanitized_live_review_matured_outcomes": MIN_EFFECTIVE_SAMPLE,
-        "ibkr_bound_sanitized_live_reviews": 1,
-    }
+    thresholds = _canonical_evidence_thresholds()
     gates = {
         "model_artifacts_valid": model_validation.get("status") == "VALID",
         "live_review_forward_artifacts_valid": live_validation.get("status") == "VALID",
@@ -161,15 +251,7 @@ def audit_v6_release(
         "ibkr_to_chatgpt_contract_evidenced": live_predictions
         >= thresholds["ibkr_bound_sanitized_live_reviews"],
     }
-    blocker_by_gate = {
-        "model_artifacts_valid": "MODEL_ARTIFACT_VALIDATION_FAILED",
-        "live_review_forward_artifacts_valid": "LIVE_REVIEW_ARTIFACT_VALIDATION_FAILED",
-        "public_signal_minimum_sample_reached": "PUBLIC_SIGNAL_PRIMARY_OUTCOMES_BELOW_MINIMUM",
-        "model_governance_promotion_sample_reached": "MODEL_GOVERNANCE_PAIRED_SAMPLES_BELOW_PROMOTION_THRESHOLD",
-        "live_review_minimum_sample_reached": "LIVE_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM",
-        "ibkr_to_chatgpt_contract_evidenced": "IBKR_TO_CHATGPT_RUNTIME_NOT_YET_EVIDENCED",
-    }
-    blockers = [blocker_by_gate[name] for name, passed in gates.items() if not passed]
+    blockers = [BLOCKER_BY_GATE[name] for name in RELEASE_GATE_ORDER if not gates[name]]
     ready = not blockers
 
     packet_quality = decision_packet.get("data_quality")
