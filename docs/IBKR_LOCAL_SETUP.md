@@ -65,4 +65,19 @@ python -m scripts.build_local_ibkr_context --max-snapshot-age-seconds 300
 
 输出固定为 `private/ibkr/chatgpt_account_context.json`。Git/GitHub 只保存代码、规则和脱敏验证证据；账户号、股数、余额、成本和盈亏只存在于 `private/`。
 
+生成覆盖全部当前持仓、无排名和无数量上限的独立复核请求：
+
+```text
+python -m scripts.holding_review_contract build-request
+```
+
+TradingAgents、ChatGPT 或 Codex 按 `schemas/holding_review_response.schema.json` 把响应写入 `private/ibkr/holding_review_response.json` 后执行：
+
+```text
+python -m scripts.holding_review_contract validate-response
+python -m scripts.run_v6_live_cycle finalize-holdings
+```
+
+该层只允许 `HOLD`、`REDUCE_REVIEW`、`EXIT_REVIEW` 和 `NO_ACTION`，不能创建买入候选、不能改变量化 `NO_TRADE`，也不会被计入影子证据放行门。公开的 `docs/holding_review_status.json` 不含持仓符号或账户数据。详细边界见 `docs/HOLDING_REVIEW.md`。
+
 若端口离线、官方 `ibapi` 未安装、官方 `accountDownloadEnd` 未返回、Gateway 明确返回 `accountReady=false`/未知值、回调超时、账户为空、关键数字无效或快照过期，命令会以非零状态显式失败。`accountReady` 属于可选的客户端值；完全缺席时只能由官方 `accountDownloadEnd` 证明本轮账户下载完成。TWS 账户更新中的组合价格类型会标记为“未验证为实时”，不得当作实时行情信号。

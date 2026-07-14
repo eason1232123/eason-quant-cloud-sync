@@ -1,0 +1,33 @@
+{
+  "schema_version": "public-holding-review-status-v1",
+  "status": "PRIVATE_IBKR_CONTEXT_REQUIRED",
+  "generated_at_utc": "2026-07-14T16:13:29.933629+00:00",
+  "observation_market_date": "2026-07-13",
+  "privacy": {
+    "contains_private_position_symbols": false,
+    "contains_exact_account_values": false,
+    "contains_account_identifiers": false
+  },
+  "scope": {
+    "layer_type": "HOLDING_REVIEW",
+    "scope_type": "ALL_CURRENT_PRIVATE_IBKR_HOLDINGS",
+    "selection_policy": "COMPLETE_UNRANKED_UNCAPPED_DISTINCT_SYMBOLS",
+    "allowed_actions": [
+      "HOLD",
+      "REDUCE_REVIEW",
+      "EXIT_REVIEW",
+      "NO_ACTION"
+    ],
+    "tradingagents_adapter_compatible": true
+  },
+  "latest_review": null,
+  "quant_boundary": {
+    "quant_final_action": "NO_TRADE",
+    "quant_final_action_unchanged": true,
+    "buy_standard_modified": false,
+    "can_create_buy_candidate": false,
+    "affects_shadow_evidence_gate": false
+  },
+  "automatic_order_allowed": false,
+  "human_confirmation_required": true
+}

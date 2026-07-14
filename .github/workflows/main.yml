@@ -68,6 +68,7 @@ jobs:
           python -m scripts.validate_market_universe
           python -m scripts.validate_model_artifacts
           python -m scripts.build_v6_operating_status --validate-only
+          python -m scripts.holding_review_contract validate-public-status
 
       - name: Compile Python sources
         run: python -m compileall -q scripts tests config.py
@@ -111,8 +112,10 @@ jobs:
           test -s docs/promotion_queue.csv
           test -s docs/promotion_queue.json
           test -s docs/decision_packet.json
+          test -s docs/holding_review_status.json
           python -m scripts.validate_market_universe
           python -m scripts.validate_decision_packet
+          python -m scripts.holding_review_contract validate-public-status
           python -m scripts.validate_generated_json
           python - <<'PY'
           import json
@@ -327,6 +330,7 @@ jobs:
           python -m scripts.validate_validation_split
           python -m scripts.validate_model_artifacts
           python -m scripts.build_shadow_review_forward_ledger validate
+          python -m scripts.holding_review_contract validate-public-status
           python -m scripts.validate_generated_json
 
       - name: Audit v6 human-pilot release readiness

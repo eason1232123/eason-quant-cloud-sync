@@ -1,11 +1,12 @@
 {
-  "generated_at_utc": "2026-07-14T16:15:11.342989+00:00",
+  "generated_at_utc": "2026-07-14T16:56:05.696657+00:00",
   "version": "chatgpt-compact-snapshot-v6.0-model-governance-t2",
   "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
   "read_priority_for_chatgpt": [
     "docs/decision_packet.json",
     "docs/chatgpt_snapshot.json",
     "docs/model_governance.json",
+    "docs/holding_review_status.json",
     "docs/eason_master_status.json",
     "docs/action_board.json",
     "docs/market_report.json"
@@ -1358,7 +1359,79 @@
       "counterfactual_only": true,
       "execution_eligible": false,
       "automatic_order_allowed": false
+    },
+    "holding_review": {
+      "schema_version": "public-holding-review-status-v1",
+      "status": "PRIVATE_IBKR_CONTEXT_REQUIRED",
+      "generated_at_utc": "2026-07-14T16:13:29.933629+00:00",
+      "observation_market_date": "2026-07-13",
+      "privacy": {
+        "contains_private_position_symbols": false,
+        "contains_exact_account_values": false,
+        "contains_account_identifiers": false
+      },
+      "scope": {
+        "layer_type": "HOLDING_REVIEW",
+        "scope_type": "ALL_CURRENT_PRIVATE_IBKR_HOLDINGS",
+        "selection_policy": "COMPLETE_UNRANKED_UNCAPPED_DISTINCT_SYMBOLS",
+        "allowed_actions": [
+          "HOLD",
+          "REDUCE_REVIEW",
+          "EXIT_REVIEW",
+          "NO_ACTION"
+        ],
+        "tradingagents_adapter_compatible": true
+      },
+      "latest_review": null,
+      "quant_boundary": {
+        "quant_final_action": "NO_TRADE",
+        "quant_final_action_unchanged": true,
+        "buy_standard_modified": false,
+        "can_create_buy_candidate": false,
+        "affects_shadow_evidence_gate": false
+      },
+      "automatic_order_allowed": false,
+      "human_confirmation_required": true,
+      "available": true,
+      "current_for_quant_market_date": true,
+      "usable_for_current_holding_decision": false
     }
+  },
+  "holding_review": {
+    "schema_version": "public-holding-review-status-v1",
+    "status": "PRIVATE_IBKR_CONTEXT_REQUIRED",
+    "generated_at_utc": "2026-07-14T16:13:29.933629+00:00",
+    "observation_market_date": "2026-07-13",
+    "privacy": {
+      "contains_private_position_symbols": false,
+      "contains_exact_account_values": false,
+      "contains_account_identifiers": false
+    },
+    "scope": {
+      "layer_type": "HOLDING_REVIEW",
+      "scope_type": "ALL_CURRENT_PRIVATE_IBKR_HOLDINGS",
+      "selection_policy": "COMPLETE_UNRANKED_UNCAPPED_DISTINCT_SYMBOLS",
+      "allowed_actions": [
+        "HOLD",
+        "REDUCE_REVIEW",
+        "EXIT_REVIEW",
+        "NO_ACTION"
+      ],
+      "tradingagents_adapter_compatible": true
+    },
+    "latest_review": null,
+    "quant_boundary": {
+      "quant_final_action": "NO_TRADE",
+      "quant_final_action_unchanged": true,
+      "buy_standard_modified": false,
+      "can_create_buy_candidate": false,
+      "affects_shadow_evidence_gate": false
+    },
+    "automatic_order_allowed": false,
+    "human_confirmation_required": true,
+    "available": true,
+    "current_for_quant_market_date": true,
+    "usable_for_current_holding_decision": false
   },
   "market_report_status": {
     "available": true,

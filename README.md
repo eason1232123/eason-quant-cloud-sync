@@ -97,11 +97,22 @@ docs/latest_market_summary.txt    # 同上，纯文本版
 docs/latest_decision_summary.json # 决策层摘要，由 build_decision_report.py 生成
 docs/decision_packet.json         # GitHub → ChatGPT 的稳定 v5.1 决策契约（执行/影子候选分离）
 docs/shadow_review_forward_status.json # ChatGPT 影子复核的20日成熟状态与相对基准结果
+docs/holding_review_status.json # 全部真实持仓的脱敏复核覆盖状态；不含符号或账户数据
 docs/etf_lookthrough_status.json  # QQQ/SMH 官方持仓可用性与重复暴露；过期时 UNAVAILABLE
 docs/v6_release_status.json       # v6 前瞻样本与人工试用发布闸门
 docs/v6_operating_status.json     # v6 当前允许的只读/人工试用运行分级
 docs/eason_signal.txt             # 当前阻断/许可的人类可读快照；机器仍优先读取 decision_packet.json
 ```
+
+## 影子候选、真实持仓与 TradingAgents
+
+新机会和已有持仓采用两个独立复核层：
+
+- `SHADOW_REVIEW` 每日按冻结规则最多选择 3 个新机会，用于积累反事实前瞻证据。
+- `HOLDING_REVIEW` 从本地 IBKR 只读上下文覆盖全部真实持仓，不排名、不截断，只允许 `HOLD`、`REDUCE_REVIEW`、`EXIT_REVIEW` 或 `NO_ACTION`。
+- TradingAgents 可作为两层共享的分析能力，但必须使用独立请求、独立响应和独立状态；持仓结果不能生成买入候选，不能改变 `NO_TRADE`，也不进入影子样本或人工试运行放行门槛。
+
+完整契约和本地命令见 `docs/HOLDING_REVIEW.md`。
 
 请不要再使用：
 

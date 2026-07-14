@@ -10,6 +10,7 @@ from unittest.mock import Mock, patch
 from scripts.ibkr_readonly import IbkrReadonlyConfig
 from scripts.run_v6_live_cycle import (
     V6LiveCycleError,
+    finalize_holding_review,
     finalize_live_cycle,
     main,
     prepare_live_cycle,
@@ -55,6 +56,7 @@ class V6LiveCycleTests(unittest.TestCase):
             prepare_live_cycle(config=IbkrReadonlyConfig())
         capture_private_snapshot.assert_not_called()
 
+    @patch("scripts.run_v6_live_cycle.build_holding_review_request_from_files")
     @patch("scripts.run_v6_live_cycle.build_request_from_files")
     @patch("scripts.run_v6_live_cycle.build_local_context")
     @patch("scripts.run_v6_live_cycle.capture_private_snapshot")
@@ -69,6 +71,7 @@ class V6LiveCycleTests(unittest.TestCase):
         capture_private_snapshot: Mock,
         build_local_context: Mock,
         build_request_from_files: Mock,
+        build_holding_review_request_from_files: Mock,
     ) -> None:
         validate_model_artifacts.return_value = {"status": "VALID"}
         live_review_due_status.return_value = {
@@ -100,6 +103,12 @@ class V6LiveCycleTests(unittest.TestCase):
             "automatic_order_allowed": False,
             "human_confirmation_required": True,
         }
+        build_holding_review_request_from_files.return_value = {
+            "status": "AWAITING_HOLDING_REVIEW",
+            "review_scope": {"held_symbol_count": 2},
+            "automatic_order_allowed": False,
+            "human_confirmation_required": True,
+        }
         adapter = Mock()
 
         result = prepare_live_cycle(config=config, adapter=adapter)
@@ -107,6 +116,7 @@ class V6LiveCycleTests(unittest.TestCase):
         capture_private_snapshot.assert_called_once_with(config, adapter=adapter)
         build_local_context.assert_called_once()
         build_request_from_files.assert_called_once()
+        build_holding_review_request_from_files.assert_called_once()
         encoded = json.dumps(result, sort_keys=True)
         for secret in ("SECRET_ACCOUNT", "SECRET_POSITION", "SECRET_REQUEST_ID"):
             self.assertNotIn(secret, encoded)
@@ -116,6 +126,11 @@ class V6LiveCycleTests(unittest.TestCase):
         self.assertEqual(
             result["next_command"],
             "python -m scripts.run_v6_live_cycle finalize",
+        )
+        self.assertEqual(result["holding_review_symbol_count"], 2)
+        self.assertIn(
+            "python -m scripts.run_v6_live_cycle finalize-holdings",
+            result["next_commands"],
         )
 
     @patch("scripts.run_v6_live_cycle.capture_private_snapshot")
@@ -182,6 +197,30 @@ class V6LiveCycleTests(unittest.TestCase):
         self.assertEqual(result["new_prediction_events"], 1)
         self.assertEqual(result["operating_mode"], "READ_ONLY_SHADOW")
         self.assertFalse(result["ready_for_human_pilot_review"])
+        self.assertFalse(result["automatic_order_allowed"])
+
+    @patch("scripts.run_v6_live_cycle.record_holding_review_from_files")
+    def test_finalize_holdings_publishes_only_sanitized_boundary_status(
+        self,
+        record_holding_review_from_files: Mock,
+    ) -> None:
+        record_holding_review_from_files.return_value = {
+            "status": "HOLDING_REVIEW_COMPLETE",
+            "latest_review": {
+                "reviewed_holding_count": 3,
+                "coverage_complete": True,
+            },
+            "quant_boundary": {"quant_final_action": "NO_TRADE"},
+        }
+
+        result = finalize_holding_review()
+
+        record_holding_review_from_files.assert_called_once_with()
+        self.assertEqual(result["status"], "HOLDING_REVIEW_COMPLETE")
+        self.assertEqual(result["reviewed_holding_count"], 3)
+        self.assertEqual(result["quant_final_action"], "NO_TRADE")
+        self.assertTrue(result["quant_final_action_unchanged"])
+        self.assertFalse(result["buy_standard_modified"])
         self.assertFalse(result["automatic_order_allowed"])
 
     @patch("scripts.run_v6_live_cycle.probe_live_cycle")

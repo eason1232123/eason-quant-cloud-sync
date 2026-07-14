@@ -59,3 +59,5 @@ python -m scripts.live_review_contract validate-response
 请求默认五分钟过期。响应必须绑定请求 ID 和私有上下文 SHA-256，且在同一有效窗口内完成。过期、未来时间、来源缺失、量化越权、候选/持仓不匹配或任何订单载荷都会显式失败。
 
 当前阶段只验证“GPT 输入、证据与判断边界”。后续 v6-T5 才会从已验证的私有响应生成不含账户信息的前瞻审计事件；不会把私有响应直接发布到 GitHub。
+
+现有真实持仓的逐只风险复核使用独立的 `HOLDING_REVIEW` 契约，不与本文件的执行候选或影子候选混合。它覆盖全部当前 IBKR 持仓，只能给出 `HOLD`、`REDUCE_REVIEW`、`EXIT_REVIEW` 或 `NO_ACTION`，并固定保持量化结论和买入标准不变。详见 `docs/HOLDING_REVIEW.md`。
