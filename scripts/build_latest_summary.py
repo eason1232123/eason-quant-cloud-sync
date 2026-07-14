@@ -17,6 +17,8 @@ import math
 from pathlib import Path
 from typing import Any
 
+from scripts.artifact_io import atomic_write_text
+
 DOCS_DIR = Path("docs")
 FULL_REPORT_PATH = DOCS_DIR / "market_report.json"
 MARKET_SUMMARY_JSON_PATH = DOCS_DIR / "latest_market_summary.json"
@@ -306,10 +308,8 @@ def main() -> None:
     summary_json = json.dumps(summary, ensure_ascii=False, indent=2, allow_nan=False)
 
     DOCS_DIR.mkdir(parents=True, exist_ok=True)
-    MARKET_SUMMARY_JSON_PATH.write_text(summary_json + "\n", encoding="utf-8")
-
-    with MARKET_SUMMARY_TXT_PATH.open("w", encoding="utf-8") as f:
-        f.write(build_text_summary(summary))
+    atomic_write_text(MARKET_SUMMARY_JSON_PATH, summary_json + "\n")
+    atomic_write_text(MARKET_SUMMARY_TXT_PATH, build_text_summary(summary))
 
     print(f"Wrote {MARKET_SUMMARY_JSON_PATH}")
     print(f"Wrote {MARKET_SUMMARY_TXT_PATH}")

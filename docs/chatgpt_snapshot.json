@@ -1,8 +1,9 @@
 {
-  "generated_at_utc": "2026-07-14T14:36:59.210890+00:00",
+  "generated_at_utc": "2026-07-14T15:28:52.833117+00:00",
   "version": "chatgpt-compact-snapshot-v6.0-model-governance-t2",
   "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
   "read_priority_for_chatgpt": [
+    "docs/artifact_manifest.json",
     "docs/decision_packet.json",
     "docs/chatgpt_snapshot.json",
     "docs/model_governance.json",
@@ -12,7 +13,7 @@
   ],
   "decision_contract": {
     "schema_version": "decision-packet-v5.0",
-    "generated_at_utc": "2026-07-14T14:36:58.028897+00:00",
+    "generated_at_utc": "2026-07-14T15:28:52.443065+00:00",
     "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
     "roles": {
       "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",
@@ -670,7 +671,8 @@
     "execution_contract": {
       "automatic_order_allowed": false,
       "required_live_checks": [
-        "Read action_board.json, eason_signal.json, portfolio_backtest.json, and market_report.json freshness first.",
+        "Read artifact_manifest.json and decision_packet.json first; verify the large market_report.json size/hash before relying on it.",
+        "Read action_board.json, eason_signal.json, portfolio_backtest.json, and market_report.json freshness before any order.",
         "Check current tradable bid/ask/last from IBKR if available; otherwise cross-check at least two public quote sources.",
         "Check whether current price is still close to the tested signal entry area; do not chase if price already ran far away.",
         "Check same-day regime: SPY/QQQ trend, VIX, 10Y yield, breadth, and semiconductor leadership.",
@@ -2780,6 +2782,7 @@
     "trade_review_available": true
   },
   "required_live_checks_before_order": [
+    "artifact_manifest hashes and cross-file consistency status",
     "IBKR bid/ask/last or two public quote sources",
     "current price vs tested signal area",
     "same-day SPY/QQQ/VIX/10Y/breadth/regime",

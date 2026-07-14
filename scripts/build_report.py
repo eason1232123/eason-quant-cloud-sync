@@ -13,6 +13,7 @@ import pandas as pd
 import requests
 
 from config import TICKERS, START_DATE
+from scripts.artifact_io import atomic_write_csv, atomic_write_text
 from scripts.market_data_contract import (
     DATA_TIMESTAMP_GRANULARITY,
     PRICE_ADJUSTMENT_POLICY,
@@ -745,22 +746,25 @@ def main():
     }
 
     report_json = json.dumps(report, indent=2, allow_nan=False)
-    (OUT / "market_report.json").write_text(report_json, encoding="utf-8")
+    atomic_write_text(OUT / "market_report.json", report_json + "\n")
 
-    report_dataframe(all_rows, report).to_csv(OUT / "backtest_summary.csv", index=False)
+    atomic_write_csv(OUT / "backtest_summary.csv", report_dataframe(all_rows, report))
 
     ranking_rows = []
     for ticker, rows in report["rule_evidence_ranking"].items():
         for row in rows:
             ranking_rows.append({"ticker": ticker, **row})
-    report_dataframe(ranking_rows, report).to_csv(OUT / "rule_evidence_ranking.csv", index=False)
+    atomic_write_csv(
+        OUT / "rule_evidence_ranking.csv",
+        report_dataframe(ranking_rows, report),
+    )
 
-    with open(OUT / "index.html", "w", encoding="utf-8") as f:
-        f.write(
-            "<h1>Eason Quant Cloud Sync</h1>"
-            "<p>Sanitized public report. Open market_report.json, latest_summary.json, eason_signal.json, "
-            "backtest_summary.csv, or rule_evidence_ranking.csv.</p>"
-        )
+    atomic_write_text(
+        OUT / "index.html",
+        "<h1>Eason Quant Cloud Sync</h1>"
+        "<p>Sanitized public report. Open artifact_manifest.json and decision_packet.json first; "
+        "market_report.json is the large evidence source.</p>",
+    )
 
     print("Saved sanitized docs/market_report.json, docs/backtest_summary.csv, docs/rule_evidence_ranking.csv")
 

@@ -164,6 +164,9 @@ def _account_currency_metrics(
             if model_concentration_weight is not None
             else None
         ),
+        "concentration_method": "DIRECT_SYMBOLS_ONLY_NO_ETF_LOOKTHROUGH",
+        "etf_lookthrough_exposure_weight": None,
+        "etf_lookthrough_status": "NOT_AVAILABLE_REQUIRES_CURRENT_FUND_HOLDINGS",
         "exposure_status": exposure_status,
         "currency_conversion_applied": False,
     }
@@ -272,6 +275,9 @@ def build_private_context(
             "cross_currency_aggregation": "PROHIBITED_WITHOUT_EXPLICIT_FX_RATES",
             "missing_value_policy": "null with explicit UNAVAILABLE status; never replace with zero",
             "model_concentration_symbols": list(MODEL_CONCENTRATION_SYMBOLS),
+            "direct_symbol_concentration_only": True,
+            "etf_lookthrough_status": "NOT_AVAILABLE_REQUIRES_CURRENT_FUND_HOLDINGS",
+            "guardrail_interpretation": "Direct-symbol concentration must not be described as look-through validated.",
         },
         "automatic_order_allowed": False,
         "human_confirmation_required": True,

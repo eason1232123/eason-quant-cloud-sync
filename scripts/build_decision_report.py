@@ -14,7 +14,9 @@ if str(ROOT) not in sys.path:
 
 from scripts.market_clock import reference_market_context, weekday_lag
 from scripts.market_data_contract import extract_market_data_metadata
+from scripts.artifact_io import atomic_write_csv, atomic_write_json, atomic_write_text
 from scripts.validate_decision_packet import validate_invariants, validate_schema
+from scripts.validate_generated_json import load_strict_json
 
 OUT = Path("docs")
 REPORT_PATH = OUT / "market_report.json"
@@ -39,7 +41,8 @@ BUY_RULES = {
 }
 
 LIVE_REVIEW_CHECKLIST = [
-    "Read action_board.json, eason_signal.json, portfolio_backtest.json, and market_report.json freshness first.",
+    "Read artifact_manifest.json and decision_packet.json first; verify the large market_report.json size/hash before relying on it.",
+    "Read action_board.json, eason_signal.json, portfolio_backtest.json, and market_report.json freshness before any order.",
     "Check current tradable bid/ask/last from IBKR if available; otherwise cross-check at least two public quote sources.",
     "Check whether current price is still close to the tested signal entry area; do not chase if price already ran far away.",
     "Check same-day regime: SPY/QQQ trend, VIX, 10Y yield, breadth, and semiconductor leadership.",
@@ -72,8 +75,7 @@ def load_optional_json(path: Path) -> dict:
     if not path.exists() or path.stat().st_size == 0:
         return {}
     try:
-        with open(path, "r", encoding="utf-8") as f:
-            return json.load(f)
+        return load_strict_json(path)
     except Exception as exc:
         return {"load_error": str(exc)}
 
@@ -621,7 +623,7 @@ def build_action_board(
         "quant_layer_reason": decision["reason"],
         "market_data": decision["market_data"],
         "portfolio_backtest": portfolio_digest(portfolio),
-        "chatgpt_final_review_required": final_action != "NO_TRADE",
+        "chatgpt_final_review_required": True,
         "chatgpt_task": chatgpt_task,
         "top_quant_buy_candidate": actionable[0] if actionable else None,
         "top_active_buy_candidate_even_if_insufficient": buy_candidates[0] if buy_candidates else None,
@@ -983,8 +985,7 @@ def main() -> None:
     if not REPORT_PATH.exists() or REPORT_PATH.stat().st_size == 0:
         raise SystemExit("docs/market_report.json not found or empty. Run scripts/build_report_safe.py first.")
 
-    with open(REPORT_PATH, "r", encoding="utf-8") as f:
-        report = json.load(f)
+    report = load_strict_json(REPORT_PATH)
     portfolio = load_optional_json(PORTFOLIO_PATH)
     outputs = compile_decision_outputs(report, portfolio)
 
@@ -1006,9 +1007,7 @@ def main() -> None:
         (DECISION_SUMMARY_PATH, outputs["latest_decision_summary"]),
         (DECISION_PACKET_PATH, outputs["decision_packet"]),
     ]:
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(payload, f, indent=2, ensure_ascii=False, allow_nan=False)
-            f.write("\n")
+        atomic_write_json(path, payload)
 
     packet = outputs["decision_packet"]
     signal_text = "\n".join(
@@ -1027,7 +1026,7 @@ def main() -> None:
             "Primary machine-readable file: docs/decision_packet.json",
         ]
     )
-    (OUT / "eason_signal.txt").write_text(signal_text + "\n", encoding="utf-8")
+    atomic_write_text(OUT / "eason_signal.txt", signal_text + "\n")
 
     csv_metadata = {
         "data_source": outputs["decision_packet"]["market_data"]["source"],
@@ -1038,8 +1037,8 @@ def main() -> None:
     }
     buy_rows = [{**csv_metadata, **row} for row in outputs["buy_candidates"]]
     risk_rows = [{**csv_metadata, **row} for row in outputs["risk_candidates"]]
-    pd.DataFrame(buy_rows).to_csv(OUT / "signal_candidates.csv", index=False)
-    pd.DataFrame(risk_rows).to_csv(OUT / "risk_candidates.csv", index=False)
+    atomic_write_csv(OUT / "signal_candidates.csv", pd.DataFrame(buy_rows))
+    atomic_write_csv(OUT / "risk_candidates.csv", pd.DataFrame(risk_rows))
 
     print(
         "Saved docs/eason_signal.json, docs/action_board.json, docs/latest_decision_summary.json, "

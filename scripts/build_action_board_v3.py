@@ -12,6 +12,7 @@ if str(ROOT) not in sys.path:
 
 from scripts.market_clock import MARKET_TIMEZONE
 from scripts.market_data_contract import PRICE_ADJUSTMENT_POLICY, PRICE_FREQUENCY
+from scripts.artifact_io import atomic_write_json, atomic_write_text
 from scripts.strategy_contract import RULE_FINGERPRINT, STRATEGY_CONTRACT_VERSION, STRATEGY_FINGERPRINT
 from scripts.validate_decision_packet import validate_invariants, validate_schema
 
@@ -471,6 +472,7 @@ def build_chatgpt_snapshot(
         "version": "chatgpt-compact-snapshot-v6.0-model-governance-t2",
         "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
         "read_priority_for_chatgpt": [
+            "docs/artifact_manifest.json",
             "docs/decision_packet.json",
             "docs/chatgpt_snapshot.json",
             "docs/model_governance.json",
@@ -512,6 +514,7 @@ def build_chatgpt_snapshot(
             "trade_review_available": trade.get("available", False),
         },
         "required_live_checks_before_order": [
+            "artifact_manifest hashes and cross-file consistency status",
             "IBKR bid/ask/last or two public quote sources",
             "current price vs tested signal area",
             "same-day SPY/QQQ/VIX/10Y/breadth/regime",
@@ -597,6 +600,7 @@ def main() -> None:
         "trade_review": trade,
         "actual_vs_backtest": actual,
         "required_live_checks_before_order": [
+            "artifact_manifest hashes and cross-file consistency status",
             "IBKR bid/ask/last or two public quote sources",
             "current price vs tested signal area",
             "same-day SPY/QQQ/VIX/10Y/breadth/regime",
@@ -616,21 +620,11 @@ def main() -> None:
     json.dumps(snapshot, allow_nan=False)
 
     OUT.mkdir(exist_ok=True)
-    with open(OUT / "eason_master_status.json", "w", encoding="utf-8") as f:
-        json.dump(master, f, indent=2, ensure_ascii=False, allow_nan=False)
-
-    with open(OUT / "action_board.json", "w", encoding="utf-8") as f:
-        json.dump(master, f, indent=2, ensure_ascii=False, allow_nan=False)
-
-    with open(OUT / "chatgpt_snapshot.json", "w", encoding="utf-8") as f:
-        json.dump(snapshot, f, indent=2, ensure_ascii=False, allow_nan=False)
-
-    with open(OUT / "chatgpt_snapshot.txt", "w", encoding="utf-8") as f:
-        f.write(write_snapshot_txt(snapshot))
-
-    with open(OUT / "decision_packet.json", "w", encoding="utf-8") as f:
-        json.dump(decision_packet, f, indent=2, ensure_ascii=False, allow_nan=False)
-        f.write("\n")
+    atomic_write_json(OUT / "eason_master_status.json", master)
+    atomic_write_json(OUT / "action_board.json", master)
+    atomic_write_json(OUT / "chatgpt_snapshot.json", snapshot)
+    atomic_write_text(OUT / "chatgpt_snapshot.txt", write_snapshot_txt(snapshot))
+    atomic_write_json(OUT / "decision_packet.json", decision_packet)
 
     print("Saved docs/decision_packet.json, docs/eason_master_status.json, docs/action_board.json, docs/chatgpt_snapshot.json, and docs/chatgpt_snapshot.txt without recursive self-nesting")
 

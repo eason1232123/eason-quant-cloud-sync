@@ -16,6 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.artifact_io import atomic_write_csv, atomic_write_json
 from scripts.market_clock import MARKET_TIMEZONE
 from scripts.market_data_contract import (
     DATA_TIMESTAMP_GRANULARITY,
@@ -764,32 +765,40 @@ def main() -> None:
     }
 
     OUT.mkdir(exist_ok=True)
-    attach_output_metadata(
-        equity,
-        generated_at_utc=generated_at_utc,
-        data_timestamp=data_timestamp,
-        portfolio_fingerprint=portfolio_fingerprint,
-        split_fingerprint=split_fingerprint,
-        model_fingerprint=model_fingerprint,
-    ).to_csv(OUT / "portfolio_equity_curve.csv", index=False)
-    attach_output_metadata(
-        trades,
-        generated_at_utc=generated_at_utc,
-        data_timestamp=data_timestamp,
-        portfolio_fingerprint=portfolio_fingerprint,
-        split_fingerprint=split_fingerprint,
-        model_fingerprint=model_fingerprint,
-    ).to_csv(OUT / "portfolio_trades.csv", index=False)
-    attach_output_metadata(
-        vs,
-        generated_at_utc=generated_at_utc,
-        data_timestamp=data_timestamp,
-        portfolio_fingerprint=portfolio_fingerprint,
-        split_fingerprint=split_fingerprint,
-        model_fingerprint=model_fingerprint,
-    ).to_csv(OUT / "portfolio_vs_benchmark.csv", index=False)
-    with open(OUT / "portfolio_backtest.json", "w", encoding="utf-8") as f:
-        json.dump(report, f, indent=2, ensure_ascii=False, allow_nan=False)
+    atomic_write_csv(
+        OUT / "portfolio_equity_curve.csv",
+        attach_output_metadata(
+            equity,
+            generated_at_utc=generated_at_utc,
+            data_timestamp=data_timestamp,
+            portfolio_fingerprint=portfolio_fingerprint,
+            split_fingerprint=split_fingerprint,
+            model_fingerprint=model_fingerprint,
+        ),
+    )
+    atomic_write_csv(
+        OUT / "portfolio_trades.csv",
+        attach_output_metadata(
+            trades,
+            generated_at_utc=generated_at_utc,
+            data_timestamp=data_timestamp,
+            portfolio_fingerprint=portfolio_fingerprint,
+            split_fingerprint=split_fingerprint,
+            model_fingerprint=model_fingerprint,
+        ),
+    )
+    atomic_write_csv(
+        OUT / "portfolio_vs_benchmark.csv",
+        attach_output_metadata(
+            vs,
+            generated_at_utc=generated_at_utc,
+            data_timestamp=data_timestamp,
+            portfolio_fingerprint=portfolio_fingerprint,
+            split_fingerprint=split_fingerprint,
+            model_fingerprint=model_fingerprint,
+        ),
+    )
+    atomic_write_json(OUT / "portfolio_backtest.json", report)
 
     print("Saved docs/portfolio_backtest.json, docs/portfolio_equity_curve.csv, docs/portfolio_trades.csv, docs/portfolio_vs_benchmark.csv")
 
