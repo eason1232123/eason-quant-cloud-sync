@@ -58,6 +58,7 @@ Additional v6 public-evidence chain:
 build_decision_report.py
 -> build_model_candidate_ledger.py
 -> build_action_board_v3.py
+-> validate config/prospective_universe.json
 -> build_forward_ledger.py
 -> build_live_review_forward_ledger.py update-outcomes
 -> validate_model_artifacts.py

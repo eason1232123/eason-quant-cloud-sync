@@ -53,6 +53,14 @@ class V6ReleaseAuditTests(unittest.TestCase):
         )
         self.assertFalse(payload["automatic_order_allowed"])
         self.assertTrue(payload["human_confirmation_required"])
+        self.assertIn(
+            "RETROSPECTIVE_BACKTEST_SURVIVORSHIP_BIAS_REMAINS_UNCONTROLLED",
+            payload["known_limitations"],
+        )
+        self.assertIn(
+            "PROSPECTIVE_FROZEN_UNIVERSE_DOES_NOT_SUPPORT_MARKET_WIDE_GENERALIZATION",
+            payload["known_limitations"],
+        )
 
     def test_human_pilot_and_challenger_promotion_tracks_are_independent(self) -> None:
         payload = audit_v6_release(output_path=None)
@@ -100,6 +108,11 @@ class V6ReleaseAuditTests(unittest.TestCase):
         executable["automatic_order_allowed"] = True
         with self.assertRaisesRegex(V6ReleaseAuditError, "automatic orders"):
             validate_v6_release_status(executable)
+
+        hidden_limit = copy.deepcopy(payload)
+        hidden_limit["known_limitations"] = hidden_limit["known_limitations"][1:]
+        with self.assertRaisesRegex(V6ReleaseAuditError, "known limitations"):
+            validate_v6_release_status(hidden_limit)
 
     def test_count_gates_must_match_frozen_thresholds(self) -> None:
         payload = audit_v6_release(output_path=None)

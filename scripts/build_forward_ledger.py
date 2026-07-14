@@ -10,13 +10,14 @@ import sys
 from collections import Counter
 from datetime import date, datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
 
 ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from config import TICKERS  # noqa: E402
 from scripts.market_clock import (  # noqa: E402
     MARKET_TIMEZONE,
     latest_completed_us_market_weekday,
@@ -37,6 +38,11 @@ from scripts.strategy_contract import (  # noqa: E402
     STRATEGY_FINGERPRINT,
     execution_cost_assumptions,
     net_return_after_round_trip_costs,
+)
+from scripts.prospective_universe_contract import (  # noqa: E402
+    DEFAULT_UNIVERSE_CONTRACT,
+    ProspectiveUniverseContractError,
+    load_and_validate_prospective_universe_contract,
 )
 from scripts.validate_validation_split import (  # noqa: E402
     ValidationSplitError,
@@ -249,7 +255,11 @@ def _validate_market_inputs(
     return observation, metadata
 
 
-def _ticker_universe(report: dict[str, Any]) -> list[str]:
+def _ticker_universe(
+    report: dict[str, Any],
+    *,
+    frozen_tickers: list[str],
+) -> list[str]:
     technicals = report.get("technicals")
     update_log = report.get("update_log")
     date_by_ticker = report.get("data_timestamp_by_ticker")
@@ -281,7 +291,15 @@ def _ticker_universe(report: dict[str, Any]) -> list[str]:
         raise ForwardLedgerError(
             "cannot record all configured tickers: public report ticker names or universe counts differ"
         )
-    return sorted(normalized)
+    actual = sorted(normalized)
+    if actual != frozen_tickers or configured_count != len(frozen_tickers):
+        missing = sorted(set(frozen_tickers) - normalized)
+        extra = sorted(normalized - set(frozen_tickers))
+        raise ForwardLedgerError(
+            "market_report ticker set differs from the frozen prospective universe: "
+            f"missing={missing}, extra={extra}"
+        )
+    return actual
 
 
 def _ticker_prediction(
@@ -535,6 +553,50 @@ def _existing_prediction_cohort(
     return [by_ticker[ticker] for ticker in tickers]
 
 
+def validate_prediction_cohort_universe(
+    events: list[dict[str, Any]],
+    *,
+    frozen_tickers: list[str],
+    frozen_on_date: str,
+) -> dict[str, int]:
+    expected = set(frozen_tickers)
+    frozen_on = _parse_required_date(
+        frozen_on_date,
+        "prospective universe frozen_on_date",
+    )
+    cohorts: dict[str, list[str]] = {}
+    for event in events:
+        if event["event_type"] != "PREDICTION":
+            continue
+        prediction = event["prediction"]
+        observation = str(prediction.get("observation_market_date"))
+        ticker = str(prediction.get("ticker"))
+        cohorts.setdefault(observation, []).append(ticker)
+
+    for observation, cohort in sorted(cohorts.items()):
+        observation_date = _parse_required_date(
+            observation,
+            "prediction cohort observation_market_date",
+        )
+        if observation_date <= frozen_on:
+            raise ForwardLedgerError(
+                "prediction cohort is not prospective to the frozen universe: "
+                f"observation={observation}, frozen_on={frozen_on_date}"
+            )
+        actual = set(cohort)
+        if len(cohort) != len(frozen_tickers) or actual != expected:
+            missing = sorted(expected - actual)
+            extra = sorted(actual - expected)
+            raise ForwardLedgerError(
+                "immutable prediction cohort differs from the frozen prospective universe "
+                f"for {observation}: missing={missing}, extra={extra}"
+            )
+    return {
+        "validated_cohort_count": len(cohorts),
+        "frozen_ticker_count": len(frozen_tickers),
+    }
+
+
 def _price_path(prices_dir: Path, ticker: str) -> Path:
     safe = ticker.replace("/", "-").replace(".", "-")
     return prices_dir / f"{safe}_daily.csv"
@@ -704,10 +766,18 @@ def build_forward_ledger(
     prices_dir: Path = DEFAULT_PRICES_DIR,
     anchor_path: Path | None = None,
     as_of_market_date: date | None = None,
+    universe_contract_path: Path = DEFAULT_UNIVERSE_CONTRACT,
+    expected_tickers: Iterable[str] = TICKERS,
 ) -> dict[str, Any]:
     manifest = load_strict_json(split_path)
     anchor_dates = load_anchor_market_dates(anchor_path or _price_path(prices_dir, "SPY"))
     split_result = validate_split_manifest(manifest, anchor_dates=anchor_dates)
+    universe_contract = load_and_validate_prospective_universe_contract(
+        universe_contract_path,
+        split_manifest=manifest,
+        expected_tickers=expected_tickers,
+    )
+    frozen_tickers = universe_contract["tickers"]
     packet = load_public_json(packet_path, "decision_packet")
     report = load_public_json(report_path, "market_report")
     as_of = as_of_market_date or latest_completed_us_market_weekday()
@@ -718,6 +788,11 @@ def build_forward_ledger(
     )
 
     events = load_ledger(ledger_path)
+    cohort_validation = validate_prediction_cohort_universe(
+        events,
+        frozen_tickers=frozen_tickers,
+        frozen_on_date=universe_contract["frozen_on_date"],
+    )
     event_by_id = {event["event_id"]: event for event in events}
     for event in events:
         if event.get("split_manifest_fingerprint") != split_result["split_manifest_fingerprint"]:
@@ -735,7 +810,7 @@ def build_forward_ledger(
     new_prediction_count = 0
     current_predictions: list[dict[str, Any]] = []
     if observation > last_seen:
-        tickers = _ticker_universe(report)
+        tickers = _ticker_universe(report, frozen_tickers=frozen_tickers)
         existing_cohort = _existing_prediction_cohort(
             events,
             observation=observation,
@@ -762,6 +837,11 @@ def build_forward_ledger(
                 event_by_id[candidate["event_id"]] = candidate
                 current_predictions.append(candidate)
                 new_prediction_count += 1
+        cohort_validation = validate_prediction_cohort_universe(
+            events,
+            frozen_tickers=frozen_tickers,
+            frozen_on_date=universe_contract["frozen_on_date"],
+        )
 
     prediction_events = [event for event in events if event["event_type"] == "PREDICTION"]
     new_outcome_count = 0
@@ -831,6 +911,19 @@ def build_forward_ledger(
         "strategy_contract_version": STRATEGY_CONTRACT_VERSION,
         "rule_fingerprint": RULE_FINGERPRINT,
         "strategy_fingerprint": STRATEGY_FINGERPRINT,
+        "prospective_universe_contract_version": universe_contract["schema_version"],
+        "prospective_universe_fingerprint": universe_contract[
+            "prospective_universe_fingerprint"
+        ],
+        "prospective_universe_status": universe_contract["status"],
+        "prospective_universe_frozen_on_date": universe_contract["frozen_on_date"],
+        "prospective_universe_ticker_count": universe_contract["ticker_count"],
+        "prospective_survivorship_bias_status": universe_contract[
+            "prospective_survivorship_bias_status"
+        ],
+        "validated_prediction_cohort_count": cohort_validation[
+            "validated_cohort_count"
+        ],
         "current_market_date_prediction_counts": {
             "total": len(current_predictions),
             "active": current_state_counts.get("ACTIVE", 0),
@@ -866,6 +959,11 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--summary", type=Path, default=DEFAULT_SUMMARY)
     parser.add_argument("--prices-dir", type=Path, default=DEFAULT_PRICES_DIR)
     parser.add_argument("--anchor-csv", type=Path)
+    parser.add_argument(
+        "--universe-contract",
+        type=Path,
+        default=DEFAULT_UNIVERSE_CONTRACT,
+    )
     parser.add_argument("--as-of-market-date", type=str)
     args = parser.parse_args(argv)
     as_of = None
@@ -884,8 +982,13 @@ def main(argv: list[str] | None = None) -> int:
             prices_dir=args.prices_dir,
             anchor_path=args.anchor_csv,
             as_of_market_date=as_of,
+            universe_contract_path=args.universe_contract,
         )
-    except (ForwardLedgerError, ValidationSplitError) as exc:
+    except (
+        ForwardLedgerError,
+        ProspectiveUniverseContractError,
+        ValidationSplitError,
+    ) as exc:
         print(f"forward ledger FAILED: {exc}", file=sys.stderr)
         return 1
     print(json.dumps(summary, ensure_ascii=False, allow_nan=False, sort_keys=True))
