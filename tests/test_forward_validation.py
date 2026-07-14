@@ -10,6 +10,9 @@ from pathlib import Path
 
 from scripts.build_forward_ledger import (
     ForwardLedgerError,
+    _outcome_event,
+    _seal_event,
+    _write_jsonl_atomic,
     build_forward_ledger,
     load_ledger,
 )
@@ -384,6 +387,58 @@ class ForwardLedgerTests(unittest.TestCase):
             parsed = json.loads(line, parse_constant=lambda value: self.fail(value))
             assert_all_finite(self, parsed)
         assert_all_finite(self, json.loads(self.summary_path.read_text(encoding="utf-8")))
+
+    def test_prediction_state_and_outcome_lineage_must_be_consistent(self) -> None:
+        source_events = load_ledger(ROOT / "docs" / "forward_signal_ledger.jsonl")
+        no_signal = copy.deepcopy(
+            next(
+                event
+                for event in source_events
+                if event["event_type"] == "PREDICTION"
+                and event["prediction"]["state"] == "NO_SIGNAL"
+            )
+        )
+
+        forged_state = copy.deepcopy(no_signal)
+        forged_state["prediction"]["state"] = "ACTIVE"
+        _write_jsonl_atomic(self.ledger_path, [_seal_event(forged_state)])
+        with self.assertRaisesRegex(
+            ForwardLedgerError,
+            "prediction ACTIVE state requires active entry signals",
+        ):
+            load_ledger(self.ledger_path)
+
+        prediction = no_signal["prediction"]
+        metadata = no_signal["market_data"]
+        mismatched_outcome = _outcome_event(
+            no_signal,
+            {
+                "ticker": "WRONG",
+                "observation_market_date": prediction["observation_market_date"],
+                "horizon_bars": 20,
+                "status": "MATURED",
+                "entry_market_date": "2026-07-14",
+                "exit_market_date": "2026-08-11",
+                "entry_close": 1.0,
+                "exit_close": 1.0,
+                "gross_return": 0.0,
+                "net_return_after_frozen_costs": net_return_after_round_trip_costs(0.0),
+                "return_definition": "close[t+1+h] / close[t+1] - 1",
+                "price_basis": prediction["price_basis"],
+            },
+            metadata=metadata,
+            split_result={
+                "split_manifest_fingerprint": no_signal[
+                    "split_manifest_fingerprint"
+                ]
+            },
+        )
+        _write_jsonl_atomic(self.ledger_path, [no_signal, mismatched_outcome])
+        with self.assertRaisesRegex(
+            ForwardLedgerError,
+            "outcome ticker does not match prediction",
+        ):
+            load_ledger(self.ledger_path)
 
     def test_complete_same_day_cohort_is_replayed_but_invalid_inputs_fail(self) -> None:
         packet, report = public_inputs("2026-07-13", generated_at="2026-07-14T01:00:00+00:00")
