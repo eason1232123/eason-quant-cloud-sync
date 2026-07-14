@@ -280,7 +280,7 @@ class ForwardLedgerTests(unittest.TestCase):
             assert_all_finite(self, parsed)
         assert_all_finite(self, json.loads(self.summary_path.read_text(encoding="utf-8")))
 
-    def test_prediction_mutation_fingerprint_mismatch_and_future_data_fail(self) -> None:
+    def test_complete_same_day_cohort_is_replayed_but_invalid_inputs_fail(self) -> None:
         packet, report = public_inputs("2026-07-13", generated_at="2026-07-14T01:00:00+00:00")
         write_json(self.packet_path, packet)
         write_json(self.report_path, report)
@@ -288,16 +288,26 @@ class ForwardLedgerTests(unittest.TestCase):
         for ticker in ("AAA", "BBB", "CCC"):
             write_prices(self.root, ticker, rows)
         self._run("2026-07-13")
+        original_ledger = self.ledger_path.read_text(encoding="utf-8")
 
         changed_packet, changed_report = public_inputs(
             "2026-07-13",
             generated_at="2026-07-14T02:00:00+00:00",
             active_rule=None,
         )
+        changed_packet["data_quality"]["data_status"] = "OK"
+        changed_report["data_timestamp_by_ticker"]["CCC"] = "2026-07-13"
+        changed_report["update_log"]["CCC"]["latest_date"] = "2026-07-13"
+        changed_report["technicals"]["CCC"]["latest_date"] = "2026-07-13"
         write_json(self.packet_path, changed_packet)
         write_json(self.report_path, changed_report)
-        with self.assertRaisesRegex(ForwardLedgerError, "immutable prediction changed"):
-            self._run("2026-07-13")
+        replayed = self._run("2026-07-13")
+        self.assertEqual(replayed["ledger_counts"]["new_prediction_events"], 0)
+        self.assertEqual(self.ledger_path.read_text(encoding="utf-8"), original_ledger)
+        replayed_events = load_ledger(self.ledger_path)
+        ccc = next(event for event in replayed_events if event["prediction"]["ticker"] == "CCC")
+        self.assertEqual(ccc["prediction"]["state"], "SKIPPED")
+        self.assertEqual(ccc["prediction"]["ticker_market_date"], "2026-07-10")
 
         broken_report = copy.deepcopy(report)
         broken_report["strategy_fingerprint"] = "0" * 64
@@ -313,6 +323,23 @@ class ForwardLedgerTests(unittest.TestCase):
         write_json(self.packet_path, future_packet)
         write_json(self.report_path, future_report)
         with self.assertRaisesRegex(ForwardLedgerError, "future data"):
+            self._run("2026-07-13")
+
+    def test_partial_same_day_prediction_cohort_fails_closed(self) -> None:
+        packet, report = public_inputs(
+            "2026-07-13",
+            generated_at="2026-07-14T01:00:00+00:00",
+        )
+        write_json(self.packet_path, packet)
+        write_json(self.report_path, report)
+        rows = [("2026-07-10", 99.0), ("2026-07-13", 100.0)]
+        for ticker in ("AAA", "BBB", "CCC"):
+            write_prices(self.root, ticker, rows)
+        self._run("2026-07-13")
+
+        lines = self.ledger_path.read_text(encoding="utf-8").splitlines()
+        self.ledger_path.write_text("\n".join(lines[:-1]) + "\n", encoding="utf-8")
+        with self.assertRaisesRegex(ForwardLedgerError, "incomplete or mismatched"):
             self._run("2026-07-13")
 
 
