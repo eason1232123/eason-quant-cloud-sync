@@ -506,24 +506,33 @@ def load_ledger(path: Path) -> list[dict[str, Any]]:
     return events
 
 
-def _equivalent_prediction(existing: dict[str, Any], candidate: dict[str, Any]) -> bool:
-    stable_keys = (
-        "evidence_classification",
-        "split_manifest_fingerprint",
-        "strategy_contract_version",
-        "rule_fingerprint",
-        "strategy_fingerprint",
-        "decision_context",
-        "prediction",
-        "contains_private_account_data",
-    )
-    if any(existing.get(key) != candidate.get(key) for key in stable_keys):
-        return False
-    existing_market = dict(existing.get("market_data", {}))
-    candidate_market = dict(candidate.get("market_data", {}))
-    existing_market.pop("report_generated_at_utc", None)
-    candidate_market.pop("report_generated_at_utc", None)
-    return existing_market == candidate_market
+def _existing_prediction_cohort(
+    events: list[dict[str, Any]],
+    *,
+    observation: date,
+    tickers: list[str],
+) -> list[dict[str, Any]] | None:
+    observation_text = observation.isoformat()
+    cohort = [
+        event
+        for event in events
+        if event["event_type"] == "PREDICTION"
+        and event["prediction"]["observation_market_date"] == observation_text
+    ]
+    if not cohort:
+        return None
+
+    by_ticker = {event["prediction"]["ticker"]: event for event in cohort}
+    expected = set(tickers)
+    actual = set(by_ticker)
+    if len(cohort) != len(tickers) or actual != expected:
+        missing = sorted(expected - actual)
+        extra = sorted(actual - expected)
+        raise ForwardLedgerError(
+            "existing immutable prediction cohort is incomplete or mismatched "
+            f"for {observation_text}: missing={missing}, extra={extra}"
+        )
+    return [by_ticker[ticker] for ticker in tickers]
 
 
 def _price_path(prices_dir: Path, ticker: str) -> Path:
@@ -727,23 +736,28 @@ def build_forward_ledger(
     current_predictions: list[dict[str, Any]] = []
     if observation > last_seen:
         tickers = _ticker_universe(report)
-        decision_context = _decision_context(packet)
-        for ticker in tickers:
-            prediction = _ticker_prediction(ticker, report, observation)
-            candidate = _prediction_event(
-                prediction,
-                metadata=metadata,
-                decision_context=decision_context,
-                split_result=split_result,
-            )
-            existing = event_by_id.get(candidate["event_id"])
-            if existing is not None:
-                if existing.get("event_type") != "PREDICTION" or not _equivalent_prediction(existing, candidate):
+        existing_cohort = _existing_prediction_cohort(
+            events,
+            observation=observation,
+            tickers=tickers,
+        )
+        if existing_cohort is not None:
+            current_predictions = existing_cohort
+        else:
+            decision_context = _decision_context(packet)
+            for ticker in tickers:
+                prediction = _ticker_prediction(ticker, report, observation)
+                candidate = _prediction_event(
+                    prediction,
+                    metadata=metadata,
+                    decision_context=decision_context,
+                    split_result=split_result,
+                )
+                if candidate["event_id"] in event_by_id:
                     raise ForwardLedgerError(
-                        f"immutable prediction changed for {ticker} on {observation.isoformat()}"
+                        "prediction event exists outside its expected observation cohort: "
+                        f"{candidate['event_id']}"
                     )
-                current_predictions.append(existing)
-            else:
                 events.append(candidate)
                 event_by_id[candidate["event_id"]] = candidate
                 current_predictions.append(candidate)
