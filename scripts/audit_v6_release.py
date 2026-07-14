@@ -101,6 +101,13 @@ BLOCKER_BY_GATE = {
         "IBKR_TO_CHATGPT_RUNTIME_NOT_YET_EVIDENCED"
     ),
 }
+KNOWN_LIMITATIONS = (
+    "RETROSPECTIVE_BACKTEST_SURVIVORSHIP_BIAS_REMAINS_UNCONTROLLED",
+    "PROSPECTIVE_FROZEN_UNIVERSE_DOES_NOT_SUPPORT_MARKET_WIDE_GENERALIZATION",
+    "CONFIGURED_COSTS_ARE_NOT_OBSERVED_LIVE_EXECUTION_COSTS",
+    "SANITIZED_RUNTIME_EVIDENCE_IS_NOT_AN_INDEPENDENT_BROKER_ATTESTATION",
+    "BACKTEST_OR_PROSPECTIVE_RESULTS_DO_NOT_GUARANTEE_FUTURE_PERFORMANCE",
+)
 
 
 class V6ReleaseAuditError(ValueError):
@@ -229,6 +236,10 @@ def validate_v6_release_status(payload: dict[str, Any]) -> dict[str, Any]:
         raise V6ReleaseAuditError("v6 release status must require human confirmation")
     if payload.get("contains_private_account_data") is not False:
         raise V6ReleaseAuditError("v6 release status must not contain private account data")
+    if payload.get("known_limitations") != list(KNOWN_LIMITATIONS):
+        raise V6ReleaseAuditError(
+            "v6 release known limitations changed or were omitted"
+        )
     assert_finite_json(payload)
     return payload
 
@@ -365,12 +376,7 @@ def audit_v6_release(
         "release_gates": gates,
         "blockers": blockers,
         "challenger_model_promotion_blockers": promotion_blockers,
-        "known_limitations": [
-            "SURVIVORSHIP_BIAS_REMAINS_UNCONTROLLED_FOR_THE_CURRENT_FIXED_ASSET_SET",
-            "CONFIGURED_COSTS_ARE_NOT_OBSERVED_LIVE_EXECUTION_COSTS",
-            "SANITIZED_RUNTIME_EVIDENCE_IS_NOT_AN_INDEPENDENT_BROKER_ATTESTATION",
-            "BACKTEST_OR_PROSPECTIVE_RESULTS_DO_NOT_GUARANTEE_FUTURE_PERFORMANCE",
-        ],
+        "known_limitations": list(KNOWN_LIMITATIONS),
         "contains_private_account_data": False,
         "automatic_order_allowed": False,
         "human_confirmation_required": True,

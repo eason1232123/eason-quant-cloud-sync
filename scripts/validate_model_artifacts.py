@@ -6,6 +6,11 @@ from pathlib import Path
 from typing import Any
 
 from scripts.build_portfolio_backtest import portfolio_contract_payload
+from scripts.build_forward_ledger import (
+    ForwardLedgerError,
+    load_ledger as load_signal_ledger,
+    validate_prediction_cohort_universe,
+)
 from scripts.build_model_candidate_ledger import (
     ModelCandidateLedgerError,
     _read_candidate_ledger,
@@ -21,6 +26,11 @@ from scripts.model_governance import (
     governance_fingerprint,
     load_governance_config,
     model_fingerprint as governed_model_fingerprint,
+)
+from scripts.prospective_universe_contract import (
+    DEFAULT_UNIVERSE_CONTRACT,
+    ProspectiveUniverseContractError,
+    load_and_validate_prospective_universe_contract,
 )
 from scripts.strategy_contract import (
     RULE_FINGERPRINT,
@@ -67,6 +77,7 @@ MODEL_CSV_REPORTS = (
 )
 METADATA_CSV_REPORTS = MODEL_CSV_REPORTS + ("trade_review.csv",)
 LEDGER_REPORTS = ("model_candidate_forward_ledger.jsonl",)
+SIGNAL_LEDGER_REPORT = "forward_signal_ledger.jsonl"
 METADATA_FIELDS = (
     "data_source",
     "market_timezone",
@@ -156,6 +167,7 @@ def validate_csv_contract(path: Path, *, require_model: bool = True) -> int:
 def validate_model_artifacts(
     docs: Path = DOCS,
     manifest_path: Path = DEFAULT_MANIFEST,
+    universe_contract_path: Path = DEFAULT_UNIVERSE_CONTRACT,
 ) -> dict[str, Any]:
     # Imported here because the private live-review contract already depends on
     # this validator. Keeping the public T5 validator lazy avoids a module cycle.
@@ -167,6 +179,13 @@ def validate_model_artifacts(
     manifest = load_strict_json(manifest_path)
     validate_split_manifest(manifest)
     split_fingerprint = split_manifest_fingerprint(manifest)
+    try:
+        universe_contract = load_and_validate_prospective_universe_contract(
+            universe_contract_path,
+            split_manifest=manifest,
+        )
+    except ProspectiveUniverseContractError as exc:
+        raise AssertionError(f"invalid prospective universe contract: {exc}") from exc
     portfolio_payload = portfolio_contract_payload()
     portfolio_fingerprint = canonical_fingerprint(portfolio_payload)
     model_fingerprint = full_model_fingerprint(
@@ -214,6 +233,47 @@ def validate_model_artifacts(
         raise AssertionError("forward_validation_status.json split fingerprint mismatch")
     if forward.get("automatic_order_allowed") is not False:
         raise AssertionError("forward validation must never allow automatic orders")
+    expected_universe_fields = {
+        "prospective_universe_contract_version": universe_contract["schema_version"],
+        "prospective_universe_fingerprint": universe_contract[
+            "prospective_universe_fingerprint"
+        ],
+        "prospective_universe_status": universe_contract["status"],
+        "prospective_universe_frozen_on_date": universe_contract["frozen_on_date"],
+        "prospective_universe_ticker_count": universe_contract["ticker_count"],
+        "prospective_survivorship_bias_status": universe_contract[
+            "prospective_survivorship_bias_status"
+        ],
+    }
+    actual_universe_fields = {
+        field: forward.get(field) for field in expected_universe_fields
+    }
+    if actual_universe_fields != expected_universe_fields:
+        raise AssertionError(
+            "forward_validation_status.json prospective universe contract mismatch: "
+            f"{actual_universe_fields}"
+        )
+    try:
+        signal_events = load_signal_ledger(docs / SIGNAL_LEDGER_REPORT)
+        cohort_validation = validate_prediction_cohort_universe(
+            signal_events,
+            frozen_tickers=universe_contract["tickers"],
+            frozen_on_date=universe_contract["frozen_on_date"],
+        )
+    except ForwardLedgerError as exc:
+        raise AssertionError(f"invalid public signal forward ledger: {exc}") from exc
+    if (
+        forward.get("validated_prediction_cohort_count")
+        != cohort_validation["validated_cohort_count"]
+    ):
+        raise AssertionError(
+            "forward_validation_status.json validated cohort count mismatch"
+        )
+    for event in signal_events:
+        if event.get("split_manifest_fingerprint") != split_fingerprint:
+            raise AssertionError(
+                "public signal forward ledger split fingerprint mismatch"
+            )
 
     governance_report = reports["model_governance.json"]
     if governance_report.get("model_governance_fingerprint") != governance_fp:
@@ -274,6 +334,14 @@ def validate_model_artifacts(
         "portfolio_contract_fingerprint": portfolio_fingerprint,
         "full_model_fingerprint": model_fingerprint,
         "model_governance_fingerprint": governance_fp,
+        "prospective_universe_fingerprint": universe_contract[
+            "prospective_universe_fingerprint"
+        ],
+        "prospective_universe_ticker_count": universe_contract["ticker_count"],
+        "validated_prediction_cohort_count": cohort_validation[
+            "validated_cohort_count"
+        ],
+        "public_signal_event_count": len(signal_events),
         "model_candidate_event_count": len(candidate_events),
         "live_review_prediction_event_count": live_review_validation[
             "prediction_event_count"

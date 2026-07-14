@@ -18,6 +18,12 @@ from scripts.market_data_contract import (
     PRICE_ADJUSTMENT_POLICY,
     PRICE_FREQUENCY,
 )
+from scripts.prospective_universe_contract import (
+    PROSPECTIVE_SURVIVORSHIP_BIAS_STATUS,
+    PROSPECTIVE_UNIVERSE_STATUS,
+    ProspectiveUniverseContractError,
+    load_and_validate_prospective_universe_contract,
+)
 from scripts.strategy_contract import (
     ENTRY_RULE_SPECS,
     RULE_FINGERPRINT,
@@ -115,6 +121,30 @@ def write_json(path: Path, value: dict) -> None:
     path.write_text(json.dumps(value, allow_nan=False), encoding="utf-8")
 
 
+def prospective_universe_contract(tickers: list[str]) -> dict:
+    manifest = load_strict_json(SPLIT_PATH)
+    return {
+        "schema_version": "v6-prospective-universe-v1",
+        "status": "FROZEN",
+        "frozen_on_date": "2026-07-12",
+        "effective_after_market_date": "2026-07-10",
+        "selection_basis": "TEST_PRECOMMITTED_UNIVERSE",
+        "ticker_source": "test fixture",
+        "amendment_policy": "Universe changes start a new validation generation.",
+        "strategy_fingerprint": STRATEGY_FINGERPRINT,
+        "split_manifest_fingerprint": split_manifest_fingerprint(manifest),
+        "ticker_count": len(tickers),
+        "tickers": sorted(tickers),
+        "historical_survivorship_bias_status": (
+            "KNOWN_UNCONTROLLED_RETROSPECTIVE_RESEARCH_UNIVERSE"
+        ),
+        "prospective_survivorship_bias_status": (
+            PROSPECTIVE_SURVIVORSHIP_BIAS_STATUS
+        ),
+        "private_account_data_allowed": False,
+    }
+
+
 def write_prices(path: Path, ticker: str, rows: list[tuple[str, float]]) -> None:
     text = "ticker,date,price\n" + "".join(f"{ticker},{market_date},{price}\n" for market_date, price in rows)
     path.joinpath(f"{ticker}_daily.csv").write_text(text, encoding="utf-8")
@@ -164,6 +194,46 @@ class ValidationSplitTests(unittest.TestCase):
         self.assertEqual(first, same)
         self.assertNotEqual(first, changed)
 
+    def test_frozen_prospective_universe_matches_runtime_config(self) -> None:
+        manifest = load_strict_json(SPLIT_PATH)
+        result = load_and_validate_prospective_universe_contract(
+            split_manifest=manifest,
+        )
+        self.assertEqual(result["ticker_count"], 94)
+        self.assertEqual(result["status"], PROSPECTIVE_UNIVERSE_STATUS)
+        self.assertEqual(
+            result["prospective_survivorship_bias_status"],
+            PROSPECTIVE_SURVIVORSHIP_BIAS_STATUS,
+        )
+
+    def test_prospective_universe_membership_drift_fails(self) -> None:
+        manifest = load_strict_json(SPLIT_PATH)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "prospective_universe.json"
+            contract = prospective_universe_contract(["AAA", "BBB", "CCC"])
+            write_json(path, contract)
+            with self.assertRaisesRegex(
+                ProspectiveUniverseContractError,
+                "differs from config.py:TICKERS",
+            ):
+                load_and_validate_prospective_universe_contract(
+                    path,
+                    split_manifest=manifest,
+                )
+
+            contract = prospective_universe_contract(["AAA", "BBB", "CCC"])
+            contract["account_number"] = "must-not-be-public"
+            write_json(path, contract)
+            with self.assertRaisesRegex(
+                ProspectiveUniverseContractError,
+                "field membership changed",
+            ):
+                load_and_validate_prospective_universe_contract(
+                    path,
+                    split_manifest=manifest,
+                    expected_tickers=["AAA", "BBB", "CCC"],
+                )
+
 
 class ForwardLedgerTests(unittest.TestCase):
     def setUp(self) -> None:
@@ -173,6 +243,12 @@ class ForwardLedgerTests(unittest.TestCase):
         self.report_path = self.root / "market_report.json"
         self.ledger_path = self.root / "forward_signal_ledger.jsonl"
         self.summary_path = self.root / "forward_validation_status.json"
+        self.universe_path = self.root / "prospective_universe.json"
+        self.expected_tickers = ["AAA", "BBB", "CCC"]
+        write_json(
+            self.universe_path,
+            prospective_universe_contract(self.expected_tickers),
+        )
 
     def tearDown(self) -> None:
         self.temp.cleanup()
@@ -187,6 +263,8 @@ class ForwardLedgerTests(unittest.TestCase):
             prices_dir=self.root,
             anchor_path=ANCHOR_PATH,
             as_of_market_date=date.fromisoformat(market_date),
+            universe_contract_path=self.universe_path,
+            expected_tickers=self.expected_tickers,
         )
 
     def test_before_boundary_is_explicitly_not_prospective(self) -> None:
@@ -215,6 +293,12 @@ class ForwardLedgerTests(unittest.TestCase):
             {"total": 3, "active": 1, "no_signal": 1, "skipped": 1},
         )
         self.assertEqual(first_summary["ledger_counts"]["pending_outcomes"], 8)
+        self.assertEqual(first_summary["prospective_universe_ticker_count"], 3)
+        self.assertEqual(
+            first_summary["prospective_universe_status"],
+            PROSPECTIVE_UNIVERSE_STATUS,
+        )
+        self.assertEqual(first_summary["validated_prediction_cohort_count"], 1)
         first_text = self.ledger_path.read_text(encoding="utf-8")
         first_events = load_ledger(self.ledger_path)
         self.assertEqual(len(first_events), 3)
@@ -339,8 +423,56 @@ class ForwardLedgerTests(unittest.TestCase):
 
         lines = self.ledger_path.read_text(encoding="utf-8").splitlines()
         self.ledger_path.write_text("\n".join(lines[:-1]) + "\n", encoding="utf-8")
-        with self.assertRaisesRegex(ForwardLedgerError, "incomplete or mismatched"):
+        with self.assertRaisesRegex(ForwardLedgerError, "frozen prospective universe"):
             self._run("2026-07-13")
+
+    def test_cross_date_ticker_set_drift_fails_closed(self) -> None:
+        packet, report = public_inputs(
+            "2026-07-13",
+            generated_at="2026-07-14T01:00:00+00:00",
+        )
+        write_json(self.packet_path, packet)
+        write_json(self.report_path, report)
+        rows = [("2026-07-10", 99.0), ("2026-07-13", 100.0)]
+        for ticker in self.expected_tickers:
+            write_prices(self.root, ticker, rows)
+        self._run("2026-07-13")
+
+        next_packet, next_report = public_inputs(
+            "2026-07-14",
+            generated_at="2026-07-15T01:00:00+00:00",
+        )
+        next_report["data_timestamp_by_ticker"]["DDD"] = next_report[
+            "data_timestamp_by_ticker"
+        ].pop("CCC")
+        next_report["price_basis_by_ticker"]["DDD"] = next_report[
+            "price_basis_by_ticker"
+        ].pop("CCC")
+        next_report["update_log"]["DDD"] = next_report["update_log"].pop("CCC")
+        next_report["technicals"]["DDD"] = next_report["technicals"].pop("CCC")
+        write_json(self.packet_path, next_packet)
+        write_json(self.report_path, next_report)
+        with self.assertRaisesRegex(
+            ForwardLedgerError,
+            "differs from the frozen prospective universe",
+        ):
+            self._run("2026-07-14")
+
+    def test_prediction_on_or_before_universe_freeze_fails_closed(self) -> None:
+        packet, report = public_inputs(
+            "2026-07-12",
+            generated_at="2026-07-13T01:00:00+00:00",
+        )
+        write_json(self.packet_path, packet)
+        write_json(self.report_path, report)
+        rows = [("2026-07-10", 99.0), ("2026-07-12", 100.0)]
+        for ticker in self.expected_tickers:
+            write_prices(self.root, ticker, rows)
+        with self.assertRaisesRegex(
+            ForwardLedgerError,
+            "not prospective to the frozen universe",
+        ):
+            self._run("2026-07-12")
 
 
 if __name__ == "__main__":

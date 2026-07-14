@@ -16,6 +16,9 @@ class ModelArtifactValidationTests(unittest.TestCase):
         self.assertEqual(result["status"], "VALID")
         self.assertEqual(len(result["strategy_fingerprint"]), 64)
         self.assertEqual(len(result["full_model_fingerprint"]), 64)
+        self.assertEqual(len(result["prospective_universe_fingerprint"]), 64)
+        self.assertEqual(result["prospective_universe_ticker_count"], 94)
+        self.assertEqual(result["validated_prediction_cohort_count"], 1)
 
     def test_fingerprint_drift_fails_before_publication(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -32,6 +35,40 @@ class ModelArtifactValidationTests(unittest.TestCase):
             path.write_text(json.dumps(report, allow_nan=False), encoding="utf-8")
 
             with self.assertRaisesRegex(AssertionError, "strategy contract mismatch"):
+                validator.validate_model_artifacts(docs=docs)
+
+    def test_universe_summary_drift_fails_before_publication(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            docs = Path(temp_dir)
+            for name in validator.METADATA_REPORTS:
+                shutil.copy2(validator.DOCS / name, docs / name)
+            path = docs / "forward_validation_status.json"
+            report = json.loads(path.read_text(encoding="utf-8"))
+            report["prospective_universe_fingerprint"] = "0" * 64
+            path.write_text(json.dumps(report, allow_nan=False), encoding="utf-8")
+
+            with self.assertRaisesRegex(
+                AssertionError,
+                "prospective universe contract mismatch",
+            ):
+                validator.validate_model_artifacts(docs=docs)
+
+    def test_incomplete_historical_universe_cohort_fails_before_publication(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            docs = Path(temp_dir)
+            for name in validator.METADATA_REPORTS:
+                shutil.copy2(validator.DOCS / name, docs / name)
+            ledger = validator.DOCS / validator.SIGNAL_LEDGER_REPORT
+            lines = ledger.read_text(encoding="utf-8").splitlines()
+            (docs / validator.SIGNAL_LEDGER_REPORT).write_text(
+                "\n".join(lines[:-1]) + "\n",
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(
+                AssertionError,
+                "frozen prospective universe",
+            ):
                 validator.validate_model_artifacts(docs=docs)
 
 

@@ -25,10 +25,17 @@
   "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
   "price_frequency": "end_of_day_daily",
   "prospective_start_rule": "STRICTLY_AFTER_LAST_SEEN_MARKET_DATE",
+  "prospective_survivorship_bias_status": "CONTROLLED_FOR_FROZEN_UNIVERSE_COHORT_MEMBERSHIP",
+  "prospective_universe_contract_version": "v6-prospective-universe-v1",
+  "prospective_universe_fingerprint": "a0cb81a6f31088649ab19d568f404592ec78e88e82190a5186b1702d91d484a3",
+  "prospective_universe_frozen_on_date": "2026-07-12",
+  "prospective_universe_status": "FROZEN_COMPLETE_DAILY_COHORTS",
+  "prospective_universe_ticker_count": 94,
   "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
   "schema_version": "v6-forward-validation-status-v1",
   "split_manifest_fingerprint": "f785a1c7fc63e21c6816be2017220219c619db543ffffdf5353fe70d8caff7ce",
   "status": "PROSPECTIVE_EVENTS_RECORDED",
   "strategy_contract_version": "v6-rc2-shared-rules-next-close",
-  "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807"
+  "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
+  "validated_prediction_cohort_count": 1
 }
