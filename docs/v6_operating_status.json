@@ -36,7 +36,7 @@
     "sanitized_live_review_matured_outcomes": 20
   },
   "final_execution_layer": "IBKR_MANUAL_WITH_EXPLICIT_HUMAN_CONFIRMATION",
-  "generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
+  "generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
   "human_confirmation_required": true,
   "important_limit": "READ_ONLY_SHADOW is decision support, not validated pilot performance or an order. Human-pilot readiness and challenger-model promotion evidence are separate; neither authorizes model replacement or automatic execution.",
   "market_timezone": "America/New_York",

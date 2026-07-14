@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-14T07:21:14.792593+00:00",
+  "generated_at_utc": "2026-07-14T08:23:35.296117+00:00",
   "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
   "market_timezone": "America/New_York",
   "data_timestamp": "2026-07-13",

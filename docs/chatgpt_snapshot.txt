@@ -1,12 +1,12 @@
 Eason ChatGPT Compact Snapshot
-generated_at_utc: 2026-07-14T07:21:16.565413+00:00
+generated_at_utc: 2026-07-14T08:23:36.576787+00:00
 data_quality: Medium
 coverage: 94/94 ratio=1.0
 latest_price_date: 2026-07-13
 tiingo_circuit_open: False
 coverage_gaps_count: 0
 errors_count: 0
-market_report_generated_at_utc: 2026-07-14T07:19:00.563122+00:00
+market_report_generated_at_utc: 2026-07-14T08:21:59.461819+00:00
 data_source: Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates
 market_timezone: America/New_York
 data_timestamp: 2026-07-13

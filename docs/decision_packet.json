@@ -1,6 +1,6 @@
 {
   "schema_version": "decision-packet-v5.0",
-  "generated_at_utc": "2026-07-14T07:21:15.259900+00:00",
+  "generated_at_utc": "2026-07-14T08:23:35.637148+00:00",
   "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
   "roles": {
     "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",
@@ -10,7 +10,7 @@
   "market_data": {
     "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "report_generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
+    "report_generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
     "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
@@ -19,7 +19,7 @@
     "metadata_status": "COMPLETE"
   },
   "data_quality": {
-    "source_report_generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
+    "source_report_generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
     "data_quality_metadata_status": "COMPLETE",
     "reported_expected_market_date": "2026-07-13",
     "reference_market_date": "2026-07-13",
@@ -156,7 +156,7 @@
     ],
     "loaded_ticker_count": 94,
     "configured_ticker_count": 94,
-    "fresh_request_count": 12,
+    "fresh_request_count": 0,
     "errors_count": 0
   },
   "portfolio_scope": {
@@ -286,33 +286,6 @@
         "risk_scope": "watchlist_advisory"
       },
       {
-        "ticker": "INTC",
-        "severity_0_100": 95,
-        "latest_date": "2026-07-13",
-        "latest_price": 103.12,
-        "data_fresh": true,
-        "staleness_business_days": 0,
-        "decision_eligible": true,
-        "data_exclusion_reason": null,
-        "reasons": [
-          "failed_rebound_risk active",
-          "5d pullback not reclaimed",
-          "below MA20",
-          "below MA50",
-          "drawdown from 52w high <= -12%"
-        ],
-        "failed_rebound_samples_20d": 164,
-        "failed_rebound_valid_20d": true,
-        "failed_rebound_avg_return_pct": 1.24,
-        "failed_rebound_median_return_pct": 1.57,
-        "failed_rebound_worst_mae_pct": -40.18,
-        "ret_5d_pct": -15.61,
-        "ret_20d_pct": -11.83,
-        "drawdown_from_52w_high_pct": -26.83,
-        "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
-        "risk_scope": "watchlist_advisory"
-      },
-      {
         "ticker": "GLD",
         "severity_0_100": 95,
         "latest_date": "2026-07-13",
@@ -367,29 +340,29 @@
         "risk_scope": "watchlist_advisory"
       },
       {
-        "ticker": "MSTR",
-        "severity_0_100": 80,
+        "ticker": "INTC",
+        "severity_0_100": 95,
         "latest_date": "2026-07-13",
-        "latest_price": 92.1,
+        "latest_price": 103.12,
         "data_fresh": true,
         "staleness_business_days": 0,
         "decision_eligible": true,
         "data_exclusion_reason": null,
         "reasons": [
+          "failed_rebound_risk active",
           "5d pullback not reclaimed",
           "below MA20",
           "below MA50",
-          "below MA200",
           "drawdown from 52w high <= -12%"
         ],
         "failed_rebound_samples_20d": 164,
         "failed_rebound_valid_20d": true,
-        "failed_rebound_avg_return_pct": 1.06,
-        "failed_rebound_median_return_pct": 0.71,
-        "failed_rebound_worst_mae_pct": -52.25,
-        "ret_5d_pct": -8.6,
-        "ret_20d_pct": -23.35,
-        "drawdown_from_52w_high_pct": -79.8,
+        "failed_rebound_avg_return_pct": 1.24,
+        "failed_rebound_median_return_pct": 1.57,
+        "failed_rebound_worst_mae_pct": -40.18,
+        "ret_5d_pct": -15.61,
+        "ret_20d_pct": -11.83,
+        "drawdown_from_52w_high_pct": -26.83,
         "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
         "risk_scope": "watchlist_advisory"
       },
@@ -468,6 +441,33 @@
         "ret_5d_pct": -5.43,
         "ret_20d_pct": -9.13,
         "drawdown_from_52w_high_pct": -13.24,
+        "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+        "risk_scope": "watchlist_advisory"
+      },
+      {
+        "ticker": "TSLA",
+        "severity_0_100": 80,
+        "latest_date": "2026-07-13",
+        "latest_price": 394.76,
+        "data_fresh": true,
+        "staleness_business_days": 0,
+        "decision_eligible": true,
+        "data_exclusion_reason": null,
+        "reasons": [
+          "5d pullback not reclaimed",
+          "below MA20",
+          "below MA50",
+          "below MA200",
+          "drawdown from 52w high <= -12%"
+        ],
+        "failed_rebound_samples_20d": 123,
+        "failed_rebound_valid_20d": true,
+        "failed_rebound_avg_return_pct": 1.24,
+        "failed_rebound_median_return_pct": 0.35,
+        "failed_rebound_worst_mae_pct": -47.53,
+        "ret_5d_pct": -5.96,
+        "ret_20d_pct": -1.1,
+        "drawdown_from_52w_high_pct": -19.42,
         "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
         "risk_scope": "watchlist_advisory"
       }

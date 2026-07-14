@@ -18,7 +18,7 @@
     "pending": 0
   },
   "evidence_classification": "PROSPECTIVE",
-  "generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
+  "generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
   "human_confirmation_required": true,
   "important_limit": "This ledger measures sanitized prospective review outcomes. It does not prove an order was placed, does not expose private holdings, and does not guarantee future performance.",
   "ledger_counts": {

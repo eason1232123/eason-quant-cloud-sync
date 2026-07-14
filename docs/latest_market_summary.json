@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
+  "generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
   "source_file": "market_report.json",
   "summary_file_version": "v4.4-latest-market-summary-no-name-conflict",
   "summary_type": "market",
@@ -15,20 +15,20 @@
   "universe": {
     "configured_ticker_count": 94,
     "loaded_ticker_count": 94,
-    "tiingo_request_attempt_count": 13,
-    "fresh_request_count": 12,
+    "tiingo_request_attempt_count": 1,
+    "fresh_request_count": 0,
     "exact_fresh_ticker_count": 59,
     "lagging_ticker_count": 35,
     "future_quarantine_ticker_count": 0,
     "missing_ticker_count": 0,
-    "skipped_fresh_enough_no_request": 47,
+    "skipped_fresh_enough_no_request": 59,
     "skipped_by_tier_rotation": 34,
     "forced_refresh_due_count": 1,
     "forced_refresh_requested_count": 1,
     "forced_refresh_succeeded_count": 0,
     "forced_refresh_deferred_count": 1,
     "future_quarantine_event_count": 0,
-    "rows_appended_total": 28,
+    "rows_appended_total": 0,
     "append_only_mode": true,
     "coverage_gaps_first": true,
     "historical_rows_overwritten": 0,
@@ -331,62 +331,6 @@
         "failed_rebound_risk": false
       }
     },
-    "MDB": {
-      "latest_date": "2026-07-13",
-      "ret_1d": -0.012,
-      "ret_5d": -0.0557,
-      "ret_10d": 0.0763,
-      "ret_20d": -0.0464,
-      "ret_60d": 0.3848,
-      "rsi14": 49.51,
-      "above_ma5": false,
-      "above_ma20": false,
-      "above_ma50": true,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.2329,
-      "volatility_20d": 0.6215,
-      "volatility_60d": 0.756,
-      "relative_20d": -0.04,
-      "relative_60d": 0.2669,
-      "relative_benchmark": "QQQ",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
-    "USMV": {
-      "latest_date": "2026-07-13",
-      "ret_1d": 0.0006,
-      "ret_5d": -0.0007,
-      "ret_10d": 0.0191,
-      "ret_20d": 0.026,
-      "ret_60d": 0.0445,
-      "rsi14": 64.23,
-      "above_ma5": false,
-      "above_ma20": true,
-      "above_ma50": true,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.0054,
-      "volatility_20d": 0.0895,
-      "volatility_60d": 0.0821,
-      "relative_20d": 0.0079,
-      "relative_60d": -0.0285,
-      "relative_benchmark": "SPY",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
     "AMAT": {
       "latest_date": "2026-07-09",
       "ret_1d": 0.0318,
@@ -499,34 +443,6 @@
         "failed_rebound_risk": false
       }
     },
-    "INTC": {
-      "latest_date": "2026-07-13",
-      "ret_1d": -0.0612,
-      "ret_5d": -0.1561,
-      "ret_10d": -0.1964,
-      "ret_20d": -0.1183,
-      "ret_60d": 0.5879,
-      "rsi14": 39.4,
-      "above_ma5": false,
-      "above_ma20": false,
-      "above_ma50": false,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.2683,
-      "volatility_20d": 0.9029,
-      "volatility_60d": 1.005,
-      "relative_20d": -0.0792,
-      "relative_60d": 0.2952,
-      "relative_benchmark": "SMH",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": true
-      }
-    },
     "IYW": {
       "latest_date": "2026-07-09",
       "ret_1d": 0.0171,
@@ -549,62 +465,6 @@
         "pullback_reclaim_5dma": false,
         "rsi_oversold_reclaim_40": false,
         "ma20_reclaim_bullish": true,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
-    "MCHP": {
-      "latest_date": "2026-07-13",
-      "ret_1d": -0.0492,
-      "ret_5d": -0.0384,
-      "ret_10d": -0.0421,
-      "ret_20d": -0.0937,
-      "ret_60d": 0.1363,
-      "rsi14": 42.3,
-      "above_ma5": false,
-      "above_ma20": false,
-      "above_ma50": false,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.1799,
-      "volatility_20d": 0.6647,
-      "volatility_60d": 0.5911,
-      "relative_20d": -0.0546,
-      "relative_60d": -0.1565,
-      "relative_benchmark": "SMH",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
-    "MPWR": {
-      "latest_date": "2026-07-13",
-      "ret_1d": -0.0454,
-      "ret_5d": -0.0407,
-      "ret_10d": -0.0153,
-      "ret_20d": -0.1864,
-      "ret_60d": -0.0442,
-      "rsi14": 41.63,
-      "above_ma5": false,
-      "above_ma20": false,
-      "above_ma50": false,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.2347,
-      "volatility_20d": 0.7809,
-      "volatility_60d": 0.6825,
-      "relative_20d": -0.1473,
-      "relative_60d": -0.3369,
-      "relative_benchmark": "SMH",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
         "ma50_reclaim_bullish": false,
         "relative_strength_rebound": false,
         "momentum_leader": false,
@@ -835,90 +695,6 @@
         "failed_rebound_risk": true
       }
     },
-    "CSCO": {
-      "latest_date": "2026-07-13",
-      "ret_1d": -0.017,
-      "ret_5d": 0.0462,
-      "ret_10d": 0.052,
-      "ret_20d": -0.0176,
-      "ret_60d": 0.4532,
-      "rsi14": 54.59,
-      "above_ma5": true,
-      "above_ma20": true,
-      "above_ma50": true,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.0793,
-      "volatility_20d": 0.349,
-      "volatility_60d": 0.4488,
-      "relative_20d": -0.0356,
-      "relative_60d": 0.3802,
-      "relative_benchmark": "SPY",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
-    "DLR": {
-      "latest_date": "2026-07-13",
-      "ret_1d": -0.0138,
-      "ret_5d": 0.0243,
-      "ret_10d": -0.0781,
-      "ret_20d": -0.0205,
-      "ret_60d": -0.0848,
-      "rsi14": 41.93,
-      "above_ma5": true,
-      "above_ma20": false,
-      "above_ma50": false,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.1217,
-      "volatility_20d": 0.322,
-      "volatility_60d": 0.2693,
-      "relative_20d": -0.0385,
-      "relative_60d": -0.1579,
-      "relative_benchmark": "SPY",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": true,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
-    "EQIX": {
-      "latest_date": "2026-07-13",
-      "ret_1d": -0.0111,
-      "ret_5d": 0.0407,
-      "ret_10d": -0.0474,
-      "ret_20d": -0.0035,
-      "ret_60d": -0.008,
-      "rsi14": 46.16,
-      "above_ma5": true,
-      "above_ma20": false,
-      "above_ma50": false,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.0685,
-      "volatility_20d": 0.277,
-      "volatility_60d": 0.2164,
-      "relative_20d": -0.0216,
-      "relative_60d": -0.0811,
-      "relative_benchmark": "SPY",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": true,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
     "ESTC": {
       "latest_date": "2026-07-09",
       "ret_1d": 0.033,
@@ -1003,90 +779,6 @@
         "failed_rebound_risk": false
       }
     },
-    "JPM": {
-      "latest_date": "2026-07-13",
-      "ret_1d": -0.0058,
-      "ret_5d": -0.0094,
-      "ret_10d": 0.0212,
-      "ret_20d": 0.0719,
-      "ret_60d": 0.0983,
-      "rsi14": 59.33,
-      "above_ma5": false,
-      "above_ma20": true,
-      "above_ma50": true,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.0138,
-      "volatility_20d": 0.2492,
-      "volatility_60d": 0.2233,
-      "relative_20d": 0.0538,
-      "relative_60d": 0.0253,
-      "relative_benchmark": "SPY",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": true,
-        "failed_rebound_risk": false
-      }
-    },
-    "LLY": {
-      "latest_date": "2026-07-13",
-      "ret_1d": -0.0056,
-      "ret_5d": -0.0152,
-      "ret_10d": -0.0217,
-      "ret_20d": 0.018,
-      "ret_60d": 0.3081,
-      "rsi14": 55.67,
-      "above_ma5": false,
-      "above_ma20": true,
-      "above_ma50": true,
-      "above_ma200": true,
-      "drawdown_from_52w_high": -0.0435,
-      "volatility_20d": 0.351,
-      "volatility_60d": 0.3797,
-      "relative_20d": -0.0,
-      "relative_60d": 0.2351,
-      "relative_benchmark": "SPY",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": true
-      }
-    },
-    "MSTR": {
-      "latest_date": "2026-07-13",
-      "ret_1d": -0.0268,
-      "ret_5d": -0.086,
-      "ret_10d": 0.1189,
-      "ret_20d": -0.2335,
-      "ret_60d": -0.3584,
-      "rsi14": 36.45,
-      "above_ma5": false,
-      "above_ma20": false,
-      "above_ma50": false,
-      "above_ma200": false,
-      "drawdown_from_52w_high": -0.798,
-      "volatility_20d": 0.9379,
-      "volatility_60d": 0.8356,
-      "relative_20d": -0.2515,
-      "relative_60d": -0.4314,
-      "relative_benchmark": "SPY",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
     "OKTA": {
       "latest_date": "2026-07-09",
       "ret_1d": 0.0141,
@@ -1104,34 +796,6 @@
       "volatility_60d": 0.8118,
       "relative_20d": 0.2178,
       "relative_60d": 1.101,
-      "relative_benchmark": "QQQ",
-      "active_signals": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": true,
-        "failed_rebound_risk": false
-      }
-    },
-    "PATH": {
-      "latest_date": "2026-07-13",
-      "ret_1d": 0.0146,
-      "ret_5d": 0.0017,
-      "ret_10d": 0.1254,
-      "ret_20d": 0.1127,
-      "ret_60d": 0.1169,
-      "rsi14": 60.94,
-      "above_ma5": true,
-      "above_ma20": true,
-      "above_ma50": true,
-      "above_ma200": false,
-      "drawdown_from_52w_high": -0.3857,
-      "volatility_20d": 0.4228,
-      "volatility_60d": 0.5271,
-      "relative_20d": 0.1191,
-      "relative_60d": -0.001,
       "relative_benchmark": "QQQ",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -2263,6 +1927,34 @@
         "failed_rebound_risk": false
       }
     },
+    "INTC": {
+      "latest_date": "2026-07-13",
+      "ret_1d": -0.0612,
+      "ret_5d": -0.1561,
+      "ret_10d": -0.1964,
+      "ret_20d": -0.1183,
+      "ret_60d": 0.5879,
+      "rsi14": 39.4,
+      "above_ma5": false,
+      "above_ma20": false,
+      "above_ma50": false,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.2683,
+      "volatility_20d": 0.9029,
+      "volatility_60d": 1.005,
+      "relative_20d": -0.0792,
+      "relative_60d": 0.2952,
+      "relative_benchmark": "SMH",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": true
+      }
+    },
     "KLAC": {
       "latest_date": "2026-07-13",
       "ret_1d": -0.04,
@@ -2308,6 +2000,62 @@
       "volatility_60d": 0.767,
       "relative_20d": -0.0502,
       "relative_60d": -0.0477,
+      "relative_benchmark": "SMH",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
+      }
+    },
+    "MCHP": {
+      "latest_date": "2026-07-13",
+      "ret_1d": -0.0492,
+      "ret_5d": -0.0384,
+      "ret_10d": -0.0421,
+      "ret_20d": -0.0937,
+      "ret_60d": 0.1363,
+      "rsi14": 42.3,
+      "above_ma5": false,
+      "above_ma20": false,
+      "above_ma50": false,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.1799,
+      "volatility_20d": 0.6647,
+      "volatility_60d": 0.5911,
+      "relative_20d": -0.0546,
+      "relative_60d": -0.1565,
+      "relative_benchmark": "SMH",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
+      }
+    },
+    "MPWR": {
+      "latest_date": "2026-07-13",
+      "ret_1d": -0.0454,
+      "ret_5d": -0.0407,
+      "ret_10d": -0.0153,
+      "ret_20d": -0.1864,
+      "ret_60d": -0.0442,
+      "rsi14": 41.63,
+      "above_ma5": false,
+      "above_ma20": false,
+      "above_ma50": false,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.2347,
+      "volatility_20d": 0.7809,
+      "volatility_60d": 0.6825,
+      "relative_20d": -0.1473,
+      "relative_60d": -0.3369,
       "relative_benchmark": "SMH",
       "active_signals": {
         "pullback_reclaim_5dma": false,
@@ -2739,6 +2487,90 @@
         "failed_rebound_risk": true
       }
     },
+    "CSCO": {
+      "latest_date": "2026-07-13",
+      "ret_1d": -0.017,
+      "ret_5d": 0.0462,
+      "ret_10d": 0.052,
+      "ret_20d": -0.0176,
+      "ret_60d": 0.4532,
+      "rsi14": 54.59,
+      "above_ma5": true,
+      "above_ma20": true,
+      "above_ma50": true,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.0793,
+      "volatility_20d": 0.349,
+      "volatility_60d": 0.4488,
+      "relative_20d": -0.0356,
+      "relative_60d": 0.3802,
+      "relative_benchmark": "SPY",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
+      }
+    },
+    "DLR": {
+      "latest_date": "2026-07-13",
+      "ret_1d": -0.0138,
+      "ret_5d": 0.0243,
+      "ret_10d": -0.0781,
+      "ret_20d": -0.0205,
+      "ret_60d": -0.0848,
+      "rsi14": 41.93,
+      "above_ma5": true,
+      "above_ma20": false,
+      "above_ma50": false,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.1217,
+      "volatility_20d": 0.322,
+      "volatility_60d": 0.2693,
+      "relative_20d": -0.0385,
+      "relative_60d": -0.1579,
+      "relative_benchmark": "SPY",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": true,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
+      }
+    },
+    "EQIX": {
+      "latest_date": "2026-07-13",
+      "ret_1d": -0.0111,
+      "ret_5d": 0.0407,
+      "ret_10d": -0.0474,
+      "ret_20d": -0.0035,
+      "ret_60d": -0.008,
+      "rsi14": 46.16,
+      "above_ma5": true,
+      "above_ma20": false,
+      "above_ma50": false,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.0685,
+      "volatility_20d": 0.277,
+      "volatility_60d": 0.2164,
+      "relative_20d": -0.0216,
+      "relative_60d": -0.0811,
+      "relative_benchmark": "SPY",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": true,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
+      }
+    },
     "GE": {
       "latest_date": "2026-07-13",
       "ret_1d": -0.0163,
@@ -2785,6 +2617,146 @@
       "relative_20d": 0.1728,
       "relative_60d": 0.3423,
       "relative_benchmark": "SPY",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": true,
+        "failed_rebound_risk": false
+      }
+    },
+    "JPM": {
+      "latest_date": "2026-07-13",
+      "ret_1d": -0.0058,
+      "ret_5d": -0.0094,
+      "ret_10d": 0.0212,
+      "ret_20d": 0.0719,
+      "ret_60d": 0.0983,
+      "rsi14": 59.33,
+      "above_ma5": false,
+      "above_ma20": true,
+      "above_ma50": true,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.0138,
+      "volatility_20d": 0.2492,
+      "volatility_60d": 0.2233,
+      "relative_20d": 0.0538,
+      "relative_60d": 0.0253,
+      "relative_benchmark": "SPY",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": true,
+        "failed_rebound_risk": false
+      }
+    },
+    "LLY": {
+      "latest_date": "2026-07-13",
+      "ret_1d": -0.0056,
+      "ret_5d": -0.0152,
+      "ret_10d": -0.0217,
+      "ret_20d": 0.018,
+      "ret_60d": 0.3081,
+      "rsi14": 55.67,
+      "above_ma5": false,
+      "above_ma20": true,
+      "above_ma50": true,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.0435,
+      "volatility_20d": 0.351,
+      "volatility_60d": 0.3797,
+      "relative_20d": -0.0,
+      "relative_60d": 0.2351,
+      "relative_benchmark": "SPY",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": true
+      }
+    },
+    "MDB": {
+      "latest_date": "2026-07-13",
+      "ret_1d": -0.012,
+      "ret_5d": -0.0557,
+      "ret_10d": 0.0763,
+      "ret_20d": -0.0464,
+      "ret_60d": 0.3848,
+      "rsi14": 49.51,
+      "above_ma5": false,
+      "above_ma20": false,
+      "above_ma50": true,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.2329,
+      "volatility_20d": 0.6215,
+      "volatility_60d": 0.756,
+      "relative_20d": -0.04,
+      "relative_60d": 0.2669,
+      "relative_benchmark": "QQQ",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
+      }
+    },
+    "MSTR": {
+      "latest_date": "2026-07-13",
+      "ret_1d": -0.0268,
+      "ret_5d": -0.086,
+      "ret_10d": 0.1189,
+      "ret_20d": -0.2335,
+      "ret_60d": -0.3584,
+      "rsi14": 36.45,
+      "above_ma5": false,
+      "above_ma20": false,
+      "above_ma50": false,
+      "above_ma200": false,
+      "drawdown_from_52w_high": -0.798,
+      "volatility_20d": 0.9379,
+      "volatility_60d": 0.8356,
+      "relative_20d": -0.2515,
+      "relative_60d": -0.4314,
+      "relative_benchmark": "SPY",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
+      }
+    },
+    "PATH": {
+      "latest_date": "2026-07-13",
+      "ret_1d": 0.0146,
+      "ret_5d": 0.0017,
+      "ret_10d": 0.1254,
+      "ret_20d": 0.1127,
+      "ret_60d": 0.1169,
+      "rsi14": 60.94,
+      "above_ma5": true,
+      "above_ma20": true,
+      "above_ma50": true,
+      "above_ma200": false,
+      "drawdown_from_52w_high": -0.3857,
+      "volatility_20d": 0.4228,
+      "volatility_60d": 0.5271,
+      "relative_20d": 0.1191,
+      "relative_60d": -0.001,
+      "relative_benchmark": "QQQ",
       "active_signals": {
         "pullback_reclaim_5dma": false,
         "rsi_oversold_reclaim_40": false,
@@ -2848,6 +2820,34 @@
         "ma50_reclaim_bullish": false,
         "relative_strength_rebound": false,
         "momentum_leader": true,
+        "failed_rebound_risk": false
+      }
+    },
+    "USMV": {
+      "latest_date": "2026-07-13",
+      "ret_1d": 0.0006,
+      "ret_5d": -0.0007,
+      "ret_10d": 0.0191,
+      "ret_20d": 0.026,
+      "ret_60d": 0.0445,
+      "rsi14": 64.23,
+      "above_ma5": false,
+      "above_ma20": true,
+      "above_ma50": true,
+      "above_ma200": true,
+      "drawdown_from_52w_high": -0.0054,
+      "volatility_20d": 0.0895,
+      "volatility_60d": 0.0821,
+      "relative_20d": 0.0079,
+      "relative_60d": -0.0285,
+      "relative_benchmark": "SPY",
+      "active_signals": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
         "failed_rebound_risk": false
       }
     },
@@ -2947,19 +2947,6 @@
       }
     },
     {
-      "ticker": "INTC",
-      "field": "active_signals",
-      "value": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": true
-      }
-    },
-    {
       "ticker": "IYW",
       "field": "active_signals",
       "value": {
@@ -3051,32 +3038,6 @@
       }
     },
     {
-      "ticker": "DLR",
-      "field": "active_signals",
-      "value": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": true,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
-    {
-      "ticker": "EQIX",
-      "field": "active_signals",
-      "value": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": true,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": false
-      }
-    },
-    {
       "ticker": "GTLB",
       "field": "active_signals",
       "value": {
@@ -3103,46 +3064,7 @@
       }
     },
     {
-      "ticker": "JPM",
-      "field": "active_signals",
-      "value": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": true,
-        "failed_rebound_risk": false
-      }
-    },
-    {
-      "ticker": "LLY",
-      "field": "active_signals",
-      "value": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": false,
-        "failed_rebound_risk": true
-      }
-    },
-    {
       "ticker": "OKTA",
-      "field": "active_signals",
-      "value": {
-        "pullback_reclaim_5dma": false,
-        "rsi_oversold_reclaim_40": false,
-        "ma20_reclaim_bullish": false,
-        "ma50_reclaim_bullish": false,
-        "relative_strength_rebound": false,
-        "momentum_leader": true,
-        "failed_rebound_risk": false
-      }
-    },
-    {
-      "ticker": "PATH",
       "field": "active_signals",
       "value": {
         "pullback_reclaim_5dma": false,
@@ -3402,6 +3324,19 @@
       }
     },
     {
+      "ticker": "INTC",
+      "field": "active_signals",
+      "value": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": true
+      }
+    },
+    {
       "ticker": "NOW",
       "field": "active_signals",
       "value": {
@@ -3493,6 +3428,32 @@
       }
     },
     {
+      "ticker": "DLR",
+      "field": "active_signals",
+      "value": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": true,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
+      }
+    },
+    {
+      "ticker": "EQIX",
+      "field": "active_signals",
+      "value": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": true,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": false
+      }
+    },
+    {
       "ticker": "GE",
       "field": "active_signals",
       "value": {
@@ -3507,6 +3468,45 @@
     },
     {
       "ticker": "HIMS",
+      "field": "active_signals",
+      "value": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": true,
+        "failed_rebound_risk": false
+      }
+    },
+    {
+      "ticker": "JPM",
+      "field": "active_signals",
+      "value": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": true,
+        "failed_rebound_risk": false
+      }
+    },
+    {
+      "ticker": "LLY",
+      "field": "active_signals",
+      "value": {
+        "pullback_reclaim_5dma": false,
+        "rsi_oversold_reclaim_40": false,
+        "ma20_reclaim_bullish": false,
+        "ma50_reclaim_bullish": false,
+        "relative_strength_rebound": false,
+        "momentum_leader": false,
+        "failed_rebound_risk": true
+      }
+    },
+    {
+      "ticker": "PATH",
       "field": "active_signals",
       "value": {
         "pullback_reclaim_5dma": false,
@@ -3560,504 +3560,504 @@
   ],
   "top_rule_evidence": [
     {
-      "worst_mae": -0.5179,
-      "ticker": "GE",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.515,
       "samples": 167,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.5179,
       "median_return": 0.0015,
       "evidence_score_0_100": 32.0,
-      "valid": true
+      "ticker": "GE",
+      "win_rate": 0.515
     },
     {
-      "worst_mae": -0.6625,
-      "ticker": "AMAT",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5758,
       "samples": 165,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.6625,
       "median_return": 0.0172,
       "evidence_score_0_100": 43.0,
-      "valid": true
+      "ticker": "AMAT",
+      "win_rate": 0.5758
     },
     {
-      "worst_mae": -0.4871,
-      "ticker": "MU",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5394,
       "samples": 165,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.4871,
       "median_return": 0.0183,
       "evidence_score_0_100": 39.7,
-      "valid": true
+      "ticker": "MU",
+      "win_rate": 0.5394
     },
     {
-      "worst_mae": -0.3793,
-      "ticker": "LRCX",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5879,
       "samples": 165,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.3793,
       "median_return": 0.0257,
       "evidence_score_0_100": 46.8,
-      "valid": true
+      "ticker": "LRCX",
+      "win_rate": 0.5879
     },
     {
-      "worst_mae": -0.4018,
-      "ticker": "INTC",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5732,
       "samples": 164,
-      "median_return": 0.0157,
-      "evidence_score_0_100": 42.2,
-      "valid": true
-    },
-    {
+      "valid": true,
+      "rule": "failed_rebound_risk",
       "worst_mae": -0.2834,
-      "ticker": "COST",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.6159,
-      "samples": 164,
       "median_return": 0.0122,
       "evidence_score_0_100": 45.4,
-      "valid": true
+      "ticker": "COST",
+      "win_rate": 0.6159
     },
     {
-      "worst_mae": -0.5225,
-      "ticker": "MSTR",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5244,
       "samples": 164,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.4018,
+      "median_return": 0.0157,
+      "evidence_score_0_100": 42.2,
+      "ticker": "INTC",
+      "win_rate": 0.5732
+    },
+    {
+      "samples": 164,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.5225,
       "median_return": 0.0071,
       "evidence_score_0_100": 34.7,
-      "valid": true
+      "ticker": "MSTR",
+      "win_rate": 0.5244
     },
     {
-      "worst_mae": -0.4425,
-      "ticker": "NRG",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.546,
       "samples": 163,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.4425,
       "median_return": 0.0164,
       "evidence_score_0_100": 39.7,
-      "valid": true
+      "ticker": "NRG",
+      "win_rate": 0.546
     },
     {
-      "worst_mae": -0.5365,
-      "ticker": "XLE",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.546,
       "samples": 163,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.5365,
       "median_return": 0.0087,
       "evidence_score_0_100": 37.3,
-      "valid": true
+      "ticker": "XLE",
+      "win_rate": 0.546
     },
     {
-      "worst_mae": -0.0983,
-      "ticker": "TLT",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5,
       "samples": 162,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.0983,
       "median_return": 0.0,
       "evidence_score_0_100": 39.1,
-      "valid": true
+      "ticker": "TLT",
+      "win_rate": 0.5
     },
     {
-      "worst_mae": -0.5342,
-      "ticker": "ON",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5123,
       "samples": 162,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.5342,
       "median_return": 0.0018,
       "evidence_score_0_100": 31.8,
-      "valid": true
+      "ticker": "ON",
+      "win_rate": 0.5123
     },
     {
-      "worst_mae": -0.2986,
-      "ticker": "QCOM",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5494,
       "samples": 162,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.2986,
       "median_return": 0.0145,
       "evidence_score_0_100": 39.5,
-      "valid": true
+      "ticker": "QCOM",
+      "win_rate": 0.5494
     },
     {
-      "worst_mae": -0.3126,
-      "ticker": "LLY",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5776,
       "samples": 161,
-      "median_return": 0.0061,
-      "evidence_score_0_100": 39.7,
-      "valid": true
-    },
-    {
+      "valid": true,
+      "rule": "failed_rebound_risk",
       "worst_mae": -0.2953,
-      "ticker": "AMZN",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5776,
-      "samples": 161,
       "median_return": 0.0228,
       "evidence_score_0_100": 44.9,
-      "valid": true
+      "ticker": "AMZN",
+      "win_rate": 0.5776
     },
     {
-      "worst_mae": -0.2642,
-      "ticker": "TSM",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.6025,
       "samples": 161,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.2642,
       "median_return": 0.017,
       "evidence_score_0_100": 45.6,
-      "valid": true
+      "ticker": "TSM",
+      "win_rate": 0.6025
     },
     {
-      "worst_mae": -0.2744,
-      "ticker": "TXN",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5839,
       "samples": 161,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.2744,
       "median_return": 0.0079,
       "evidence_score_0_100": 40.9,
-      "valid": true
+      "ticker": "TXN",
+      "win_rate": 0.5839
     },
     {
-      "worst_mae": -0.4392,
-      "ticker": "MCHP",
+      "samples": 161,
+      "valid": true,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.6,
-      "samples": 160,
-      "median_return": 0.0149,
-      "evidence_score_0_100": 44.7,
-      "valid": true
+      "worst_mae": -0.3126,
+      "median_return": 0.0061,
+      "evidence_score_0_100": 39.7,
+      "ticker": "LLY",
+      "win_rate": 0.5776
     },
     {
+      "samples": 160,
+      "valid": true,
+      "rule": "failed_rebound_risk",
       "worst_mae": -0.3408,
-      "ticker": "MRVL",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5125,
-      "samples": 160,
       "median_return": 0.0022,
       "evidence_score_0_100": 31.9,
-      "valid": true
+      "ticker": "MRVL",
+      "win_rate": 0.5125
     },
     {
-      "worst_mae": -0.4216,
-      "ticker": "ADBE",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5625,
       "samples": 160,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.4216,
       "median_return": 0.0178,
       "evidence_score_0_100": 41.8,
-      "valid": true
+      "ticker": "ADBE",
+      "win_rate": 0.5625
     },
     {
-      "worst_mae": -0.4209,
-      "ticker": "JPM",
+      "samples": 160,
+      "valid": true,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.6352,
-      "samples": 159,
-      "median_return": 0.0211,
-      "evidence_score_0_100": 50.1,
-      "valid": true
+      "worst_mae": -0.4392,
+      "median_return": 0.0149,
+      "evidence_score_0_100": 44.7,
+      "ticker": "MCHP",
+      "win_rate": 0.6
     },
     {
+      "samples": 159,
+      "valid": true,
+      "rule": "failed_rebound_risk",
       "worst_mae": -0.0583,
-      "ticker": "IEF",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5031,
-      "samples": 159,
       "median_return": 0.0002,
       "evidence_score_0_100": 41.9,
-      "valid": true
+      "ticker": "IEF",
+      "win_rate": 0.5031
     },
     {
-      "worst_mae": -0.4555,
-      "ticker": "NVDA",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5849,
       "samples": 159,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.4555,
       "median_return": 0.0303,
       "evidence_score_0_100": 48.0,
-      "valid": true
+      "ticker": "NVDA",
+      "win_rate": 0.5849
     },
     {
-      "worst_mae": -0.5063,
-      "ticker": "CRM",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5786,
       "samples": 159,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.5063,
       "median_return": 0.0242,
       "evidence_score_0_100": 45.4,
-      "valid": true
+      "ticker": "CRM",
+      "win_rate": 0.5786
     },
     {
-      "worst_mae": -0.2483,
-      "ticker": "XLV",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.6415,
       "samples": 159,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.4209,
+      "median_return": 0.0211,
+      "evidence_score_0_100": 50.1,
+      "ticker": "JPM",
+      "win_rate": 0.6352
+    },
+    {
+      "samples": 159,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.2483,
       "median_return": 0.0129,
       "evidence_score_0_100": 48.3,
-      "valid": true
+      "ticker": "XLV",
+      "win_rate": 0.6415
     },
     {
-      "worst_mae": -0.42,
-      "ticker": "ETN",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5696,
       "samples": 158,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.42,
       "median_return": 0.0184,
       "evidence_score_0_100": 42.7,
-      "valid": true
+      "ticker": "ETN",
+      "win_rate": 0.5696
     },
     {
-      "worst_mae": -0.2009,
-      "ticker": "GLD",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5823,
       "samples": 158,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.2009,
       "median_return": 0.0082,
       "evidence_score_0_100": 43.7,
-      "valid": true
+      "ticker": "GLD",
+      "win_rate": 0.5823
     },
     {
-      "worst_mae": -0.3971,
-      "ticker": "KLAC",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5823,
       "samples": 158,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.3971,
       "median_return": 0.0217,
       "evidence_score_0_100": 45.0,
-      "valid": true
+      "ticker": "KLAC",
+      "win_rate": 0.5823
     },
     {
-      "worst_mae": -0.4822,
-      "ticker": "AMD",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.465,
       "samples": 157,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.4822,
       "median_return": -0.0173,
       "evidence_score_0_100": 30.0,
-      "valid": true
+      "ticker": "AMD",
+      "win_rate": 0.465
     },
     {
-      "worst_mae": -0.3106,
-      "ticker": "EQIX",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.6051,
       "samples": 157,
-      "median_return": 0.023,
-      "evidence_score_0_100": 47.7,
-      "valid": true
-    },
-    {
+      "valid": true,
+      "rule": "failed_rebound_risk",
       "worst_mae": -0.3392,
-      "ticker": "ORCL",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5669,
-      "samples": 157,
       "median_return": 0.0145,
       "evidence_score_0_100": 41.2,
-      "valid": true
+      "ticker": "ORCL",
+      "win_rate": 0.5669
     },
     {
-      "worst_mae": -0.3084,
-      "ticker": "CSCO",
+      "samples": 157,
+      "valid": true,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5449,
-      "samples": 156,
-      "median_return": 0.0068,
-      "evidence_score_0_100": 36.6,
-      "valid": true
+      "worst_mae": -0.3106,
+      "median_return": 0.023,
+      "evidence_score_0_100": 47.7,
+      "ticker": "EQIX",
+      "win_rate": 0.6051
     },
     {
-      "worst_mae": -0.4475,
-      "ticker": "DLR",
+      "samples": 156,
+      "valid": true,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5769,
-      "samples": 156,
-      "median_return": 0.0178,
-      "evidence_score_0_100": 43.3,
-      "valid": true
-    },
-    {
       "worst_mae": -0.4072,
-      "ticker": "XLF",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5833,
-      "samples": 156,
       "median_return": 0.0081,
       "evidence_score_0_100": 40.9,
-      "valid": true
+      "ticker": "XLF",
+      "win_rate": 0.5833
     },
     {
-      "worst_mae": -0.3483,
-      "ticker": "XLU",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5705,
       "samples": 156,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.3483,
       "median_return": 0.0105,
       "evidence_score_0_100": 40.3,
-      "valid": true
+      "ticker": "XLU",
+      "win_rate": 0.5705
     },
     {
-      "worst_mae": -0.2245,
-      "ticker": "MSFT",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5449,
       "samples": 156,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.2245,
       "median_return": 0.0115,
       "evidence_score_0_100": 39.6,
-      "valid": true
+      "ticker": "MSFT",
+      "win_rate": 0.5449
     },
     {
-      "worst_mae": -0.3161,
-      "ticker": "ADI",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5513,
       "samples": 156,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.3161,
       "median_return": 0.0075,
       "evidence_score_0_100": 37.5,
-      "valid": true
+      "ticker": "ADI",
+      "win_rate": 0.5513
     },
     {
-      "worst_mae": -0.3037,
-      "ticker": "PWR",
+      "samples": 156,
+      "valid": true,
       "rule": "failed_rebound_risk",
-      "win_rate": 0.5806,
+      "worst_mae": -0.3084,
+      "median_return": 0.0068,
+      "evidence_score_0_100": 36.6,
+      "ticker": "CSCO",
+      "win_rate": 0.5449
+    },
+    {
+      "samples": 156,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.4475,
+      "median_return": 0.0178,
+      "evidence_score_0_100": 43.3,
+      "ticker": "DLR",
+      "win_rate": 0.5769
+    },
+    {
       "samples": 155,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.3037,
       "median_return": 0.0207,
       "evidence_score_0_100": 44.5,
-      "valid": true
+      "ticker": "PWR",
+      "win_rate": 0.5806
     },
     {
-      "worst_mae": -0.3947,
-      "ticker": "AAPL",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5844,
       "samples": 154,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.3947,
       "median_return": 0.0184,
       "evidence_score_0_100": 44.2,
-      "valid": true
+      "ticker": "AAPL",
+      "win_rate": 0.5844
     },
     {
-      "worst_mae": -0.2723,
-      "ticker": "GOOGL",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5584,
       "samples": 154,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.2723,
       "median_return": 0.0238,
       "evidence_score_0_100": 43.3,
-      "valid": true
+      "ticker": "GOOGL",
+      "win_rate": 0.5584
     },
     {
-      "worst_mae": -0.5982,
-      "ticker": "IGV",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.6299,
       "samples": 154,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.5982,
       "median_return": 0.0189,
       "evidence_score_0_100": 48.9,
-      "valid": true
+      "ticker": "IGV",
+      "win_rate": 0.6299
     },
     {
-      "worst_mae": -0.328,
-      "ticker": "ASML",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5294,
       "samples": 153,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.328,
       "median_return": 0.0131,
       "evidence_score_0_100": 37.0,
-      "valid": true
+      "ticker": "ASML",
+      "win_rate": 0.5294
     },
     {
-      "worst_mae": -0.227,
-      "ticker": "XLP",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.6424,
       "samples": 151,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.227,
       "median_return": 0.0099,
       "evidence_score_0_100": 48.7,
-      "valid": true
+      "ticker": "XLP",
+      "win_rate": 0.6424
     },
     {
-      "worst_mae": -0.4739,
-      "ticker": "MPWR",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.6067,
       "samples": 150,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.4739,
       "median_return": 0.0269,
       "evidence_score_0_100": 49.1,
-      "valid": true
+      "ticker": "MPWR",
+      "win_rate": 0.6067
     },
     {
-      "worst_mae": -0.7812,
-      "ticker": "SOXX",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.5906,
       "samples": 149,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.7812,
       "median_return": 0.0135,
       "evidence_score_0_100": 43.3,
-      "valid": true
+      "ticker": "SOXX",
+      "win_rate": 0.5906
     },
     {
-      "worst_mae": -0.3429,
-      "ticker": "IGM",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.651,
       "samples": 149,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.3429,
       "median_return": 0.0163,
       "evidence_score_0_100": 50.2,
-      "valid": true
+      "ticker": "IGM",
+      "win_rate": 0.651
     },
     {
-      "worst_mae": -0.2798,
-      "ticker": "PWR",
-      "rule": "momentum_leader",
-      "win_rate": 0.6149,
       "samples": 148,
+      "valid": true,
+      "rule": "momentum_leader",
+      "worst_mae": -0.2798,
       "median_return": 0.0195,
       "evidence_score_0_100": 47.6,
-      "valid": true
+      "ticker": "PWR",
+      "win_rate": 0.6149
     },
     {
-      "worst_mae": -0.2781,
-      "ticker": "QQQ",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.6081,
       "samples": 148,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.2781,
       "median_return": 0.01,
       "evidence_score_0_100": 43.9,
-      "valid": true
+      "ticker": "QQQ",
+      "win_rate": 0.6081
     },
     {
-      "worst_mae": -0.3109,
-      "ticker": "SMH",
-      "rule": "failed_rebound_risk",
-      "win_rate": 0.6014,
       "samples": 148,
+      "valid": true,
+      "rule": "failed_rebound_risk",
+      "worst_mae": -0.3109,
       "median_return": 0.008,
       "evidence_score_0_100": 42.6,
-      "valid": true
+      "ticker": "SMH",
+      "win_rate": 0.6014
     },
     {
-      "worst_mae": -0.277,
-      "ticker": "MPWR",
-      "rule": "momentum_leader",
-      "win_rate": 0.5374,
       "samples": 147,
-      "median_return": 0.0113,
-      "evidence_score_0_100": 37.3,
-      "valid": true
-    },
-    {
+      "valid": true,
+      "rule": "momentum_leader",
       "worst_mae": -0.2412,
-      "ticker": "AMZN",
-      "rule": "momentum_leader",
-      "win_rate": 0.5646,
-      "samples": 147,
       "median_return": 0.0072,
       "evidence_score_0_100": 39.2,
-      "valid": true
+      "ticker": "AMZN",
+      "win_rate": 0.5646
+    },
+    {
+      "samples": 147,
+      "valid": true,
+      "rule": "momentum_leader",
+      "worst_mae": -0.3852,
+      "median_return": 0.0504,
+      "evidence_score_0_100": 58.3,
+      "ticker": "NVDA",
+      "win_rate": 0.6259
     }
   ],
   "note": "Market-only summary for ChatGPT reading. Decision summary is latest_decision_summary.json."
