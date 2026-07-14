@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-13T16:59:05.900146+00:00",
+  "generated_at_utc": "2026-07-14T01:01:24.470309+00:00",
   "version": "eason-master-action-board-v6.0-model-governance-t2",
   "purpose": "One evidence file for ChatGPT to review the decision contract, prospective model governance, quant validation, portfolio backtest, regime behavior, and actual trade review before live-market judgment.",
   "roles": {
@@ -20,7 +20,7 @@
   },
   "decision_contract": {
     "schema_version": "decision-packet-v5.0",
-    "generated_at_utc": "2026-07-13T16:59:04.687911+00:00",
+    "generated_at_utc": "2026-07-14T01:01:23.194279+00:00",
     "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
     "roles": {
       "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",
@@ -30,8 +30,8 @@
     "market_data": {
       "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
       "market_timezone": "America/New_York",
-      "report_generated_at_utc": "2026-07-13T16:56:52.314696+00:00",
-      "data_timestamp": "2026-07-10",
+      "report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+      "data_timestamp": "2026-07-13",
       "data_timestamp_granularity": "market_date",
       "data_timestamp_status": "AVAILABLE",
       "price_frequency": "end_of_day_daily",
@@ -39,144 +39,144 @@
       "metadata_status": "COMPLETE"
     },
     "data_quality": {
-      "source_report_generated_at_utc": "2026-07-13T16:56:52.314696+00:00",
+      "source_report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
       "data_quality_metadata_status": "COMPLETE",
-      "reported_expected_market_date": "2026-07-10",
-      "reference_market_date": "2026-07-10",
+      "reported_expected_market_date": "2026-07-13",
+      "reference_market_date": "2026-07-13",
       "reference_market_date_status": "ALIGNED",
       "max_staleness_business_days": 0,
       "max_expected_market_date_age_days": 0,
-      "latest_price_date_max": "2026-07-10",
+      "latest_price_date_max": "2026-07-13",
       "latest_price_date_min": "2026-03-17",
       "data_status": "PARTIAL_STALE_WATCHLIST",
-      "fresh_ticker_count": 39,
-      "stale_ticker_count": 55,
+      "fresh_ticker_count": 47,
+      "stale_ticker_count": 47,
       "stale_tickers_in_packet_count": 20,
       "stale_tickers": [
         {
-          "ticker": "ABNB",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "ADI",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
           "ticker": "AMAT",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "AMD",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "ANET",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "APP",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "ARKK",
           "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "ARM",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "ASTS",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 4,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "CEG",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "CFLT",
           "latest_date": "2026-03-17",
-          "staleness_business_days": 83,
+          "staleness_business_days": 84,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "COIN",
           "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "staleness_business_days": 4,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "COST",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "CSCO",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "DLR",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "EQIX",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "ESTC",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "ETN",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "GE",
-          "latest_date": "2026-07-09",
+          "ticker": "GRID",
+          "latest_date": "2026-07-10",
           "staleness_business_days": 1,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "GTLB",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "HOOD",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "INTC",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "IYW",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "JPM",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "LLY",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "MCHP",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         }
       ],
       "loaded_ticker_count": 94,
       "configured_ticker_count": 94,
-      "fresh_request_count": 0,
+      "fresh_request_count": 47,
       "errors_count": 0
     },
     "portfolio_scope": {
@@ -220,30 +220,282 @@
     },
     "risks": {
       "model_portfolio_high": [],
-      "watchlist_high_advisory": [],
-      "stale_excluded": [
+      "watchlist_high_advisory": [
         {
-          "ticker": "ARM",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "COST",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
+          "ticker": "APP",
+          "severity_0_100": 100,
+          "latest_date": "2026-07-13",
+          "latest_price": 442.85,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "5d pullback not reclaimed",
+            "below MA20",
+            "below MA50",
+            "below MA200",
+            "drawdown from 52w high <= -12%"
+          ],
+          "failed_rebound_samples_20d": 40,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": 5.29,
+          "failed_rebound_median_return_pct": 4.95,
+          "failed_rebound_worst_mae_pct": -36.66,
+          "ret_5d_pct": -18.56,
+          "ret_20d_pct": -7.46,
+          "drawdown_from_52w_high_pct": -39.63,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
           "risk_scope": "watchlist_advisory"
         },
         {
           "ticker": "ASTS",
+          "severity_0_100": 100,
+          "latest_date": "2026-07-13",
+          "latest_price": 67.58,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "5d pullback not reclaimed",
+            "below MA20",
+            "below MA50",
+            "below MA200",
+            "drawdown from 52w high <= -12%"
+          ],
+          "failed_rebound_samples_20d": 46,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": 5.43,
+          "failed_rebound_median_return_pct": -1.17,
+          "failed_rebound_worst_mae_pct": -44.24,
+          "ret_5d_pct": -16.2,
+          "ret_20d_pct": -30.73,
+          "drawdown_from_52w_high_pct": -49.22,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "ORCL",
+          "severity_0_100": 100,
+          "latest_date": "2026-07-13",
+          "latest_price": 131.54,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "5d pullback not reclaimed",
+            "below MA20",
+            "below MA50",
+            "below MA200",
+            "drawdown from 52w high <= -12%"
+          ],
+          "failed_rebound_samples_20d": 157,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": 1.52,
+          "failed_rebound_median_return_pct": 1.45,
+          "failed_rebound_worst_mae_pct": -33.92,
+          "ret_5d_pct": -8.5,
+          "ret_20d_pct": -28.14,
+          "drawdown_from_52w_high_pct": -59.39,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "ARM",
+          "severity_0_100": 95,
+          "latest_date": "2026-07-13",
+          "latest_price": 298.99,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "5d pullback not reclaimed",
+            "below MA20",
+            "below MA50",
+            "drawdown from 52w high <= -12%"
+          ],
+          "failed_rebound_samples_20d": 19,
+          "failed_rebound_valid_20d": false,
+          "failed_rebound_avg_return_pct": 5.1,
+          "failed_rebound_median_return_pct": 4.32,
+          "failed_rebound_worst_mae_pct": -38.95,
+          "ret_5d_pct": -7.22,
+          "ret_20d_pct": -12.63,
+          "drawdown_from_52w_high_pct": -31.96,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "GLD",
+          "severity_0_100": 95,
+          "latest_date": "2026-07-13",
+          "latest_price": 367.13,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "below MA20",
+            "below MA50",
+            "below MA200",
+            "drawdown from 52w high <= -12%"
+          ],
+          "failed_rebound_samples_20d": 158,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": 0.72,
+          "failed_rebound_median_return_pct": 0.82,
+          "failed_rebound_worst_mae_pct": -20.09,
+          "ret_5d_pct": -3.93,
+          "ret_20d_pct": -4.97,
+          "drawdown_from_52w_high_pct": -25.97,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "TSLA",
+          "severity_0_100": 80,
+          "latest_date": "2026-07-13",
+          "latest_price": 394.76,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "5d pullback not reclaimed",
+            "below MA20",
+            "below MA50",
+            "below MA200",
+            "drawdown from 52w high <= -12%"
+          ],
+          "failed_rebound_samples_20d": 123,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": 1.24,
+          "failed_rebound_median_return_pct": 0.35,
+          "failed_rebound_worst_mae_pct": -47.53,
+          "ret_5d_pct": -5.96,
+          "ret_20d_pct": -1.1,
+          "drawdown_from_52w_high_pct": -19.42,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "IEF",
+          "severity_0_100": 80,
+          "latest_date": "2026-07-13",
+          "latest_price": 93.29,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "below MA20",
+            "below MA50",
+            "below MA200"
+          ],
+          "failed_rebound_samples_20d": 159,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": -0.01,
+          "failed_rebound_median_return_pct": 0.02,
+          "failed_rebound_worst_mae_pct": -5.83,
+          "ret_5d_pct": -0.94,
+          "ret_20d_pct": -0.79,
+          "drawdown_from_52w_high_pct": -3.24,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "TLT",
+          "severity_0_100": 80,
+          "latest_date": "2026-07-13",
+          "latest_price": 83.97,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "below MA20",
+            "below MA50",
+            "below MA200"
+          ],
+          "failed_rebound_samples_20d": 162,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": 0.13,
+          "failed_rebound_median_return_pct": 0.0,
+          "failed_rebound_worst_mae_pct": -9.83,
+          "ret_5d_pct": -1.73,
+          "ret_20d_pct": -1.97,
+          "drawdown_from_52w_high_pct": -5.8,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "ASML",
+          "severity_0_100": 80,
+          "latest_date": "2026-07-13",
+          "latest_price": 1726.04,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "5d pullback not reclaimed",
+            "below MA20",
+            "drawdown from 52w high <= -12%"
+          ],
+          "failed_rebound_samples_20d": 153,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": 2.42,
+          "failed_rebound_median_return_pct": 1.31,
+          "failed_rebound_worst_mae_pct": -32.8,
+          "ret_5d_pct": -5.43,
+          "ret_20d_pct": -9.13,
+          "drawdown_from_52w_high_pct": -13.24,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "TSM",
+          "severity_0_100": 80,
+          "latest_date": "2026-07-13",
+          "latest_price": 421.58,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "5d pullback not reclaimed",
+            "below MA20",
+            "below MA50"
+          ],
+          "failed_rebound_samples_20d": 161,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": 2.2,
+          "failed_rebound_median_return_pct": 1.7,
+          "failed_rebound_worst_mae_pct": -26.42,
+          "ret_5d_pct": -6.69,
+          "ret_20d_pct": 0.12,
+          "drawdown_from_52w_high_pct": -11.72,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        }
+      ],
+      "stale_excluded": [
+        {
+          "ticker": "COST",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -252,16 +504,7 @@
         {
           "ticker": "SMR",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "XLK",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -270,7 +513,7 @@
         {
           "ticker": "CEG",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -279,7 +522,7 @@
         {
           "ticker": "INTC",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -288,25 +531,16 @@
         {
           "ticker": "MSTR",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
           "risk_scope": "watchlist_advisory"
         },
         {
-          "ticker": "APP",
-          "latest_date": "2026-07-09",
+          "ticker": "RKLB",
+          "latest_date": "2026-07-10",
           "staleness_business_days": 1,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "TSLA",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -315,16 +549,7 @@
         {
           "ticker": "COIN",
           "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "ADI",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "staleness_business_days": 4,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -333,7 +558,7 @@
         {
           "ticker": "MCHP",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -342,7 +567,7 @@
         {
           "ticker": "MPWR",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -351,16 +576,7 @@
         {
           "ticker": "PWR",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "IGV",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -369,7 +585,7 @@
         {
           "ticker": "NRG",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -378,16 +594,7 @@
         {
           "ticker": "ESTC",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "HIMS",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -396,7 +603,70 @@
         {
           "ticker": "PATH",
           "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "RBLX",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "UBER",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "VST",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "ZS",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "SHOP",
+          "latest_date": "2026-07-10",
           "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "VRT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "AMAT",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -427,8 +697,8 @@
   "market_data": {
     "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "report_generated_at_utc": "2026-07-13T16:56:52.314696+00:00",
-    "data_timestamp": "2026-07-10",
+    "report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+    "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
     "price_frequency": "end_of_day_daily",
@@ -457,40 +727,69 @@
     },
     "top_actionable_buy": null,
     "top_risk": {
-      "ticker": "GLD",
-      "severity_0_100": 60,
-      "latest_date": "2026-07-10",
-      "latest_price": 377.01,
+      "ticker": "APP",
+      "severity_0_100": 100,
+      "latest_date": "2026-07-13",
+      "latest_price": 442.85,
       "data_fresh": true,
       "staleness_business_days": 0,
       "decision_eligible": true,
       "data_exclusion_reason": null,
       "reasons": [
+        "failed_rebound_risk active",
+        "5d pullback not reclaimed",
         "below MA20",
         "below MA50",
         "below MA200",
         "drawdown from 52w high <= -12%"
       ],
-      "failed_rebound_samples_20d": 158,
+      "failed_rebound_samples_20d": 40,
       "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 0.72,
-      "failed_rebound_median_return_pct": 0.82,
-      "failed_rebound_worst_mae_pct": -20.09,
-      "ret_5d_pct": -0.3,
-      "ret_20d_pct": 0.65,
-      "drawdown_from_52w_high_pct": -23.97,
+      "failed_rebound_avg_return_pct": 5.29,
+      "failed_rebound_median_return_pct": 4.95,
+      "failed_rebound_worst_mae_pct": -36.66,
+      "ret_5d_pct": -18.56,
+      "ret_20d_pct": -7.46,
+      "drawdown_from_52w_high_pct": -39.63,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
       "risk_scope": "watchlist_advisory"
     },
     "top_model_portfolio_risk": null,
-    "top_watchlist_risk_advisory": null,
+    "top_watchlist_risk_advisory": {
+      "ticker": "APP",
+      "severity_0_100": 100,
+      "latest_date": "2026-07-13",
+      "latest_price": 442.85,
+      "data_fresh": true,
+      "staleness_business_days": 0,
+      "decision_eligible": true,
+      "data_exclusion_reason": null,
+      "reasons": [
+        "failed_rebound_risk active",
+        "5d pullback not reclaimed",
+        "below MA20",
+        "below MA50",
+        "below MA200",
+        "drawdown from 52w high <= -12%"
+      ],
+      "failed_rebound_samples_20d": 40,
+      "failed_rebound_valid_20d": true,
+      "failed_rebound_avg_return_pct": 5.29,
+      "failed_rebound_median_return_pct": 4.95,
+      "failed_rebound_worst_mae_pct": -36.66,
+      "ret_5d_pct": -18.56,
+      "ret_20d_pct": -7.46,
+      "drawdown_from_52w_high_pct": -39.63,
+      "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+      "risk_scope": "watchlist_advisory"
+    },
     "freshness": {
-      "source_report_generated_at_utc": "2026-07-13T16:56:52.314696+00:00",
+      "source_report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
       "market_data": {
         "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:52.314696+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+        "data_timestamp": "2026-07-13",
         "data_timestamp_granularity": "market_date",
         "data_timestamp_status": "AVAILABLE",
         "price_frequency": "end_of_day_daily",
@@ -498,374 +797,326 @@
         "metadata_status": "COMPLETE"
       },
       "data_quality_metadata_status": "COMPLETE",
-      "reported_expected_market_date": "2026-07-10",
-      "reference_market_date": "2026-07-10",
+      "reported_expected_market_date": "2026-07-13",
+      "reference_market_date": "2026-07-13",
       "reference_market_date_status": "ALIGNED",
       "max_staleness_business_days": 0,
       "max_expected_market_date_age_days": 0,
-      "latest_price_date_max": "2026-07-10",
+      "latest_price_date_max": "2026-07-13",
       "latest_price_date_min": "2026-03-17",
       "data_status": "PARTIAL_STALE_WATCHLIST",
-      "fresh_ticker_count": 39,
-      "stale_ticker_count": 55,
+      "fresh_ticker_count": 47,
+      "stale_ticker_count": 47,
       "stale_tickers": [
-        {
-          "ticker": "ABNB",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "ADI",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "reason": "stale_or_missing_market_data"
-        },
         {
           "ticker": "AMAT",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "AMD",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "ANET",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "APP",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "ARKK",
           "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "ARM",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "ASTS",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 4,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "CEG",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "CFLT",
           "latest_date": "2026-03-17",
-          "staleness_business_days": 83,
+          "staleness_business_days": 84,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "COIN",
           "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "staleness_business_days": 4,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "COST",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "CSCO",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "DLR",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "EQIX",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "ESTC",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "ETN",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "GE",
-          "latest_date": "2026-07-09",
+          "ticker": "GRID",
+          "latest_date": "2026-07-10",
           "staleness_business_days": 1,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "GTLB",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "HIMS",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "HOOD",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "IGM",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "IGV",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "INTC",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "IYW",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "JPM",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "LLY",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "MCHP",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "MDB",
           "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "staleness_business_days": 4,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "MPWR",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "MRVL",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "MSTR",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "MU",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "NET",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "NRG",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "OKTA",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "PATH",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "PWR",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "RBLX",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "RDDT",
           "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "RKLB",
+          "latest_date": "2026-07-10",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SHOP",
+          "latest_date": "2026-07-10",
+          "staleness_business_days": 1,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "SHY",
+          "latest_date": "2026-07-10",
           "staleness_business_days": 1,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "SMR",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "SNOW",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "SOFI",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "TEAM",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "TSLA",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "UBER",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "USMV",
           "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "staleness_business_days": 4,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "VRT",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "VST",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "VYM",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "XLE",
           "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "XLF",
+          "latest_date": "2026-07-10",
           "staleness_business_days": 1,
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "XLK",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "ticker": "XLP",
+          "latest_date": "2026-07-10",
+          "staleness_business_days": 1,
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "XLV",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 3,
+          "ticker": "XLU",
+          "latest_date": "2026-07-10",
+          "staleness_business_days": 1,
           "reason": "stale_or_missing_market_data"
         },
         {
           "ticker": "ZS",
           "latest_date": "2026-07-09",
-          "staleness_business_days": 1,
+          "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         }
       ],
       "loaded_ticker_count": 94,
       "configured_ticker_count": 94,
-      "fresh_request_count": 0,
+      "fresh_request_count": 47,
       "errors_count": 0
     },
     "universe": {
       "configured_ticker_count": 94,
       "loaded_ticker_count": 94,
-      "tiingo_request_attempt_count": 1,
-      "fresh_request_count": 0,
-      "exact_fresh_ticker_count": 39,
-      "lagging_ticker_count": 55,
+      "tiingo_request_attempt_count": 48,
+      "fresh_request_count": 47,
+      "exact_fresh_ticker_count": 47,
+      "lagging_ticker_count": 47,
       "future_quarantine_ticker_count": 0,
       "missing_ticker_count": 0,
-      "skipped_fresh_enough_no_request": 39,
-      "skipped_by_tier_rotation": 39,
-      "forced_refresh_due_count": 8,
-      "forced_refresh_requested_count": 1,
-      "forced_refresh_succeeded_count": 0,
-      "forced_refresh_deferred_count": 8,
+      "skipped_fresh_enough_no_request": 0,
+      "skipped_by_tier_rotation": 46,
+      "forced_refresh_due_count": 23,
+      "forced_refresh_requested_count": 23,
+      "forced_refresh_succeeded_count": 22,
+      "forced_refresh_deferred_count": 1,
       "future_quarantine_event_count": 0,
-      "rows_appended_total": 0,
+      "rows_appended_total": 78,
       "append_only_mode": true,
       "coverage_gaps_first": true,
       "historical_rows_overwritten": 0,
-      "expected_latest_market_date": "2026-07-10",
+      "expected_latest_market_date": "2026-07-13",
       "refresh_policy": {
         "core_daily": [
           "AAPL",
@@ -932,9 +1183,9 @@
       },
       "max_tiingo_requests_per_run": 50,
       "max_new_full_downloads_per_run": 40,
-      "tiingo_circuit_open": true,
-      "tiingo_circuit_reason": "Tiingo 429 circuit breaker opened after CFLT: CFLT Tiingo HTTP 429: Too Many Requests",
-      "warnings_count": 16,
+      "tiingo_circuit_open": false,
+      "tiingo_circuit_reason": "",
+      "warnings_count": 1,
       "coverage_gaps_count": 0,
       "errors_count": 0,
       "note": "coverage_gaps are tickers without usable cache yet; errors are true processing/fetch failures not classified as rotation/rate-limit coverage gaps."
@@ -942,10 +1193,10 @@
   },
   "market_report_status": {
     "available": true,
-    "generated_at_utc": "2026-07-13T16:56:52.314696+00:00",
+    "generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
     "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "data_timestamp": "2026-07-10",
+    "data_timestamp": "2026-07-13",
     "data_timestamp_status": "AVAILABLE",
     "price_frequency": "end_of_day_daily",
     "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
@@ -953,24 +1204,24 @@
     "universe": {
       "configured_ticker_count": 94,
       "loaded_ticker_count": 94,
-      "tiingo_request_attempt_count": 1,
-      "fresh_request_count": 0,
-      "exact_fresh_ticker_count": 39,
-      "lagging_ticker_count": 55,
+      "tiingo_request_attempt_count": 48,
+      "fresh_request_count": 47,
+      "exact_fresh_ticker_count": 47,
+      "lagging_ticker_count": 47,
       "future_quarantine_ticker_count": 0,
       "missing_ticker_count": 0,
-      "skipped_fresh_enough_no_request": 39,
-      "skipped_by_tier_rotation": 39,
-      "forced_refresh_due_count": 8,
-      "forced_refresh_requested_count": 1,
-      "forced_refresh_succeeded_count": 0,
-      "forced_refresh_deferred_count": 8,
+      "skipped_fresh_enough_no_request": 0,
+      "skipped_by_tier_rotation": 46,
+      "forced_refresh_due_count": 23,
+      "forced_refresh_requested_count": 23,
+      "forced_refresh_succeeded_count": 22,
+      "forced_refresh_deferred_count": 1,
       "future_quarantine_event_count": 0,
-      "rows_appended_total": 0,
+      "rows_appended_total": 78,
       "append_only_mode": true,
       "coverage_gaps_first": true,
       "historical_rows_overwritten": 0,
-      "expected_latest_market_date": "2026-07-10",
+      "expected_latest_market_date": "2026-07-13",
       "refresh_policy": {
         "core_daily": [
           "AAPL",
@@ -1037,9 +1288,9 @@
       },
       "max_tiingo_requests_per_run": 50,
       "max_new_full_downloads_per_run": 40,
-      "tiingo_circuit_open": true,
-      "tiingo_circuit_reason": "Tiingo 429 circuit breaker opened after CFLT: CFLT Tiingo HTTP 429: Too Many Requests",
-      "warnings_count": 16,
+      "tiingo_circuit_open": false,
+      "tiingo_circuit_reason": "",
+      "warnings_count": 1,
       "coverage_gaps_count": 0,
       "errors_count": 0,
       "note": "coverage_gaps are tickers without usable cache yet; errors are true processing/fetch failures not classified as rotation/rate-limit coverage gaps."
@@ -1056,7 +1307,7 @@
     "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
     "data_source": "Tiingo daily local CSV cache",
     "market_timezone": "America/New_York",
-    "data_timestamp": "2026-07-10",
+    "data_timestamp": "2026-07-13",
     "data": {
       "calendar_policy": "each_ticker_native_valid_dates_no_forward_fill",
       "loaded_tickers": [
@@ -1083,39 +1334,39 @@
         "TSM",
         "VRT"
       ],
-      "rows": 94978,
+      "rows": 94997,
       "start_date": "2005-01-03",
-      "end_date": "2026-07-10",
+      "end_date": "2026-07-13",
       "missing_tickers": [],
       "stale_tickers": [
         "AMD",
         "CEG",
         "VRT"
       ],
-      "expected_latest_market_date": "2026-07-10",
+      "expected_latest_market_date": "2026-07-13",
       "current_data_status": "INCOMPLETE_OR_STALE",
       "data_timestamp_by_ticker": {
-        "AAPL": "2026-07-10",
+        "AAPL": "2026-07-13",
         "AMD": "2026-07-09",
-        "AMZN": "2026-07-10",
-        "ASML": "2026-07-10",
-        "AVGO": "2026-07-10",
+        "AMZN": "2026-07-13",
+        "ASML": "2026-07-13",
+        "AVGO": "2026-07-13",
         "CEG": "2026-07-09",
-        "CRWD": "2026-07-10",
-        "GLD": "2026-07-10",
-        "GOOGL": "2026-07-10",
-        "META": "2026-07-10",
-        "MSFT": "2026-07-10",
-        "NVDA": "2026-07-10",
-        "PANW": "2026-07-10",
-        "PLTR": "2026-07-10",
-        "QQQ": "2026-07-10",
-        "SGOV": "2026-07-10",
-        "SMH": "2026-07-10",
-        "SOXX": "2026-07-10",
-        "SPY": "2026-07-10",
-        "TLT": "2026-07-10",
-        "TSM": "2026-07-10",
+        "CRWD": "2026-07-13",
+        "GLD": "2026-07-13",
+        "GOOGL": "2026-07-13",
+        "META": "2026-07-13",
+        "MSFT": "2026-07-13",
+        "NVDA": "2026-07-13",
+        "PANW": "2026-07-13",
+        "PLTR": "2026-07-13",
+        "QQQ": "2026-07-13",
+        "SGOV": "2026-07-13",
+        "SMH": "2026-07-13",
+        "SOXX": "2026-07-13",
+        "SPY": "2026-07-13",
+        "TLT": "2026-07-13",
+        "TSM": "2026-07-13",
         "VRT": "2026-07-09"
       },
       "price_basis_by_ticker": {
@@ -1167,27 +1418,27 @@
         "VRT": "2018-07-30"
       },
       "rows_by_ticker": {
-        "AAPL": 5413,
+        "AAPL": 5414,
         "AMD": 5412,
-        "AMZN": 5413,
-        "ASML": 5413,
-        "AVGO": 4257,
+        "AMZN": 5414,
+        "ASML": 5414,
+        "AVGO": 4258,
         "CEG": 1111,
-        "CRWD": 1779,
-        "GLD": 5413,
-        "GOOGL": 5413,
-        "META": 3555,
-        "MSFT": 5413,
-        "NVDA": 5413,
-        "PANW": 3512,
-        "PLTR": 1450,
-        "QQQ": 5413,
-        "SGOV": 1537,
-        "SMH": 5413,
-        "SOXX": 5413,
-        "SPY": 5413,
-        "TLT": 5413,
-        "TSM": 5413,
+        "CRWD": 1780,
+        "GLD": 5414,
+        "GOOGL": 5414,
+        "META": 3556,
+        "MSFT": 5414,
+        "NVDA": 5414,
+        "PANW": 3513,
+        "PLTR": 1451,
+        "QQQ": 5414,
+        "SGOV": 1538,
+        "SMH": 5414,
+        "SOXX": 5414,
+        "SPY": 5414,
+        "TLT": 5414,
+        "TSM": 5414,
         "VRT": 1996
       }
     },
@@ -1218,10 +1469,10 @@
         "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
         "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
         "cost_assumption_source": "configured_not_observed",
-        "vectorbt_total_return_pct": 10.41,
+        "vectorbt_total_return_pct": 10.43,
         "vectorbt_max_drawdown_pct": -7.53,
-        "vectorbt_sharpe": 4.249,
-        "vectorbt_final_value": 11040.86,
+        "vectorbt_sharpe": 4.256,
+        "vectorbt_final_value": 11043.06,
         "vectorbt_trade_count": 36.0,
         "vectorbt_closed_trade_count": 35.0,
         "vectorbt_open_trade_count": 1.0,
@@ -1233,8 +1484,8 @@
         "executed_exit_count": 35.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
+        "data_timestamp": "2026-07-13",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "price_basis": "adjusted"
@@ -1263,7 +1514,7 @@
         "executed_exit_count": 53.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
         "data_timestamp": "2026-07-09",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
@@ -1293,7 +1544,7 @@
         "executed_exit_count": 41.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
         "data_timestamp": "2026-07-09",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
@@ -1308,23 +1559,23 @@
         "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
         "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
         "cost_assumption_source": "configured_not_observed",
-        "vectorbt_total_return_pct": 1863.89,
+        "vectorbt_total_return_pct": 1876.28,
         "vectorbt_max_drawdown_pct": -27.74,
-        "vectorbt_sharpe": 1.092,
-        "vectorbt_final_value": 196388.6,
+        "vectorbt_sharpe": 1.094,
+        "vectorbt_final_value": 197628.01,
         "vectorbt_trade_count": 148.0,
         "vectorbt_closed_trade_count": 147.0,
         "vectorbt_open_trade_count": 1.0,
-        "raw_entry_signal_count": 1748,
-        "shifted_entry_signal_count": 1747,
+        "raw_entry_signal_count": 1749,
+        "shifted_entry_signal_count": 1748,
         "executed_entry_count": 148.0,
         "raw_exit_signal_count": 2127,
         "shifted_exit_signal_count": 2127,
         "executed_exit_count": 147.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
+        "data_timestamp": "2026-07-13",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "price_basis": "adjusted"
@@ -1340,7 +1591,7 @@
         "cost_assumption_source": "configured_not_observed",
         "vectorbt_total_return_pct": 327.85,
         "vectorbt_max_drawdown_pct": -37.55,
-        "vectorbt_sharpe": 1.037,
+        "vectorbt_sharpe": 1.036,
         "vectorbt_final_value": 42785.23,
         "vectorbt_trade_count": 27.0,
         "vectorbt_closed_trade_count": 27.0,
@@ -1348,13 +1599,13 @@
         "raw_entry_signal_count": 27,
         "shifted_entry_signal_count": 27,
         "executed_entry_count": 27.0,
-        "raw_exit_signal_count": 652,
-        "shifted_exit_signal_count": 651,
+        "raw_exit_signal_count": 653,
+        "shifted_exit_signal_count": 652,
         "executed_exit_count": 27.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
+        "data_timestamp": "2026-07-13",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "price_basis": "adjusted"
@@ -1383,7 +1634,7 @@
         "executed_exit_count": 77.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
         "data_timestamp": "2026-07-09",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
@@ -1398,23 +1649,23 @@
         "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
         "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
         "cost_assumption_source": "configured_not_observed",
-        "vectorbt_total_return_pct": 4898.5,
+        "vectorbt_total_return_pct": 4893.01,
         "vectorbt_max_drawdown_pct": -60.28,
-        "vectorbt_sharpe": 0.943,
-        "vectorbt_final_value": 499850.22,
-        "vectorbt_trade_count": 125.0,
+        "vectorbt_sharpe": 0.942,
+        "vectorbt_final_value": 499300.84,
+        "vectorbt_trade_count": 126.0,
         "vectorbt_closed_trade_count": 125.0,
-        "vectorbt_open_trade_count": 0.0,
+        "vectorbt_open_trade_count": 1.0,
         "raw_entry_signal_count": 126,
-        "shifted_entry_signal_count": 125,
-        "executed_entry_count": 125.0,
-        "raw_exit_signal_count": 1887,
+        "shifted_entry_signal_count": 126,
+        "executed_entry_count": 126.0,
+        "raw_exit_signal_count": 1888,
         "shifted_exit_signal_count": 1887,
         "executed_exit_count": 125.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
+        "data_timestamp": "2026-07-13",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "price_basis": "adjusted"
@@ -1443,8 +1694,8 @@
         "executed_exit_count": 158.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
+        "data_timestamp": "2026-07-13",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "price_basis": "adjusted"
@@ -1473,7 +1724,7 @@
         "executed_exit_count": 29.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
         "data_timestamp": "2026-07-09",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
@@ -1503,8 +1754,8 @@
         "executed_exit_count": 139.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
+        "data_timestamp": "2026-07-13",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "price_basis": "adjusted"
@@ -1528,13 +1779,13 @@
         "raw_entry_signal_count": 114,
         "shifted_entry_signal_count": 114,
         "executed_entry_count": 114.0,
-        "raw_exit_signal_count": 1921,
-        "shifted_exit_signal_count": 1920,
+        "raw_exit_signal_count": 1922,
+        "shifted_exit_signal_count": 1921,
         "executed_exit_count": 114.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
+        "data_timestamp": "2026-07-13",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "price_basis": "adjusted"
@@ -1548,10 +1799,10 @@
         "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
         "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
         "cost_assumption_source": "configured_not_observed",
-        "vectorbt_total_return_pct": 1389.65,
+        "vectorbt_total_return_pct": 1330.57,
         "vectorbt_max_drawdown_pct": -45.19,
-        "vectorbt_sharpe": 0.814,
-        "vectorbt_final_value": 148964.74,
+        "vectorbt_sharpe": 0.804,
+        "vectorbt_final_value": 143056.94,
         "vectorbt_trade_count": 133.0,
         "vectorbt_closed_trade_count": 132.0,
         "vectorbt_open_trade_count": 1.0,
@@ -1563,8 +1814,8 @@
         "executed_exit_count": 132.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
+        "data_timestamp": "2026-07-13",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "price_basis": "adjusted"
@@ -1593,7 +1844,7 @@
         "executed_exit_count": 39.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
         "data_timestamp": "2026-07-09",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
@@ -1608,10 +1859,10 @@
         "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
         "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
         "cost_assumption_source": "configured_not_observed",
-        "vectorbt_total_return_pct": 585.74,
+        "vectorbt_total_return_pct": 590.06,
         "vectorbt_max_drawdown_pct": -34.75,
-        "vectorbt_sharpe": 0.732,
-        "vectorbt_final_value": 68573.58,
+        "vectorbt_sharpe": 0.734,
+        "vectorbt_final_value": 69006.35,
         "vectorbt_trade_count": 132.0,
         "vectorbt_closed_trade_count": 131.0,
         "vectorbt_open_trade_count": 1.0,
@@ -1623,8 +1874,8 @@
         "executed_exit_count": 131.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
+        "data_timestamp": "2026-07-13",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "price_basis": "adjusted"
@@ -1648,13 +1899,13 @@
         "raw_entry_signal_count": 1456,
         "shifted_entry_signal_count": 1456,
         "executed_entry_count": 127.0,
-        "raw_exit_signal_count": 2202,
-        "shifted_exit_signal_count": 2201,
+        "raw_exit_signal_count": 2203,
+        "shifted_exit_signal_count": 2202,
         "executed_exit_count": 127.0,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:56:59.075597+00:00",
-        "data_timestamp": "2026-07-10",
+        "report_generated_at_utc": "2026-07-14T00:59:15.835158+00:00",
+        "data_timestamp": "2026-07-13",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "price_basis": "adjusted"
@@ -1673,7 +1924,7 @@
     "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
     "data_source": "Tiingo daily local CSV cache",
     "market_timezone": "America/New_York",
-    "data_timestamp": "2026-07-10",
+    "data_timestamp": "2026-07-13",
     "loaded_ticker_count": 94,
     "configured_ticker_count": 94,
     "minimum_valid_samples": 20,
@@ -1741,7 +1992,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1767,19 +2018,19 @@
         "executed_entry_count": 50,
         "open_position_count": 0,
         "lookback_start": "2019-11-01",
-        "lookback_end": "2026-07-09",
+        "lookback_end": "2026-07-13",
         "forward_horizon": "next_close_to_next_close_after_exit_signal",
         "valid": true,
         "min_sample_required": 20,
         "description": "Positive 20-day momentum and relative strength without extreme RSI.",
         "strategy_total_return": 16.6047,
-        "strategy_cagr": 0.5388,
-        "strategy_sharpe": 0.9237,
+        "strategy_cagr": 0.538,
+        "strategy_sharpe": 0.9231,
         "strategy_max_drawdown": -0.5847,
         "strategy_worst_day": -0.2716,
         "strategy_best_day": 0.6923,
-        "buy_hold_return_same_window": 6.5619,
-        "alpha_vs_buy_hold": 10.0428,
+        "buy_hold_return_same_window": 5.9171,
+        "alpha_vs_buy_hold": 10.6876,
         "trade_win_rate": 0.52,
         "avg_trade_return": 0.1171,
         "median_trade_return": 0.0106,
@@ -1791,10 +2042,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-09",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted"
       },
       {
@@ -1841,7 +2092,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1859,7 +2110,7 @@
         "execution_assumption": "Signal on trading bar t; entry/exit can execute only at trading bar t+1 close.",
         "tested_entry_rule": "momentum_leader",
         "tested_risk_rule": "close_below_ma20_or_rsi_above_82",
-        "raw_signal_count": 447,
+        "raw_signal_count": 449,
         "effective_samples": 43,
         "closed_trade_count": 43,
         "sample_count": 43,
@@ -1867,19 +2118,19 @@
         "executed_entry_count": 44,
         "open_position_count": 1,
         "lookback_start": "2019-09-13",
-        "lookback_end": "2026-07-09",
+        "lookback_end": "2026-07-13",
         "forward_horizon": "next_close_to_next_close_after_exit_signal",
         "valid": true,
         "min_sample_required": 20,
         "description": "Positive 20-day momentum and relative strength without extreme RSI.",
-        "strategy_total_return": 4.5821,
-        "strategy_cagr": 0.288,
-        "strategy_sharpe": 0.7591,
+        "strategy_total_return": 4.4136,
+        "strategy_cagr": 0.2819,
+        "strategy_sharpe": 0.7492,
         "strategy_max_drawdown": -0.6345,
         "strategy_worst_day": -0.2446,
         "strategy_best_day": 0.3102,
-        "buy_hold_return_same_window": 2.6173,
-        "alpha_vs_buy_hold": 1.9648,
+        "buy_hold_return_same_window": 2.5082,
+        "alpha_vs_buy_hold": 1.9054,
         "trade_win_rate": 0.4419,
         "avg_trade_return": 0.0526,
         "median_trade_return": -0.0155,
@@ -1891,10 +2142,60 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-09",
+        "data_timestamp": "2026-07-13",
+        "price_basis": "adjusted"
+      },
+      {
+        "ticker": "APP",
+        "strategy": "ma50_reclaim_bullish",
+        "engine": "vectorbt",
+        "strategy_contract": "v6-rc2-shared-rules-next-close",
+        "strategy_contract_version": "v6-rc2-shared-rules-next-close",
+        "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
+        "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
+        "cost_assumption_source": "configured_not_observed",
+        "execution_assumption": "Signal on trading bar t; entry/exit can execute only at trading bar t+1 close.",
+        "tested_entry_rule": "ma50_reclaim_bullish",
+        "tested_risk_rule": "close_below_ma50",
+        "raw_signal_count": 21,
+        "effective_samples": 21,
+        "closed_trade_count": 21,
+        "sample_count": 21,
+        "trade_count": 21,
+        "executed_entry_count": 21,
+        "open_position_count": 0,
+        "lookback_start": "2021-04-15",
+        "lookback_end": "2026-07-13",
+        "forward_horizon": "next_close_to_next_close_after_exit_signal",
+        "valid": true,
+        "min_sample_required": 20,
+        "description": "Price reclaims MA50 while remaining above MA200.",
+        "strategy_total_return": 7.4521,
+        "strategy_cagr": 0.5054,
+        "strategy_sharpe": 1.1569,
+        "strategy_max_drawdown": -0.3731,
+        "strategy_worst_day": -0.1468,
+        "strategy_best_day": 0.4627,
+        "buy_hold_return_same_window": 5.7922,
+        "alpha_vs_buy_hold": 1.6599,
+        "trade_win_rate": 0.381,
+        "avg_trade_return": 0.1872,
+        "median_trade_return": -0.0086,
+        "worst_trade_return": -0.0932,
+        "best_trade_return": 2.7796,
+        "latest_entry_signal_active": false,
+        "latest_exit_signal_active": true,
+        "latest_position_active": false,
+        "reason": null,
+        "data_source": "Tiingo daily local CSV cache",
+        "market_timezone": "America/New_York",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "price_frequency": "end_of_day_daily",
+        "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted"
       },
       {
@@ -1941,7 +2242,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1991,7 +2292,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -2041,7 +2342,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-07",
@@ -2091,7 +2392,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-07",
@@ -2110,91 +2411,41 @@
         "tested_entry_rule": "momentum_leader",
         "tested_risk_rule": "close_below_ma20_or_rsi_above_82",
         "raw_signal_count": 1204,
-        "effective_samples": 113,
-        "closed_trade_count": 113,
-        "sample_count": 113,
-        "trade_count": 113,
-        "executed_entry_count": 113,
+        "effective_samples": 114,
+        "closed_trade_count": 114,
+        "sample_count": 114,
+        "trade_count": 114,
+        "executed_entry_count": 114,
         "open_position_count": 0,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-09",
+        "lookback_end": "2026-07-13",
         "forward_horizon": "next_close_to_next_close_after_exit_signal",
         "valid": true,
         "min_sample_required": 20,
         "description": "Positive 20-day momentum and relative strength without extreme RSI.",
-        "strategy_total_return": 2.9335,
-        "strategy_cagr": 0.0659,
-        "strategy_sharpe": 0.4819,
+        "strategy_total_return": 2.861,
+        "strategy_cagr": 0.0649,
+        "strategy_sharpe": 0.4762,
         "strategy_max_drawdown": -0.4345,
         "strategy_worst_day": -0.0905,
         "strategy_best_day": 0.1165,
-        "buy_hold_return_same_window": 2.4099,
-        "alpha_vs_buy_hold": 0.5236,
-        "trade_win_rate": 0.4159,
-        "avg_trade_return": 0.0153,
-        "median_trade_return": -0.0101,
+        "buy_hold_return_same_window": 2.3566,
+        "alpha_vs_buy_hold": 0.5044,
+        "trade_win_rate": 0.4123,
+        "avg_trade_return": 0.015,
+        "median_trade_return": -0.0102,
         "worst_trade_return": -0.1093,
         "best_trade_return": 0.5247,
-        "latest_entry_signal_active": true,
-        "latest_exit_signal_active": false,
-        "latest_position_active": false,
-        "reason": null,
-        "data_source": "Tiingo daily local CSV cache",
-        "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
-        "price_frequency": "end_of_day_daily",
-        "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-09",
-        "price_basis": "adjusted"
-      },
-      {
-        "ticker": "APP",
-        "strategy": "ma50_reclaim_bullish",
-        "engine": "vectorbt",
-        "strategy_contract": "v6-rc2-shared-rules-next-close",
-        "strategy_contract_version": "v6-rc2-shared-rules-next-close",
-        "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
-        "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
-        "cost_assumption_source": "configured_not_observed",
-        "execution_assumption": "Signal on trading bar t; entry/exit can execute only at trading bar t+1 close.",
-        "tested_entry_rule": "ma50_reclaim_bullish",
-        "tested_risk_rule": "close_below_ma50",
-        "raw_signal_count": 21,
-        "effective_samples": 21,
-        "closed_trade_count": 21,
-        "sample_count": 21,
-        "trade_count": 21,
-        "executed_entry_count": 21,
-        "open_position_count": 0,
-        "lookback_start": "2021-04-15",
-        "lookback_end": "2026-07-09",
-        "forward_horizon": "next_close_to_next_close_after_exit_signal",
-        "valid": true,
-        "min_sample_required": 20,
-        "description": "Price reclaims MA50 while remaining above MA200.",
-        "strategy_total_return": 7.4521,
-        "strategy_cagr": 0.5063,
-        "strategy_sharpe": 1.1578,
-        "strategy_max_drawdown": -0.3731,
-        "strategy_worst_day": -0.1468,
-        "strategy_best_day": 0.4627,
-        "buy_hold_return_same_window": 6.9821,
-        "alpha_vs_buy_hold": 0.47,
-        "trade_win_rate": 0.381,
-        "avg_trade_return": 0.1872,
-        "median_trade_return": -0.0086,
-        "worst_trade_return": -0.0932,
-        "best_trade_return": 2.7796,
         "latest_entry_signal_active": false,
-        "latest_exit_signal_active": false,
+        "latest_exit_signal_active": true,
         "latest_position_active": false,
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-09",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted"
       },
       {
@@ -2241,7 +2492,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -2291,10 +2542,60 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
+        "price_basis": "adjusted"
+      },
+      {
+        "ticker": "HIMS",
+        "strategy": "ma50_reclaim_bullish",
+        "engine": "vectorbt",
+        "strategy_contract": "v6-rc2-shared-rules-next-close",
+        "strategy_contract_version": "v6-rc2-shared-rules-next-close",
+        "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
+        "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
+        "cost_assumption_source": "configured_not_observed",
+        "execution_assumption": "Signal on trading bar t; entry/exit can execute only at trading bar t+1 close.",
+        "tested_entry_rule": "ma50_reclaim_bullish",
+        "tested_risk_rule": "close_below_ma50",
+        "raw_signal_count": 20,
+        "effective_samples": 20,
+        "closed_trade_count": 20,
+        "sample_count": 20,
+        "trade_count": 20,
+        "executed_entry_count": 20,
+        "open_position_count": 0,
+        "lookback_start": "2019-09-13",
+        "lookback_end": "2026-07-13",
+        "forward_horizon": "next_close_to_next_close_after_exit_signal",
+        "valid": true,
+        "min_sample_required": 20,
+        "description": "Price reclaims MA50 while remaining above MA200.",
+        "strategy_total_return": 2.8571,
+        "strategy_cagr": 0.2195,
+        "strategy_sharpe": 0.6388,
+        "strategy_max_drawdown": -0.5664,
+        "strategy_worst_day": -0.3463,
+        "strategy_best_day": 0.3102,
+        "buy_hold_return_same_window": 2.5082,
+        "alpha_vs_buy_hold": 0.3489,
+        "trade_win_rate": 0.6,
+        "avg_trade_return": 0.0951,
+        "median_trade_return": 0.0207,
+        "worst_trade_return": -0.2297,
+        "best_trade_return": 0.7664,
+        "latest_entry_signal_active": false,
+        "latest_exit_signal_active": false,
+        "latest_position_active": false,
+        "reason": null,
+        "data_source": "Tiingo daily local CSV cache",
+        "market_timezone": "America/New_York",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "price_frequency": "end_of_day_daily",
+        "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted"
       },
       {
@@ -2341,7 +2642,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-10",
@@ -2391,57 +2692,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
-        "price_frequency": "end_of_day_daily",
-        "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-09",
-        "price_basis": "adjusted"
-      },
-      {
-        "ticker": "HIMS",
-        "strategy": "ma50_reclaim_bullish",
-        "engine": "vectorbt",
-        "strategy_contract": "v6-rc2-shared-rules-next-close",
-        "strategy_contract_version": "v6-rc2-shared-rules-next-close",
-        "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
-        "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
-        "cost_assumption_source": "configured_not_observed",
-        "execution_assumption": "Signal on trading bar t; entry/exit can execute only at trading bar t+1 close.",
-        "tested_entry_rule": "ma50_reclaim_bullish",
-        "tested_risk_rule": "close_below_ma50",
-        "raw_signal_count": 20,
-        "effective_samples": 20,
-        "closed_trade_count": 20,
-        "sample_count": 20,
-        "trade_count": 20,
-        "executed_entry_count": 20,
-        "open_position_count": 0,
-        "lookback_start": "2019-09-13",
-        "lookback_end": "2026-07-09",
-        "forward_horizon": "next_close_to_next_close_after_exit_signal",
-        "valid": true,
-        "min_sample_required": 20,
-        "description": "Price reclaims MA50 while remaining above MA200.",
-        "strategy_total_return": 2.8571,
-        "strategy_cagr": 0.2198,
-        "strategy_sharpe": 0.6391,
-        "strategy_max_drawdown": -0.5664,
-        "strategy_worst_day": -0.3463,
-        "strategy_best_day": 0.3102,
-        "buy_hold_return_same_window": 2.6173,
-        "alpha_vs_buy_hold": 0.2398,
-        "trade_win_rate": 0.6,
-        "avg_trade_return": 0.0951,
-        "median_trade_return": 0.0207,
-        "worst_trade_return": -0.2297,
-        "best_trade_return": 0.7664,
-        "latest_entry_signal_active": false,
-        "latest_exit_signal_active": false,
-        "latest_position_active": false,
-        "reason": null,
-        "data_source": "Tiingo daily local CSV cache",
-        "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -2489,7 +2740,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -2536,7 +2787,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-10",
@@ -2562,7 +2813,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Positive 20-day momentum and relative strength without extreme RSI.",
@@ -2583,10 +2834,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 73.6
       },
@@ -2630,7 +2881,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -2677,7 +2928,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -2695,7 +2946,7 @@
         "cost_assumption_source": "configured_not_observed",
         "tested_rule": "momentum_leader",
         "horizon_days": 20,
-        "raw_signal_count": 1748,
+        "raw_signal_count": 1749,
         "completed_signal_count": 1746,
         "effective_samples": 146,
         "closed_trade_count": 0,
@@ -2703,7 +2954,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Positive 20-day momentum and relative strength without extreme RSI.",
@@ -2724,10 +2975,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 71.8
       },
@@ -2742,15 +2993,15 @@
         "cost_assumption_source": "configured_not_observed",
         "tested_rule": "momentum_leader",
         "horizon_days": 20,
-        "raw_signal_count": 1151,
-        "completed_signal_count": 1134,
+        "raw_signal_count": 1152,
+        "completed_signal_count": 1135,
         "effective_samples": 100,
         "closed_trade_count": 0,
         "sample_count": 100,
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2012-07-20",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Positive 20-day momentum and relative strength without extreme RSI.",
@@ -2771,10 +3022,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 70.4
       },
@@ -2797,7 +3048,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price reclaims MA50 while remaining above MA200.",
@@ -2818,10 +3069,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 70.3
       },
@@ -2844,7 +3095,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price reclaims MA50 while remaining above MA200.",
@@ -2865,10 +3116,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 70.2
       },
@@ -2891,7 +3142,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price reclaims MA20 in a bullish intermediate trend.",
@@ -2912,10 +3163,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 70.0
       },
@@ -2938,7 +3189,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price reclaims MA20 in a bullish intermediate trend.",
@@ -2959,10 +3210,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 69.8
       },
@@ -3006,7 +3257,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -3024,15 +3275,15 @@
         "cost_assumption_source": "configured_not_observed",
         "tested_rule": "momentum_leader",
         "horizon_days": 20,
-        "raw_signal_count": 1103,
-        "completed_signal_count": 1092,
+        "raw_signal_count": 1107,
+        "completed_signal_count": 1094,
         "effective_samples": 95,
         "closed_trade_count": 0,
         "sample_count": 95,
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2014-06-06",
-        "lookback_end": "2026-07-07",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Positive 20-day momentum and relative strength without extreme RSI.",
@@ -3053,10 +3304,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-07",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 69.5
       },
@@ -3079,7 +3330,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price reclaims MA20 in a bullish intermediate trend.",
@@ -3100,10 +3351,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 68.9
       },
@@ -3118,7 +3369,7 @@
         "cost_assumption_source": "configured_not_observed",
         "tested_rule": "momentum_leader",
         "horizon_days": 20,
-        "raw_signal_count": 1060,
+        "raw_signal_count": 1061,
         "completed_signal_count": 1058,
         "effective_samples": 93,
         "closed_trade_count": 0,
@@ -3126,7 +3377,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2012-05-18",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Positive 20-day momentum and relative strength without extreme RSI.",
@@ -3147,10 +3398,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 68.8
       }
@@ -3196,7 +3447,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -3243,7 +3494,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -3261,7 +3512,7 @@
         "cost_assumption_source": "configured_not_observed",
         "tested_rule": "break_ma20",
         "horizon_days": 20,
-        "raw_signal_count": 321,
+        "raw_signal_count": 322,
         "completed_signal_count": 320,
         "effective_samples": 147,
         "closed_trade_count": 0,
@@ -3269,7 +3520,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-09",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price breaks below MA20.",
@@ -3290,10 +3541,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-09",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 83.3
       },
@@ -3309,14 +3560,14 @@
         "tested_rule": "break_ma20",
         "horizon_days": 20,
         "raw_signal_count": 351,
-        "completed_signal_count": 348,
+        "completed_signal_count": 349,
         "effective_samples": 152,
         "closed_trade_count": 0,
         "sample_count": 152,
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-07",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price breaks below MA20.",
@@ -3337,10 +3588,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-07",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 83.0
       },
@@ -3355,7 +3606,7 @@
         "cost_assumption_source": "configured_not_observed",
         "tested_rule": "break_ma20",
         "horizon_days": 20,
-        "raw_signal_count": 228,
+        "raw_signal_count": 230,
         "completed_signal_count": 227,
         "effective_samples": 107,
         "closed_trade_count": 0,
@@ -3363,7 +3614,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2010-06-29",
-        "lookback_end": "2026-07-07",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price breaks below MA20.",
@@ -3384,10 +3635,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-07",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 83.0
       },
@@ -3403,14 +3654,14 @@
         "tested_rule": "failed_rebound_risk",
         "horizon_days": 20,
         "raw_signal_count": 811,
-        "completed_signal_count": 808,
+        "completed_signal_count": 809,
         "effective_samples": 162,
         "closed_trade_count": 0,
         "sample_count": 162,
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price breaks below MA5 and the prior 10-day close low.",
@@ -3431,10 +3682,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 82.1
       },
@@ -3478,10 +3729,57 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
+        "price_basis": "adjusted",
+        "evidence_score_0_100": 82.1
+      },
+      {
+        "ticker": "TSLA",
+        "rule": "failed_rebound_risk",
+        "rule_type": "risk",
+        "strategy_contract": "v6-rc2-shared-rules-next-close",
+        "strategy_contract_version": "v6-rc2-shared-rules-next-close",
+        "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
+        "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
+        "cost_assumption_source": "configured_not_observed",
+        "tested_rule": "failed_rebound_risk",
+        "horizon_days": 20,
+        "raw_signal_count": 594,
+        "completed_signal_count": 592,
+        "effective_samples": 123,
+        "closed_trade_count": 0,
+        "sample_count": 123,
+        "valid": true,
+        "min_sample_required": 20,
+        "lookback_start": "2010-06-29",
+        "lookback_end": "2026-07-13",
+        "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
+        "benchmark_data_required_for_completed_sample": true,
+        "description": "Price breaks below MA5 and the prior 10-day close low.",
+        "win_rate": 0.5122,
+        "avoidance_rate": 0.4878,
+        "avg_gross_forward_return": 0.0146,
+        "avg_forward_return": 0.0124,
+        "median_forward_return": 0.0035,
+        "worst_forward_return": -0.3377,
+        "best_forward_return": 0.4716,
+        "avg_mae": -0.1059,
+        "worst_mae": -0.4753,
+        "benchmark": "SPY",
+        "paired_benchmark_sample_count": 123.0,
+        "avg_gross_benchmark_same_dates": 0.01,
+        "avg_benchmark_same_dates": 0.0078,
+        "alpha_vs_benchmark_same_dates": 0.0046,
+        "reason": null,
+        "data_source": "Tiingo daily local CSV cache",
+        "market_timezone": "America/New_York",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "price_frequency": "end_of_day_daily",
+        "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 82.1
       },
@@ -3496,7 +3794,7 @@
         "cost_assumption_source": "configured_not_observed",
         "tested_rule": "failed_rebound_risk",
         "horizon_days": 20,
-        "raw_signal_count": 852,
+        "raw_signal_count": 853,
         "completed_signal_count": 852,
         "effective_samples": 167,
         "closed_trade_count": 0,
@@ -3504,7 +3802,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-09",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price breaks below MA5 and the prior 10-day close low.",
@@ -3525,10 +3823,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-09",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 82.0
       },
@@ -3551,7 +3849,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price breaks below MA20.",
@@ -3572,10 +3870,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 82.0
       },
@@ -3619,7 +3917,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -3666,7 +3964,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -3713,57 +4011,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
-        "price_basis": "adjusted",
-        "evidence_score_0_100": 81.9
-      },
-      {
-        "ticker": "TSLA",
-        "rule": "failed_rebound_risk",
-        "rule_type": "risk",
-        "strategy_contract": "v6-rc2-shared-rules-next-close",
-        "strategy_contract_version": "v6-rc2-shared-rules-next-close",
-        "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
-        "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
-        "cost_assumption_source": "configured_not_observed",
-        "tested_rule": "failed_rebound_risk",
-        "horizon_days": 20,
-        "raw_signal_count": 594,
-        "completed_signal_count": 590,
-        "effective_samples": 122,
-        "closed_trade_count": 0,
-        "sample_count": 122,
-        "valid": true,
-        "min_sample_required": 20,
-        "lookback_start": "2010-06-29",
-        "lookback_end": "2026-07-07",
-        "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
-        "benchmark_data_required_for_completed_sample": true,
-        "description": "Price breaks below MA5 and the prior 10-day close low.",
-        "win_rate": 0.5164,
-        "avoidance_rate": 0.4836,
-        "avg_gross_forward_return": 0.015,
-        "avg_forward_return": 0.0128,
-        "median_forward_return": 0.0047,
-        "worst_forward_return": -0.3377,
-        "best_forward_return": 0.4716,
-        "avg_mae": -0.106,
-        "worst_mae": -0.4753,
-        "benchmark": "SPY",
-        "paired_benchmark_sample_count": 122.0,
-        "avg_gross_benchmark_same_dates": 0.01,
-        "avg_benchmark_same_dates": 0.0078,
-        "alpha_vs_benchmark_same_dates": 0.005,
-        "reason": null,
-        "data_source": "Tiingo daily local CSV cache",
-        "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
-        "price_frequency": "end_of_day_daily",
-        "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-07",
         "price_basis": "adjusted",
         "evidence_score_0_100": 81.9
       },
@@ -3786,7 +4037,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2010-08-06",
-        "lookback_end": "2026-07-10",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "Price breaks below MA20.",
@@ -3807,10 +4058,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-10",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 81.9
       },
@@ -3854,7 +4105,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-13T16:57:20.624808+00:00",
+        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -3864,8 +4115,8 @@
     ],
     "latest_active_signals": {
       "SPY": {
-        "latest_date": "2026-07-10",
-        "latest_price": 754.95,
+        "latest_date": "2026-07-13",
+        "latest_price": 749.17,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -3883,8 +4134,8 @@
         }
       },
       "QQQ": {
-        "latest_date": "2026-07-10",
-        "latest_price": 725.51,
+        "latest_date": "2026-07-13",
+        "latest_price": 711.74,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -3897,13 +4148,13 @@
         },
         "risks": {
           "failed_rebound_risk": false,
-          "break_ma20": false,
-          "break_ma50": false
+          "break_ma20": true,
+          "break_ma50": true
         }
       },
       "SMH": {
-        "latest_date": "2026-07-10",
-        "latest_price": 611.03,
+        "latest_date": "2026-07-13",
+        "latest_price": 585.62,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -3917,12 +4168,12 @@
         "risks": {
           "failed_rebound_risk": false,
           "break_ma20": false,
-          "break_ma50": false
+          "break_ma50": true
         }
       },
       "SOXX": {
-        "latest_date": "2026-07-10",
-        "latest_price": 581.34,
+        "latest_date": "2026-07-13",
+        "latest_price": 553.61,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -3936,12 +4187,12 @@
         "risks": {
           "failed_rebound_risk": false,
           "break_ma20": false,
-          "break_ma50": false
+          "break_ma50": true
         }
       },
       "VGT": {
-        "latest_date": "2026-07-10",
-        "latest_price": 118.08,
+        "latest_date": "2026-07-13",
+        "latest_price": 115.58,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -3950,19 +4201,19 @@
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
           "relative_strength_rebound": false,
-          "momentum_leader": true
+          "momentum_leader": false
         },
         "risks": {
           "failed_rebound_risk": false,
-          "break_ma20": false,
+          "break_ma20": true,
           "break_ma50": false
         }
       },
       "XLK": {
-        "latest_date": "2026-07-07",
-        "latest_price": 179.18,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 181.28,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -3972,8 +4223,8 @@
           "momentum_leader": false
         },
         "risks": {
-          "failed_rebound_risk": true,
-          "break_ma20": false,
+          "failed_rebound_risk": false,
+          "break_ma20": true,
           "break_ma50": true
         }
       },
@@ -3997,10 +4248,10 @@
         }
       },
       "IGV": {
-        "latest_date": "2026-07-07",
-        "latest_price": 94.13,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 92.7,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -4016,10 +4267,10 @@
         }
       },
       "IGM": {
-        "latest_date": "2026-07-07",
-        "latest_price": 156.65,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 158.11,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -4035,8 +4286,8 @@
         }
       },
       "SGOV": {
-        "latest_date": "2026-07-10",
-        "latest_price": 100.5,
+        "latest_date": "2026-07-13",
+        "latest_price": 100.52,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4054,8 +4305,8 @@
         }
       },
       "MSFT": {
-        "latest_date": "2026-07-10",
-        "latest_price": 385.1,
+        "latest_date": "2026-07-13",
+        "latest_price": 390.99,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4073,27 +4324,27 @@
         }
       },
       "NVDA": {
-        "latest_date": "2026-07-10",
-        "latest_price": 210.96,
+        "latest_date": "2026-07-13",
+        "latest_price": 203.53,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
           "ma20_reclaim_bullish": false,
-          "ma50_reclaim_bullish": true,
+          "ma50_reclaim_bullish": false,
           "relative_strength_rebound": false,
           "momentum_leader": false
         },
         "risks": {
           "failed_rebound_risk": false,
           "break_ma20": false,
-          "break_ma50": false
+          "break_ma50": true
         }
       },
       "AAPL": {
-        "latest_date": "2026-07-10",
-        "latest_price": 315.32,
+        "latest_date": "2026-07-13",
+        "latest_price": 317.31,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4111,8 +4362,8 @@
         }
       },
       "GOOGL": {
-        "latest_date": "2026-07-10",
-        "latest_price": 357.18,
+        "latest_date": "2026-07-13",
+        "latest_price": 352.51,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4125,13 +4376,13 @@
         },
         "risks": {
           "failed_rebound_risk": false,
-          "break_ma20": true,
+          "break_ma20": false,
           "break_ma50": false
         }
       },
       "AMZN": {
-        "latest_date": "2026-07-10",
-        "latest_price": 245.34,
+        "latest_date": "2026-07-13",
+        "latest_price": 247.31,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4149,8 +4400,8 @@
         }
       },
       "META": {
-        "latest_date": "2026-07-10",
-        "latest_price": 669.21,
+        "latest_date": "2026-07-13",
+        "latest_price": 656.73,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4168,8 +4419,8 @@
         }
       },
       "AVGO": {
-        "latest_date": "2026-07-10",
-        "latest_price": 399.97,
+        "latest_date": "2026-07-13",
+        "latest_price": 384.05,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4187,10 +4438,10 @@
         }
       },
       "TSLA": {
-        "latest_date": "2026-07-07",
-        "latest_price": 402.9,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 394.76,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -4201,8 +4452,8 @@
         },
         "risks": {
           "failed_rebound_risk": false,
-          "break_ma20": false,
-          "break_ma50": true
+          "break_ma20": true,
+          "break_ma50": false
         }
       },
       "AMD": {
@@ -4225,8 +4476,8 @@
         }
       },
       "ASML": {
-        "latest_date": "2026-07-10",
-        "latest_price": 1797.32,
+        "latest_date": "2026-07-13",
+        "latest_price": 1726.04,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4238,14 +4489,14 @@
           "momentum_leader": false
         },
         "risks": {
-          "failed_rebound_risk": false,
+          "failed_rebound_risk": true,
           "break_ma20": false,
           "break_ma50": false
         }
       },
       "TSM": {
-        "latest_date": "2026-07-10",
-        "latest_price": 434.11,
+        "latest_date": "2026-07-13",
+        "latest_price": 421.58,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4257,16 +4508,16 @@
           "momentum_leader": false
         },
         "risks": {
-          "failed_rebound_risk": false,
+          "failed_rebound_risk": true,
           "break_ma20": false,
-          "break_ma50": false
+          "break_ma50": true
         }
       },
       "ARM": {
-        "latest_date": "2026-07-07",
-        "latest_price": 300.43,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 298.99,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -4301,8 +4552,8 @@
         }
       },
       "LRCX": {
-        "latest_date": "2026-07-10",
-        "latest_price": 350.33,
+        "latest_date": "2026-07-13",
+        "latest_price": 329.92,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4316,7 +4567,7 @@
         "risks": {
           "failed_rebound_risk": false,
           "break_ma20": false,
-          "break_ma50": false
+          "break_ma50": true
         }
       },
       "AMAT": {
@@ -4339,8 +4590,8 @@
         }
       },
       "KLAC": {
-        "latest_date": "2026-07-10",
-        "latest_price": 231.52,
+        "latest_date": "2026-07-13",
+        "latest_price": 222.25,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4396,8 +4647,8 @@
         }
       },
       "QCOM": {
-        "latest_date": "2026-07-10",
-        "latest_price": 189.16,
+        "latest_date": "2026-07-13",
+        "latest_price": 183.98,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4415,8 +4666,8 @@
         }
       },
       "ON": {
-        "latest_date": "2026-07-10",
-        "latest_price": 95.96,
+        "latest_date": "2026-07-13",
+        "latest_price": 90.37,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4434,10 +4685,10 @@
         }
       },
       "ADI": {
-        "latest_date": "2026-07-07",
-        "latest_price": 379.03,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 386.01,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -4453,8 +4704,8 @@
         }
       },
       "TXN": {
-        "latest_date": "2026-07-10",
-        "latest_price": 311.46,
+        "latest_date": "2026-07-13",
+        "latest_price": 298.57,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4463,17 +4714,17 @@
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
           "relative_strength_rebound": false,
-          "momentum_leader": true
+          "momentum_leader": false
         },
         "risks": {
           "failed_rebound_risk": false,
-          "break_ma20": false,
-          "break_ma50": false
+          "break_ma20": true,
+          "break_ma50": true
         }
       },
       "NXPI": {
-        "latest_date": "2026-07-10",
-        "latest_price": 292.26,
+        "latest_date": "2026-07-13",
+        "latest_price": 278.39,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4529,8 +4780,8 @@
         }
       },
       "ORCL": {
-        "latest_date": "2026-07-10",
-        "latest_price": 140.64,
+        "latest_date": "2026-07-13",
+        "latest_price": 131.54,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4542,14 +4793,14 @@
           "momentum_leader": false
         },
         "risks": {
-          "failed_rebound_risk": false,
+          "failed_rebound_risk": true,
           "break_ma20": false,
           "break_ma50": false
         }
       },
       "PLTR": {
-        "latest_date": "2026-07-10",
-        "latest_price": 126.79,
+        "latest_date": "2026-07-13",
+        "latest_price": 130.04,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4567,8 +4818,8 @@
         }
       },
       "CRM": {
-        "latest_date": "2026-07-10",
-        "latest_price": 163.32,
+        "latest_date": "2026-07-13",
+        "latest_price": 171.22,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4586,8 +4837,8 @@
         }
       },
       "ADBE": {
-        "latest_date": "2026-07-10",
-        "latest_price": 223.64,
+        "latest_date": "2026-07-13",
+        "latest_price": 230.61,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4624,8 +4875,8 @@
         }
       },
       "DDOG": {
-        "latest_date": "2026-07-10",
-        "latest_price": 257.54,
+        "latest_date": "2026-07-13",
+        "latest_price": 260.24,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4662,8 +4913,8 @@
         }
       },
       "NOW": {
-        "latest_date": "2026-07-10",
-        "latest_price": 107.71,
+        "latest_date": "2026-07-13",
+        "latest_price": 111.26,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4672,7 +4923,7 @@
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
           "relative_strength_rebound": false,
-          "momentum_leader": false
+          "momentum_leader": true
         },
         "risks": {
           "failed_rebound_risk": false,
@@ -4681,8 +4932,8 @@
         }
       },
       "PANW": {
-        "latest_date": "2026-07-10",
-        "latest_price": 325.91,
+        "latest_date": "2026-07-13",
+        "latest_price": 330.3,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4700,8 +4951,8 @@
         }
       },
       "CRWD": {
-        "latest_date": "2026-07-10",
-        "latest_price": 187.18,
+        "latest_date": "2026-07-13",
+        "latest_price": 187.91,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -4776,17 +5027,17 @@
         }
       },
       "TEAM": {
-        "latest_date": "2026-07-09",
-        "latest_price": 90.71,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 96.16,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
           "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
           "relative_strength_rebound": false,
-          "momentum_leader": false
+          "momentum_leader": true
         },
         "risks": {
           "failed_rebound_risk": false,
@@ -4797,8 +5048,8 @@
       "SHOP": {
         "latest_date": "2026-07-10",
         "latest_price": 122.54,
-        "data_fresh": true,
-        "decision_eligible": true,
+        "data_fresh": false,
+        "decision_eligible": false,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -4987,8 +5238,8 @@
       "GRID": {
         "latest_date": "2026-07-10",
         "latest_price": 184.83,
-        "data_fresh": true,
-        "decision_eligible": true,
+        "data_fresh": false,
+        "decision_eligible": false,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5023,20 +5274,20 @@
         }
       },
       "GE": {
-        "latest_date": "2026-07-09",
-        "latest_price": 359.04,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 353.42,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
-          "ma20_reclaim_bullish": true,
+          "ma20_reclaim_bullish": false,
           "ma50_reclaim_bullish": false,
           "relative_strength_rebound": false,
-          "momentum_leader": true
+          "momentum_leader": false
         },
         "risks": {
-          "failed_rebound_risk": false,
+          "failed_rebound_risk": true,
           "break_ma20": false,
           "break_ma50": false
         }
@@ -5099,10 +5350,10 @@
         }
       },
       "ANET": {
-        "latest_date": "2026-07-07",
-        "latest_price": 166.46,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 181.15,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5137,8 +5388,8 @@
         }
       },
       "GLD": {
-        "latest_date": "2026-07-10",
-        "latest_price": 377.01,
+        "latest_date": "2026-07-13",
+        "latest_price": 367.13,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -5150,14 +5401,14 @@
           "momentum_leader": false
         },
         "risks": {
-          "failed_rebound_risk": false,
+          "failed_rebound_risk": true,
           "break_ma20": false,
           "break_ma50": false
         }
       },
       "TLT": {
-        "latest_date": "2026-07-10",
-        "latest_price": 84.47,
+        "latest_date": "2026-07-13",
+        "latest_price": 83.97,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -5169,14 +5420,14 @@
           "momentum_leader": false
         },
         "risks": {
-          "failed_rebound_risk": false,
+          "failed_rebound_risk": true,
           "break_ma20": false,
           "break_ma50": false
         }
       },
       "IEF": {
-        "latest_date": "2026-07-10",
-        "latest_price": 93.63,
+        "latest_date": "2026-07-13",
+        "latest_price": 93.29,
         "data_fresh": true,
         "decision_eligible": true,
         "entries": {
@@ -5188,7 +5439,7 @@
           "momentum_leader": false
         },
         "risks": {
-          "failed_rebound_risk": false,
+          "failed_rebound_risk": true,
           "break_ma20": false,
           "break_ma50": false
         }
@@ -5196,8 +5447,8 @@
       "SHY": {
         "latest_date": "2026-07-10",
         "latest_price": 81.88,
-        "data_fresh": true,
-        "decision_eligible": true,
+        "data_fresh": false,
+        "decision_eligible": false,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5213,10 +5464,10 @@
         }
       },
       "XLV": {
-        "latest_date": "2026-07-07",
-        "latest_price": 164.44,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 161.41,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5234,8 +5485,8 @@
       "XLP": {
         "latest_date": "2026-07-10",
         "latest_price": 84.12,
-        "data_fresh": true,
-        "decision_eligible": true,
+        "data_fresh": false,
+        "decision_eligible": false,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5253,8 +5504,8 @@
       "XLU": {
         "latest_date": "2026-07-10",
         "latest_price": 45.41,
-        "data_fresh": true,
-        "decision_eligible": true,
+        "data_fresh": false,
+        "decision_eligible": false,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5365,10 +5616,10 @@
         }
       },
       "SOFI": {
-        "latest_date": "2026-07-09",
-        "latest_price": 18.62,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 18.13,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5422,10 +5673,10 @@
         }
       },
       "ABNB": {
-        "latest_date": "2026-07-09",
-        "latest_price": 146.89,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 146.33,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5481,8 +5732,8 @@
       "RKLB": {
         "latest_date": "2026-07-10",
         "latest_price": 81.04,
-        "data_fresh": true,
-        "decision_eligible": true,
+        "data_fresh": false,
+        "decision_eligible": false,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5498,10 +5749,10 @@
         }
       },
       "ASTS": {
-        "latest_date": "2026-07-09",
-        "latest_price": 73.88,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 67.58,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5511,16 +5762,16 @@
           "momentum_leader": false
         },
         "risks": {
-          "failed_rebound_risk": false,
+          "failed_rebound_risk": true,
           "break_ma20": false,
           "break_ma50": false
         }
       },
       "HIMS": {
-        "latest_date": "2026-07-09",
-        "latest_price": 35.45,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 34.38,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5536,10 +5787,10 @@
         }
       },
       "APP": {
-        "latest_date": "2026-07-09",
-        "latest_price": 520.43,
-        "data_fresh": false,
-        "decision_eligible": false,
+        "latest_date": "2026-07-13",
+        "latest_price": 442.85,
+        "data_fresh": true,
+        "decision_eligible": true,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5549,8 +5800,8 @@
           "momentum_leader": false
         },
         "risks": {
-          "failed_rebound_risk": false,
-          "break_ma20": false,
+          "failed_rebound_risk": true,
+          "break_ma20": true,
           "break_ma50": false
         }
       },
@@ -5614,8 +5865,8 @@
       "XLF": {
         "latest_date": "2026-07-10",
         "latest_price": 55.71,
-        "data_fresh": true,
-        "decision_eligible": true,
+        "data_fresh": false,
+        "decision_eligible": false,
         "entries": {
           "pullback_reclaim_5dma": false,
           "rsi_oversold_reclaim_40": false,
@@ -5669,51 +5920,51 @@
     "latest_regime": "base",
     "strategy_metrics": {
       "start_date": "2020-05-29",
-      "end_date": "2026-07-10",
-      "trading_days": 1536,
-      "years": 6.09,
-      "total_return_pct": 222.71,
-      "cagr_pct": 21.21,
-      "volatility_pct": 17.26,
-      "sharpe": 1.201,
-      "sortino": 1.712,
-      "calmar": 0.848,
+      "end_date": "2026-07-13",
+      "trading_days": 1537,
+      "years": 6.1,
+      "total_return_pct": 218.17,
+      "cagr_pct": 20.91,
+      "volatility_pct": 17.27,
+      "sharpe": 1.186,
+      "sortino": 1.692,
+      "calmar": 0.836,
       "max_drawdown_pct": -25.01,
-      "daily_win_rate_pct": 55.37,
-      "avg_daily_return_pct": 0.0823,
+      "daily_win_rate_pct": 55.34,
+      "avg_daily_return_pct": 0.0813,
       "best_day_pct": 4.48,
       "worst_day_pct": -4.71,
-      "final_value": 64542.45
+      "final_value": 63633.52
     },
     "strategy_vs_benchmarks": [
       {
         "benchmark": "SPY",
-        "strategy_cagr_minus_benchmark_pct": 3.45,
+        "strategy_cagr_minus_benchmark_pct": 3.31,
         "strategy_maxdd_minus_benchmark_pct": -0.51,
-        "strategy_final_minus_benchmark_dollars": 10410.99
+        "strategy_final_minus_benchmark_dollars": 9916.49
       },
       {
         "benchmark": "QQQ",
-        "strategy_cagr_minus_benchmark_pct": 0.0,
+        "strategy_cagr_minus_benchmark_pct": 0.1,
         "strategy_maxdd_minus_benchmark_pct": 10.11,
-        "strategy_final_minus_benchmark_dollars": 3.16
+        "strategy_final_minus_benchmark_dollars": 319.17
       },
       {
         "benchmark": "SMH",
-        "strategy_cagr_minus_benchmark_pct": -22.21,
+        "strategy_cagr_minus_benchmark_pct": -21.48,
         "strategy_maxdd_minus_benchmark_pct": 20.29,
-        "strategy_final_minus_benchmark_dollars": -115322.3
+        "strategy_final_minus_benchmark_dollars": -108751.46
       }
     ],
     "exposure_summary": {
-      "latest_cash_weight_pct": 14.83,
-      "latest_QQQ_weight_pct": 30.18,
-      "latest_SMH_weight_pct": 25.48,
-      "latest_MSFT_weight_pct": 19.49,
-      "latest_SPY_weight_pct": 10.02,
-      "latest_tech_ai_concentration_pct": 75.15,
-      "latest_semiconductor_exposure_pct": 25.48,
-      "latest_MSFT_exposure_pct": 19.49,
+      "latest_cash_weight_pct": 15.04,
+      "latest_QQQ_weight_pct": 30.03,
+      "latest_SMH_weight_pct": 24.77,
+      "latest_MSFT_weight_pct": 20.07,
+      "latest_SPY_weight_pct": 10.08,
+      "latest_tech_ai_concentration_pct": 74.87,
+      "latest_semiconductor_exposure_pct": 24.77,
+      "latest_MSFT_exposure_pct": 20.07,
       "avg_cash_weight_pct": 22.63,
       "max_tech_ai_concentration_pct": 77.42,
       "max_semiconductor_exposure_pct": 28.24,
@@ -5859,10 +6110,10 @@
     ]
   },
   "market_regime_report": {
-    "generated_at_utc": "2026-07-13T16:59:03.857300+00:00",
+    "generated_at_utc": "2026-07-14T01:01:22.316692+00:00",
     "data_source": "Tiingo daily local CSV cache",
     "market_timezone": "America/New_York",
-    "data_timestamp": "2026-07-10",
+    "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
     "price_frequency": "end_of_day_daily",
@@ -5883,10 +6134,10 @@
     "regimes": [
       {
         "regime": "base",
-        "trading_days": 1263,
-        "share_of_history_pct": 82.23,
-        "avg_daily_return_pct": 0.0973,
-        "daily_win_rate_pct": 56.85,
+        "trading_days": 1264,
+        "share_of_history_pct": 82.24,
+        "avg_daily_return_pct": 0.0961,
+        "daily_win_rate_pct": 56.8,
         "max_regime_drawdown_pct": -12.79,
         "drawdown_definition": "minimum drawdown within contiguous regime episodes",
         "avg_cash_weight_pct": 14.85,
@@ -5895,7 +6146,7 @@
       {
         "regime": "severe_defensive",
         "trading_days": 247,
-        "share_of_history_pct": 16.08,
+        "share_of_history_pct": 16.07,
         "avg_daily_return_pct": 0.0236,
         "daily_win_rate_pct": 48.18,
         "max_regime_drawdown_pct": -8.69,
@@ -6029,7 +6280,7 @@
       "warmup": false
     },
     "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
-    "data_timestamp": "2026-07-10",
+    "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
     "effective_target_weights": {
@@ -6041,13 +6292,13 @@
     },
     "evaluation_horizon_bars": 20,
     "evidence_classification": "PROSPECTIVE",
-    "generated_at_utc": "2026-07-13T16:56:52.314696+00:00",
+    "generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
     "important_limit": "Governance uses only paired, non-overlapping prospective public-model samples. It cannot place an order and cannot infer current private IBKR holdings.",
     "ledger_counts": {
       "new_outcome_events": 0,
-      "new_prediction_events": 0,
+      "new_prediction_events": 3,
       "outcome_events": 0,
-      "prediction_events": 0
+      "prediction_events": 3
     },
     "market_timezone": "America/New_York",
     "model_fingerprints": {
@@ -6073,17 +6324,17 @@
     "schema_version": "v6-model-governance-status-v1",
     "selection_bias_status": "CANDIDATES_PREDECLARED_BEFORE_PROSPECTIVE_EVIDENCE_NOT_SELECTED_FROM_REPORTED_RETURNS",
     "split_manifest_fingerprint": "f785a1c7fc63e21c6816be2017220219c619db543ffffdf5353fe70d8caff7ce",
-    "status": "WAITING_FOR_FIRST_PROSPECTIVE_MARKET_DATE",
+    "status": "HOLD_INCUMBENT_INSUFFICIENT_OR_WEAK_PROSPECTIVE_EVIDENCE",
     "strategy_contract_version": "v6-rc2-shared-rules-next-close",
     "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
     "survivorship_bias_status": "KNOWN_UNCONTROLLED_CURRENT_FIXED_ASSET_SET",
     "available": true
   },
   "overfitting_check": {
-    "generated_at_utc": "2026-07-13T16:59:03.857300+00:00",
+    "generated_at_utc": "2026-07-14T01:01:22.316692+00:00",
     "data_source": "Tiingo daily local CSV cache",
     "market_timezone": "America/New_York",
-    "data_timestamp": "2026-07-10",
+    "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
     "price_frequency": "end_of_day_daily",
@@ -6113,10 +6364,10 @@
     "available": true
   },
   "trade_review": {
-    "generated_at_utc": "2026-07-13T16:59:04.241439+00:00",
+    "generated_at_utc": "2026-07-14T01:01:22.719617+00:00",
     "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "data_timestamp": "2026-07-10",
+    "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
     "price_frequency": "end_of_day_daily",
@@ -6137,10 +6388,10 @@
     "available": true
   },
   "actual_vs_backtest": {
-    "generated_at_utc": "2026-07-13T16:59:04.241439+00:00",
+    "generated_at_utc": "2026-07-14T01:01:22.719617+00:00",
     "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "data_timestamp": "2026-07-10",
+    "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
     "price_frequency": "end_of_day_daily",

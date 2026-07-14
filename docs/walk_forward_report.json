@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-07-13T16:59:03.857300+00:00",
+  "generated_at_utc": "2026-07-14T01:01:22.316692+00:00",
   "data_source": "Tiingo daily local CSV cache",
   "market_timezone": "America/New_York",
-  "data_timestamp": "2026-07-10",
+  "data_timestamp": "2026-07-13",
   "data_timestamp_granularity": "market_date",
   "data_timestamp_status": "AVAILABLE",
   "price_frequency": "end_of_day_daily",
