@@ -67,10 +67,10 @@ build_report_safe.py
 ```text
 UNAVAILABLE                 # 关键模型、审查或 IBKR→ChatGPT 证据链不可用
 READ_ONLY_SHADOW            # 可读证据并进行只读实时辅助；不是人工试用就绪或交易指令
-HUMAN_PILOT_REVIEW_READY    # 20/48/20 等全部冻结发布门槛通过，仍只表示可进入人工试用审核
+HUMAN_PILOT_REVIEW_READY    # 公开前瞻 20、脱敏实时审查 20 及只读证据门槛通过，可进入人工试用审核
 ```
 
-任何分级下 `automatic_order_allowed` 都必须为 `false`，最终执行层固定为 IBKR 手工操作和明确人工确认。运行状态同时记录数据源、`America/New_York`、市场数据日期、EOD/盘中类型和复权策略；关键字段缺失时构建失败，不会发布模糊状态。
+挑战模型的 48 个配对、非重叠前瞻样本是独立的模型晋升证据门槛，不再阻塞现有模型进入人工试用审核；样本达标也不等于挑战模型获准替换或获得真实资金。任何分级下 `automatic_order_allowed` 都必须为 `false`，最终执行层固定为 IBKR 手工操作和明确人工确认。运行状态同时记录数据源、`America/New_York`、市场数据日期、EOD/盘中类型和复权策略；关键字段缺失时构建失败，不会发布模糊状态。
 
 ## v4.5 基础修复点
 

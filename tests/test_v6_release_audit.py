@@ -4,6 +4,9 @@ import copy
 import unittest
 
 from scripts.audit_v6_release import (
+    BLOCKER_BY_GATE,
+    CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES,
+    HUMAN_PILOT_REQUIRED_GATES,
     V6ReleaseAuditError,
     audit_v6_release,
     validate_v6_release_status,
@@ -32,17 +35,64 @@ class V6ReleaseAuditTests(unittest.TestCase):
             counts["sanitized_live_review_matured_outcomes"]
             >= thresholds["sanitized_live_review_matured_outcomes"],
         )
-        self.assertEqual(payload["ready_for_human_pilot_review"], all(gates.values()))
+        self.assertEqual(
+            payload["ready_for_human_pilot_review"],
+            all(gates[name] for name in HUMAN_PILOT_REQUIRED_GATES),
+        )
+        self.assertEqual(
+            payload["challenger_model_promotion_evidence_ready"],
+            all(
+                gates[name]
+                for name in CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES
+            ),
+        )
         self.assertEqual(bool(payload["blockers"]), not payload["ready_for_human_pilot_review"])
+        self.assertEqual(
+            bool(payload["challenger_model_promotion_blockers"]),
+            not payload["challenger_model_promotion_evidence_ready"],
+        )
         self.assertFalse(payload["automatic_order_allowed"])
         self.assertTrue(payload["human_confirmation_required"])
+
+    def test_human_pilot_and_challenger_promotion_tracks_are_independent(self) -> None:
+        payload = audit_v6_release(output_path=None)
+        separated = copy.deepcopy(payload)
+        separated["evidence_counts"]["public_signal_primary_horizon_outcomes"] = (
+            separated["evidence_thresholds"]["public_signal_primary_horizon_outcomes"]
+        )
+        separated["evidence_counts"]["sanitized_live_review_matured_outcomes"] = (
+            separated["evidence_thresholds"]["sanitized_live_review_matured_outcomes"]
+        )
+        separated["evidence_counts"]["minimum_governance_paired_samples"] = (
+            separated["evidence_thresholds"][
+                "governance_paired_samples_per_challenger"
+            ]
+            - 1
+        )
+        for gate in HUMAN_PILOT_REQUIRED_GATES:
+            separated["release_gates"][gate] = True
+        separated["release_gates"][
+            "model_governance_promotion_sample_reached"
+        ] = False
+        separated["ready_for_human_pilot_review"] = True
+        separated["status"] = "READY_FOR_HUMAN_PILOT_REVIEW"
+        separated["blockers"] = []
+        separated["challenger_model_promotion_evidence_ready"] = False
+        separated["challenger_model_promotion_blockers"] = [
+            BLOCKER_BY_GATE["model_governance_promotion_sample_reached"]
+        ]
+
+        validate_v6_release_status(separated)
+
+        self.assertTrue(separated["ready_for_human_pilot_review"])
+        self.assertFalse(separated["challenger_model_promotion_evidence_ready"])
 
     def test_inconsistent_or_executable_release_claim_fails(self) -> None:
         payload = audit_v6_release(output_path=None)
         inconsistent = copy.deepcopy(payload)
-        inconsistent["ready_for_human_pilot_review"] = not all(
-            inconsistent["release_gates"].values()
-        )
+        inconsistent["ready_for_human_pilot_review"] = not inconsistent[
+            "ready_for_human_pilot_review"
+        ]
         with self.assertRaisesRegex(V6ReleaseAuditError, "readiness"):
             validate_v6_release_status(inconsistent)
 
@@ -101,6 +151,13 @@ class V6ReleaseAuditTests(unittest.TestCase):
         wrong_blocker["blockers"] = ["UNRELATED_BLOCKER"]
         with self.assertRaisesRegex(V6ReleaseAuditError, "failed gates"):
             validate_v6_release_status(wrong_blocker)
+
+        wrong_promotion_blocker = copy.deepcopy(payload)
+        wrong_promotion_blocker["challenger_model_promotion_blockers"] = [
+            "UNRELATED_BLOCKER"
+        ]
+        with self.assertRaisesRegex(V6ReleaseAuditError, "promotion blocker"):
+            validate_v6_release_status(wrong_promotion_blocker)
 
 
 if __name__ == "__main__":

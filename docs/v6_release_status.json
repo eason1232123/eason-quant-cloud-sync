@@ -2,9 +2,12 @@
   "automatic_order_allowed": false,
   "blockers": [
     "PUBLIC_SIGNAL_PRIMARY_OUTCOMES_BELOW_MINIMUM",
-    "MODEL_GOVERNANCE_PAIRED_SAMPLES_BELOW_PROMOTION_THRESHOLD",
     "LIVE_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM"
   ],
+  "challenger_model_promotion_blockers": [
+    "MODEL_GOVERNANCE_PAIRED_SAMPLES_BELOW_PROMOTION_THRESHOLD"
+  ],
+  "challenger_model_promotion_evidence_ready": false,
   "contains_private_account_data": false,
   "contract_fingerprints": {
     "full_model_fingerprint": "c7b581f73487289f6d6113d894a0149734c88bb76d3548fb8715dc91c906dac6",
@@ -25,7 +28,7 @@
   "evidence_scope": {
     "ibkr_runtime_evidence": "a sanitized prediction is created only after the private read-only IBKR context and live-review response validate; this is application-level, not broker-independent attestation",
     "live_review_count": "sanitized outcomes with non-overlap enforced per public symbol",
-    "model_governance_count": "paired, chronologically non-overlapping incumbent/challenger cohorts",
+    "model_governance_count": "paired, chronologically non-overlapping incumbent/challenger cohorts; sample sufficiency alone is not a promotion approval",
     "public_signal_count": "raw prospective primary-horizon outcomes; supporting evidence only, not an independence claim"
   },
   "evidence_thresholds": {
@@ -55,6 +58,6 @@
     "public_signal_minimum_sample_reached": false
   },
   "release_scope": "V6_DECISION_SUPPORT_HUMAN_PILOT_NOT_AUTOMATIC_EXECUTION",
-  "schema_version": "v6-release-readiness-status-v1",
+  "schema_version": "v6-release-readiness-status-v2",
   "status": "PROSPECTIVE_VALIDATION_IN_PROGRESS"
 }

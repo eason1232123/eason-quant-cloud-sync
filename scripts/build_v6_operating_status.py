@@ -15,7 +15,11 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from scripts.audit_v6_release import (  # noqa: E402
+    BLOCKER_BY_GATE,
+    CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES,
     DEFAULT_DOCS,
+    HUMAN_PILOT_REQUIRED_GATES,
+    RELEASE_GATE_ORDER,
     V6ReleaseAuditError,
     audit_v6_release,
     validate_v6_release_status,
@@ -30,16 +34,7 @@ from scripts.validate_validation_split import assert_finite_json  # noqa: E402
 
 DEFAULT_OUTPUT = DEFAULT_DOCS / "v6_operating_status.json"
 DEFAULT_SCHEMA = ROOT / "schemas" / "v6_operating_status.schema.json"
-SCHEMA_VERSION = "v6-operating-status-v1"
-
-RELEASE_GATE_ORDER = (
-    "model_artifacts_valid",
-    "live_review_forward_artifacts_valid",
-    "public_signal_minimum_sample_reached",
-    "model_governance_promotion_sample_reached",
-    "live_review_minimum_sample_reached",
-    "ibkr_to_chatgpt_contract_evidenced",
-)
+SCHEMA_VERSION = "v6-operating-status-v2"
 SHADOW_REQUIRED_GATES = (
     "model_artifacts_valid",
     "live_review_forward_artifacts_valid",
@@ -137,7 +132,13 @@ def validate_v6_operating_status(
     _validate_mode_gate(
         mode_gates["human_pilot_review"],
         label="human_pilot_review",
-        required=RELEASE_GATE_ORDER,
+        required=HUMAN_PILOT_REQUIRED_GATES,
+        release_gates=release_gates,
+    )
+    _validate_mode_gate(
+        mode_gates["challenger_model_promotion_evidence"],
+        label="challenger_model_promotion_evidence",
+        required=CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES,
         release_gates=release_gates,
     )
     automatic = mode_gates["automatic_execution"]
@@ -149,6 +150,9 @@ def validate_v6_operating_status(
 
     shadow_ready = mode_gates["read_only_shadow"]["passed"]
     pilot_ready = mode_gates["human_pilot_review"]["passed"]
+    promotion_evidence_ready = mode_gates[
+        "challenger_model_promotion_evidence"
+    ]["passed"]
     expected_mode = (
         "HUMAN_PILOT_REVIEW_READY"
         if pilot_ready
@@ -180,6 +184,7 @@ def validate_v6_operating_status(
         ],
         "human_decision_support_available": shadow_ready,
         "human_pilot_review_ready": pilot_ready,
+        "challenger_model_promotion_evidence_ready": promotion_evidence_ready,
         "automatic_order_allowed": False,
     }
     if capabilities != expected_capabilities:
@@ -190,6 +195,25 @@ def validate_v6_operating_status(
         else "PROSPECTIVE_VALIDATION_IN_PROGRESS"
     ):
         raise V6OperatingStatusError("source release status is inconsistent")
+    expected_release_blockers = [
+        BLOCKER_BY_GATE[name]
+        for name in HUMAN_PILOT_REQUIRED_GATES
+        if not release_gates[name]
+    ]
+    if payload["release_blockers"] != expected_release_blockers:
+        raise V6OperatingStatusError("human-pilot release blockers are inconsistent")
+    expected_promotion_blockers = [
+        BLOCKER_BY_GATE[name]
+        for name in CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES
+        if not release_gates[name]
+    ]
+    if (
+        payload["challenger_model_promotion_blockers"]
+        != expected_promotion_blockers
+    ):
+        raise V6OperatingStatusError(
+            "challenger model promotion blockers are inconsistent"
+        )
     if payload["automatic_order_allowed"] is not False:
         raise V6OperatingStatusError("v6 operating status must prohibit automatic orders")
     if payload["human_confirmation_required"] is not True:
@@ -223,9 +247,14 @@ def derive_v6_operating_status(
             raise V6OperatingStatusError(f"release status {field} is unavailable")
 
     shadow_failed = _failed_gates(release_gates, SHADOW_REQUIRED_GATES)
-    human_failed = _failed_gates(release_gates, RELEASE_GATE_ORDER)
+    human_failed = _failed_gates(release_gates, HUMAN_PILOT_REQUIRED_GATES)
+    promotion_failed = _failed_gates(
+        release_gates,
+        CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES,
+    )
     shadow_ready = not shadow_failed
     pilot_ready = not human_failed
+    promotion_evidence_ready = not promotion_failed
     operating_mode = (
         "HUMAN_PILOT_REVIEW_READY"
         if pilot_ready
@@ -263,6 +292,9 @@ def derive_v6_operating_status(
             ],
             "human_decision_support_available": shadow_ready,
             "human_pilot_review_ready": pilot_ready,
+            "challenger_model_promotion_evidence_ready": (
+                promotion_evidence_ready
+            ),
             "automatic_order_allowed": False,
         },
         "mode_gates": {
@@ -273,8 +305,15 @@ def derive_v6_operating_status(
             },
             "human_pilot_review": {
                 "passed": pilot_ready,
-                "required_release_gates": list(RELEASE_GATE_ORDER),
+                "required_release_gates": list(HUMAN_PILOT_REQUIRED_GATES),
                 "failed_release_gates": human_failed,
+            },
+            "challenger_model_promotion_evidence": {
+                "passed": promotion_evidence_ready,
+                "required_release_gates": list(
+                    CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES
+                ),
+                "failed_release_gates": promotion_failed,
             },
             "automatic_execution": {
                 "passed": False,
@@ -283,13 +322,17 @@ def derive_v6_operating_status(
         },
         "release_gates": dict(release_gates),
         "release_blockers": list(release["blockers"]),
+        "challenger_model_promotion_blockers": list(
+            release["challenger_model_promotion_blockers"]
+        ),
         "evidence_thresholds": dict(release["evidence_thresholds"]),
         "evidence_counts": dict(release["evidence_counts"]),
         "contract_fingerprints": dict(release["contract_fingerprints"]),
         "final_execution_layer": FINAL_EXECUTION_LAYER,
         "important_limit": (
             "READ_ONLY_SHADOW is decision support, not validated pilot performance or an order. "
-            "Human pilot review requires every frozen release gate; automatic execution is prohibited."
+            "Human-pilot readiness and challenger-model promotion evidence are separate; "
+            "neither authorizes model replacement or automatic execution."
         ),
         "contains_private_account_data": False,
         "automatic_order_allowed": False,
