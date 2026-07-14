@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-14T01:01:24.470359+00:00",
+  "generated_at_utc": "2026-07-14T07:21:16.565413+00:00",
   "version": "chatgpt-compact-snapshot-v6.0-model-governance-t2",
   "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
   "read_priority_for_chatgpt": [
@@ -12,7 +12,7 @@
   ],
   "decision_contract": {
     "schema_version": "decision-packet-v5.0",
-    "generated_at_utc": "2026-07-14T01:01:23.194279+00:00",
+    "generated_at_utc": "2026-07-14T07:21:15.259900+00:00",
     "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
     "roles": {
       "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",
@@ -22,7 +22,7 @@
     "market_data": {
       "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
       "market_timezone": "America/New_York",
-      "report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+      "report_generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
       "data_timestamp": "2026-07-13",
       "data_timestamp_granularity": "market_date",
       "data_timestamp_status": "AVAILABLE",
@@ -31,7 +31,7 @@
       "metadata_status": "COMPLETE"
     },
     "data_quality": {
-      "source_report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+      "source_report_generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
       "data_quality_metadata_status": "COMPLETE",
       "reported_expected_market_date": "2026-07-13",
       "reference_market_date": "2026-07-13",
@@ -41,8 +41,8 @@
       "latest_price_date_max": "2026-07-13",
       "latest_price_date_min": "2026-03-17",
       "data_status": "PARTIAL_STALE_WATCHLIST",
-      "fresh_ticker_count": 47,
-      "stale_ticker_count": 47,
+      "fresh_ticker_count": 59,
+      "stale_ticker_count": 35,
       "stale_tickers_in_packet_count": 20,
       "stale_tickers": [
         {
@@ -88,24 +88,6 @@
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "CSCO",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "DLR",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "EQIX",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
           "ticker": "ESTC",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
@@ -136,31 +118,49 @@
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "INTC",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
           "ticker": "IYW",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "JPM",
+          "ticker": "MRVL",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "LLY",
+          "ticker": "MU",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "MCHP",
+          "ticker": "NET",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "NRG",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "OKTA",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "PWR",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "reason": "stale_or_missing_market_data"
+        },
+        {
+          "ticker": "RBLX",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
@@ -168,7 +168,7 @@
       ],
       "loaded_ticker_count": 94,
       "configured_ticker_count": 94,
-      "fresh_request_count": 47,
+      "fresh_request_count": 12,
       "errors_count": 0
     },
     "portfolio_scope": {
@@ -213,6 +213,34 @@
     "risks": {
       "model_portfolio_high": [],
       "watchlist_high_advisory": [
+        {
+          "ticker": "ORCL",
+          "severity_0_100": 100,
+          "latest_date": "2026-07-13",
+          "latest_price": 131.54,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "5d pullback not reclaimed",
+            "below MA20",
+            "below MA50",
+            "below MA200",
+            "drawdown from 52w high <= -12%"
+          ],
+          "failed_rebound_samples_20d": 157,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": 1.52,
+          "failed_rebound_median_return_pct": 1.45,
+          "failed_rebound_worst_mae_pct": -33.92,
+          "ret_5d_pct": -8.5,
+          "ret_20d_pct": -28.14,
+          "drawdown_from_52w_high_pct": -59.39,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        },
         {
           "ticker": "APP",
           "severity_0_100": 100,
@@ -270,38 +298,10 @@
           "risk_scope": "watchlist_advisory"
         },
         {
-          "ticker": "ORCL",
-          "severity_0_100": 100,
-          "latest_date": "2026-07-13",
-          "latest_price": 131.54,
-          "data_fresh": true,
-          "staleness_business_days": 0,
-          "decision_eligible": true,
-          "data_exclusion_reason": null,
-          "reasons": [
-            "failed_rebound_risk active",
-            "5d pullback not reclaimed",
-            "below MA20",
-            "below MA50",
-            "below MA200",
-            "drawdown from 52w high <= -12%"
-          ],
-          "failed_rebound_samples_20d": 157,
-          "failed_rebound_valid_20d": true,
-          "failed_rebound_avg_return_pct": 1.52,
-          "failed_rebound_median_return_pct": 1.45,
-          "failed_rebound_worst_mae_pct": -33.92,
-          "ret_5d_pct": -8.5,
-          "ret_20d_pct": -28.14,
-          "drawdown_from_52w_high_pct": -59.39,
-          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "ARM",
+          "ticker": "INTC",
           "severity_0_100": 95,
           "latest_date": "2026-07-13",
-          "latest_price": 298.99,
+          "latest_price": 103.12,
           "data_fresh": true,
           "staleness_business_days": 0,
           "decision_eligible": true,
@@ -313,14 +313,14 @@
             "below MA50",
             "drawdown from 52w high <= -12%"
           ],
-          "failed_rebound_samples_20d": 19,
-          "failed_rebound_valid_20d": false,
-          "failed_rebound_avg_return_pct": 5.1,
-          "failed_rebound_median_return_pct": 4.32,
-          "failed_rebound_worst_mae_pct": -38.95,
-          "ret_5d_pct": -7.22,
-          "ret_20d_pct": -12.63,
-          "drawdown_from_52w_high_pct": -31.96,
+          "failed_rebound_samples_20d": 164,
+          "failed_rebound_valid_20d": true,
+          "failed_rebound_avg_return_pct": 1.24,
+          "failed_rebound_median_return_pct": 1.57,
+          "failed_rebound_worst_mae_pct": -40.18,
+          "ret_5d_pct": -15.61,
+          "ret_20d_pct": -11.83,
+          "drawdown_from_52w_high_pct": -26.83,
           "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
           "risk_scope": "watchlist_advisory"
         },
@@ -352,10 +352,37 @@
           "risk_scope": "watchlist_advisory"
         },
         {
-          "ticker": "TSLA",
+          "ticker": "ARM",
+          "severity_0_100": 95,
+          "latest_date": "2026-07-13",
+          "latest_price": 298.99,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "data_exclusion_reason": null,
+          "reasons": [
+            "failed_rebound_risk active",
+            "5d pullback not reclaimed",
+            "below MA20",
+            "below MA50",
+            "drawdown from 52w high <= -12%"
+          ],
+          "failed_rebound_samples_20d": 19,
+          "failed_rebound_valid_20d": false,
+          "failed_rebound_avg_return_pct": 5.1,
+          "failed_rebound_median_return_pct": 4.32,
+          "failed_rebound_worst_mae_pct": -38.95,
+          "ret_5d_pct": -7.22,
+          "ret_20d_pct": -12.63,
+          "drawdown_from_52w_high_pct": -31.96,
+          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "MSTR",
           "severity_0_100": 80,
           "latest_date": "2026-07-13",
-          "latest_price": 394.76,
+          "latest_price": 92.1,
           "data_fresh": true,
           "staleness_business_days": 0,
           "decision_eligible": true,
@@ -367,14 +394,14 @@
             "below MA200",
             "drawdown from 52w high <= -12%"
           ],
-          "failed_rebound_samples_20d": 123,
+          "failed_rebound_samples_20d": 164,
           "failed_rebound_valid_20d": true,
-          "failed_rebound_avg_return_pct": 1.24,
-          "failed_rebound_median_return_pct": 0.35,
-          "failed_rebound_worst_mae_pct": -47.53,
-          "ret_5d_pct": -5.96,
-          "ret_20d_pct": -1.1,
-          "drawdown_from_52w_high_pct": -19.42,
+          "failed_rebound_avg_return_pct": 1.06,
+          "failed_rebound_median_return_pct": 0.71,
+          "failed_rebound_worst_mae_pct": -52.25,
+          "ret_5d_pct": -8.6,
+          "ret_20d_pct": -23.35,
+          "drawdown_from_52w_high_pct": -79.8,
           "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
           "risk_scope": "watchlist_advisory"
         },
@@ -455,32 +482,6 @@
           "drawdown_from_52w_high_pct": -13.24,
           "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
           "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "TSM",
-          "severity_0_100": 80,
-          "latest_date": "2026-07-13",
-          "latest_price": 421.58,
-          "data_fresh": true,
-          "staleness_business_days": 0,
-          "decision_eligible": true,
-          "data_exclusion_reason": null,
-          "reasons": [
-            "failed_rebound_risk active",
-            "5d pullback not reclaimed",
-            "below MA20",
-            "below MA50"
-          ],
-          "failed_rebound_samples_20d": 161,
-          "failed_rebound_valid_20d": true,
-          "failed_rebound_avg_return_pct": 2.2,
-          "failed_rebound_median_return_pct": 1.7,
-          "failed_rebound_worst_mae_pct": -26.42,
-          "ret_5d_pct": -6.69,
-          "ret_20d_pct": 0.12,
-          "drawdown_from_52w_high_pct": -11.72,
-          "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
-          "risk_scope": "watchlist_advisory"
         }
       ],
       "stale_excluded": [
@@ -512,24 +513,6 @@
           "risk_scope": "watchlist_advisory"
         },
         {
-          "ticker": "INTC",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "MSTR",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
           "ticker": "RKLB",
           "latest_date": "2026-07-10",
           "staleness_business_days": 1,
@@ -542,24 +525,6 @@
           "ticker": "COIN",
           "latest_date": "2026-07-07",
           "staleness_business_days": 4,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "MCHP",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "MPWR",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
           "data_fresh": false,
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
@@ -585,15 +550,6 @@
         },
         {
           "ticker": "ESTC",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "data_fresh": false,
-          "decision_eligible": false,
-          "data_exclusion_reason": "stale_or_missing_market_data",
-          "risk_scope": "watchlist_advisory"
-        },
-        {
-          "ticker": "PATH",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
           "data_fresh": false,
@@ -663,6 +619,51 @@
           "decision_eligible": false,
           "data_exclusion_reason": "stale_or_missing_market_data",
           "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "MRVL",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "MU",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "GRID",
+          "latest_date": "2026-07-10",
+          "staleness_business_days": 1,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "ARKK",
+          "latest_date": "2026-07-07",
+          "staleness_business_days": 4,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
+        },
+        {
+          "ticker": "GTLB",
+          "latest_date": "2026-07-09",
+          "staleness_business_days": 2,
+          "data_fresh": false,
+          "decision_eligible": false,
+          "data_exclusion_reason": "stale_or_missing_market_data",
+          "risk_scope": "watchlist_advisory"
         }
       ]
     },
@@ -689,7 +690,7 @@
   "market_data": {
     "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+    "report_generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
     "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
@@ -702,16 +703,16 @@
     "configured_ticker_count": 94,
     "loaded_ticker_count": 94,
     "coverage_ratio": 1.0,
-    "fresh_request_count": 47,
+    "fresh_request_count": 12,
     "coverage_gaps_count": 0,
     "errors_count": 0,
     "tiingo_circuit_open": false,
     "latest_price_date_max": "2026-07-13",
     "expected_latest_market_date": "2026-07-13",
-    "stale_ticker_count": 47,
+    "stale_ticker_count": 35,
     "decision_data_status": "PARTIAL_STALE_WATCHLIST",
     "reasons": [
-      "stale_tickers=47"
+      "stale_tickers=35"
     ],
     "usage_rule": "Use High/Medium as evidence; Medium-Low only as auxiliary evidence; Low/Unusable cannot justify trades by itself."
   },
@@ -748,10 +749,10 @@
     },
     "top_actionable_buy": null,
     "top_risk": {
-      "ticker": "APP",
+      "ticker": "ORCL",
       "severity_0_100": 100,
       "latest_date": "2026-07-13",
-      "latest_price": 442.85,
+      "latest_price": 131.54,
       "data_fresh": true,
       "staleness_business_days": 0,
       "decision_eligible": true,
@@ -764,23 +765,23 @@
         "below MA200",
         "drawdown from 52w high <= -12%"
       ],
-      "failed_rebound_samples_20d": 40,
+      "failed_rebound_samples_20d": 157,
       "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 5.29,
-      "failed_rebound_median_return_pct": 4.95,
-      "failed_rebound_worst_mae_pct": -36.66,
-      "ret_5d_pct": -18.56,
-      "ret_20d_pct": -7.46,
-      "drawdown_from_52w_high_pct": -39.63,
+      "failed_rebound_avg_return_pct": 1.52,
+      "failed_rebound_median_return_pct": 1.45,
+      "failed_rebound_worst_mae_pct": -33.92,
+      "ret_5d_pct": -8.5,
+      "ret_20d_pct": -28.14,
+      "drawdown_from_52w_high_pct": -59.39,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
       "risk_scope": "watchlist_advisory"
     },
     "top_model_portfolio_risk": null,
     "top_watchlist_risk_advisory": {
-      "ticker": "APP",
+      "ticker": "ORCL",
       "severity_0_100": 100,
       "latest_date": "2026-07-13",
-      "latest_price": 442.85,
+      "latest_price": 131.54,
       "data_fresh": true,
       "staleness_business_days": 0,
       "decision_eligible": true,
@@ -793,23 +794,23 @@
         "below MA200",
         "drawdown from 52w high <= -12%"
       ],
-      "failed_rebound_samples_20d": 40,
+      "failed_rebound_samples_20d": 157,
       "failed_rebound_valid_20d": true,
-      "failed_rebound_avg_return_pct": 5.29,
-      "failed_rebound_median_return_pct": 4.95,
-      "failed_rebound_worst_mae_pct": -36.66,
-      "ret_5d_pct": -18.56,
-      "ret_20d_pct": -7.46,
-      "drawdown_from_52w_high_pct": -39.63,
+      "failed_rebound_avg_return_pct": 1.52,
+      "failed_rebound_median_return_pct": 1.45,
+      "failed_rebound_worst_mae_pct": -33.92,
+      "ret_5d_pct": -8.5,
+      "ret_20d_pct": -28.14,
+      "drawdown_from_52w_high_pct": -59.39,
       "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
       "risk_scope": "watchlist_advisory"
     },
     "freshness": {
-      "source_report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+      "source_report_generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
       "market_data": {
         "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
         "data_timestamp": "2026-07-13",
         "data_timestamp_granularity": "market_date",
         "data_timestamp_status": "AVAILABLE",
@@ -826,8 +827,8 @@
       "latest_price_date_max": "2026-07-13",
       "latest_price_date_min": "2026-03-17",
       "data_status": "PARTIAL_STALE_WATCHLIST",
-      "fresh_ticker_count": 47,
-      "stale_ticker_count": 47,
+      "fresh_ticker_count": 59,
+      "stale_ticker_count": 35,
       "stale_tickers": [
         {
           "ticker": "AMAT",
@@ -872,24 +873,6 @@
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "CSCO",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "DLR",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "EQIX",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
           "ticker": "ESTC",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
@@ -920,55 +903,13 @@
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "INTC",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
           "ticker": "IYW",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "JPM",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "LLY",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "MCHP",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "MDB",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 4,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "MPWR",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
           "ticker": "MRVL",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "MSTR",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
@@ -993,12 +934,6 @@
         },
         {
           "ticker": "OKTA",
-          "latest_date": "2026-07-09",
-          "staleness_business_days": 2,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
-          "ticker": "PATH",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
           "reason": "stale_or_missing_market_data"
@@ -1058,12 +993,6 @@
           "reason": "stale_or_missing_market_data"
         },
         {
-          "ticker": "USMV",
-          "latest_date": "2026-07-07",
-          "staleness_business_days": 4,
-          "reason": "stale_or_missing_market_data"
-        },
-        {
           "ticker": "VRT",
           "latest_date": "2026-07-09",
           "staleness_business_days": 2,
@@ -1114,26 +1043,26 @@
       ],
       "loaded_ticker_count": 94,
       "configured_ticker_count": 94,
-      "fresh_request_count": 47,
+      "fresh_request_count": 12,
       "errors_count": 0
     },
     "universe": {
       "configured_ticker_count": 94,
       "loaded_ticker_count": 94,
-      "tiingo_request_attempt_count": 48,
-      "fresh_request_count": 47,
-      "exact_fresh_ticker_count": 47,
-      "lagging_ticker_count": 47,
+      "tiingo_request_attempt_count": 13,
+      "fresh_request_count": 12,
+      "exact_fresh_ticker_count": 59,
+      "lagging_ticker_count": 35,
       "future_quarantine_ticker_count": 0,
       "missing_ticker_count": 0,
-      "skipped_fresh_enough_no_request": 0,
-      "skipped_by_tier_rotation": 46,
-      "forced_refresh_due_count": 23,
-      "forced_refresh_requested_count": 23,
-      "forced_refresh_succeeded_count": 22,
+      "skipped_fresh_enough_no_request": 47,
+      "skipped_by_tier_rotation": 34,
+      "forced_refresh_due_count": 1,
+      "forced_refresh_requested_count": 1,
+      "forced_refresh_succeeded_count": 0,
       "forced_refresh_deferred_count": 1,
       "future_quarantine_event_count": 0,
-      "rows_appended_total": 78,
+      "rows_appended_total": 28,
       "append_only_mode": true,
       "coverage_gaps_first": true,
       "historical_rows_overwritten": 0,
@@ -1214,7 +1143,7 @@
   },
   "market_report_status": {
     "available": true,
-    "generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+    "generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
     "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
     "data_timestamp": "2026-07-13",
@@ -1225,20 +1154,20 @@
     "universe": {
       "configured_ticker_count": 94,
       "loaded_ticker_count": 94,
-      "tiingo_request_attempt_count": 48,
-      "fresh_request_count": 47,
-      "exact_fresh_ticker_count": 47,
-      "lagging_ticker_count": 47,
+      "tiingo_request_attempt_count": 13,
+      "fresh_request_count": 12,
+      "exact_fresh_ticker_count": 59,
+      "lagging_ticker_count": 35,
       "future_quarantine_ticker_count": 0,
       "missing_ticker_count": 0,
-      "skipped_fresh_enough_no_request": 0,
-      "skipped_by_tier_rotation": 46,
-      "forced_refresh_due_count": 23,
-      "forced_refresh_requested_count": 23,
-      "forced_refresh_succeeded_count": 22,
+      "skipped_fresh_enough_no_request": 47,
+      "skipped_by_tier_rotation": 34,
+      "forced_refresh_due_count": 1,
+      "forced_refresh_requested_count": 1,
+      "forced_refresh_succeeded_count": 0,
       "forced_refresh_deferred_count": 1,
       "future_quarantine_event_count": 0,
-      "rows_appended_total": 78,
+      "rows_appended_total": 28,
       "append_only_mode": true,
       "coverage_gaps_first": true,
       "historical_rows_overwritten": 0,
@@ -1372,7 +1301,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1419,7 +1348,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-10",
@@ -1466,7 +1395,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-13",
@@ -1513,7 +1442,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1539,7 +1468,7 @@
         "valid": true,
         "min_sample_required": 20,
         "lookback_start": "2005-01-03",
-        "lookback_end": "2026-07-09",
+        "lookback_end": "2026-07-13",
         "measurement_assumption": "Signal on bar t enters at t+1 close and exits horizon trading bars after that entry close; samples are chronological and non-overlapping.",
         "benchmark_data_required_for_completed_sample": true,
         "description": "RSI recovers through 40 after an oversold reading while price is above MA5.",
@@ -1560,10 +1489,10 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
-        "data_timestamp": "2026-07-09",
+        "data_timestamp": "2026-07-13",
         "price_basis": "adjusted",
         "evidence_score_0_100": 73.2
       },
@@ -1607,7 +1536,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-13",
@@ -1654,7 +1583,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-13",
@@ -1701,7 +1630,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-13",
@@ -1750,7 +1679,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1797,7 +1726,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -1844,7 +1773,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-13",
@@ -1891,7 +1820,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-13",
@@ -1938,7 +1867,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-13",
@@ -1985,7 +1914,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-13",
@@ -2032,7 +1961,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-09",
@@ -2079,7 +2008,7 @@
         "reason": null,
         "data_source": "Tiingo daily local CSV cache",
         "market_timezone": "America/New_York",
-        "report_generated_at_utc": "2026-07-14T00:59:37.860288+00:00",
+        "report_generated_at_utc": "2026-07-14T07:19:29.493919+00:00",
         "price_frequency": "end_of_day_daily",
         "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
         "data_timestamp": "2026-07-13",
@@ -2506,6 +2435,25 @@
           "break_ma50": false
         }
       },
+      "INTC": {
+        "latest_date": "2026-07-13",
+        "latest_price": 103.12,
+        "data_fresh": true,
+        "decision_eligible": true,
+        "entries": {
+          "pullback_reclaim_5dma": false,
+          "rsi_oversold_reclaim_40": false,
+          "ma20_reclaim_bullish": false,
+          "ma50_reclaim_bullish": false,
+          "relative_strength_rebound": false,
+          "momentum_leader": false
+        },
+        "risks": {
+          "failed_rebound_risk": true,
+          "break_ma20": false,
+          "break_ma50": false
+        }
+      },
       "MRVL": {
         "latest_date": "2026-07-09",
         "latest_price": 243.27,
@@ -2638,25 +2586,6 @@
           "break_ma20": false,
           "break_ma50": false
         }
-      },
-      "PANW": {
-        "latest_date": "2026-07-13",
-        "latest_price": 330.3,
-        "data_fresh": true,
-        "decision_eligible": true,
-        "entries": {
-          "pullback_reclaim_5dma": false,
-          "rsi_oversold_reclaim_40": false,
-          "ma20_reclaim_bullish": false,
-          "ma50_reclaim_bullish": false,
-          "relative_strength_rebound": false,
-          "momentum_leader": true
-        },
-        "risks": {
-          "failed_rebound_risk": false,
-          "break_ma20": false,
-          "break_ma50": false
-        }
       }
     }
   },
@@ -2744,7 +2673,7 @@
   },
   "market_regime_summary": {
     "available": true,
-    "generated_at_utc": "2026-07-14T01:01:22.316692+00:00",
+    "generated_at_utc": "2026-07-14T07:21:14.390962+00:00",
     "version": "market-regime-v3.0-contiguous-episodes",
     "latest_regime": null
   },
@@ -2759,7 +2688,7 @@
     "model_governance_fingerprint": "708ce0b7fa2edc93bbfdb6aa6e614c7665fda8b8ddfb0ee4fa5351cc253dd0fc",
     "ledger_counts": {
       "new_outcome_events": 0,
-      "new_prediction_events": 3,
+      "new_prediction_events": 0,
       "outcome_events": 0,
       "prediction_events": 3
     },

@@ -1,6 +1,6 @@
 {
   "schema_version": "decision-packet-v5.0",
-  "generated_at_utc": "2026-07-14T01:01:23.194279+00:00",
+  "generated_at_utc": "2026-07-14T07:21:15.259900+00:00",
   "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
   "roles": {
     "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",
@@ -10,7 +10,7 @@
   "market_data": {
     "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+    "report_generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
     "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
@@ -19,7 +19,7 @@
     "metadata_status": "COMPLETE"
   },
   "data_quality": {
-    "source_report_generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+    "source_report_generated_at_utc": "2026-07-14T07:19:00.563122+00:00",
     "data_quality_metadata_status": "COMPLETE",
     "reported_expected_market_date": "2026-07-13",
     "reference_market_date": "2026-07-13",
@@ -29,8 +29,8 @@
     "latest_price_date_max": "2026-07-13",
     "latest_price_date_min": "2026-03-17",
     "data_status": "PARTIAL_STALE_WATCHLIST",
-    "fresh_ticker_count": 47,
-    "stale_ticker_count": 47,
+    "fresh_ticker_count": 59,
+    "stale_ticker_count": 35,
     "stale_tickers_in_packet_count": 20,
     "stale_tickers": [
       {
@@ -76,24 +76,6 @@
         "reason": "stale_or_missing_market_data"
       },
       {
-        "ticker": "CSCO",
-        "latest_date": "2026-07-09",
-        "staleness_business_days": 2,
-        "reason": "stale_or_missing_market_data"
-      },
-      {
-        "ticker": "DLR",
-        "latest_date": "2026-07-09",
-        "staleness_business_days": 2,
-        "reason": "stale_or_missing_market_data"
-      },
-      {
-        "ticker": "EQIX",
-        "latest_date": "2026-07-09",
-        "staleness_business_days": 2,
-        "reason": "stale_or_missing_market_data"
-      },
-      {
         "ticker": "ESTC",
         "latest_date": "2026-07-09",
         "staleness_business_days": 2,
@@ -124,31 +106,49 @@
         "reason": "stale_or_missing_market_data"
       },
       {
-        "ticker": "INTC",
-        "latest_date": "2026-07-09",
-        "staleness_business_days": 2,
-        "reason": "stale_or_missing_market_data"
-      },
-      {
         "ticker": "IYW",
         "latest_date": "2026-07-09",
         "staleness_business_days": 2,
         "reason": "stale_or_missing_market_data"
       },
       {
-        "ticker": "JPM",
+        "ticker": "MRVL",
         "latest_date": "2026-07-09",
         "staleness_business_days": 2,
         "reason": "stale_or_missing_market_data"
       },
       {
-        "ticker": "LLY",
+        "ticker": "MU",
         "latest_date": "2026-07-09",
         "staleness_business_days": 2,
         "reason": "stale_or_missing_market_data"
       },
       {
-        "ticker": "MCHP",
+        "ticker": "NET",
+        "latest_date": "2026-07-09",
+        "staleness_business_days": 2,
+        "reason": "stale_or_missing_market_data"
+      },
+      {
+        "ticker": "NRG",
+        "latest_date": "2026-07-09",
+        "staleness_business_days": 2,
+        "reason": "stale_or_missing_market_data"
+      },
+      {
+        "ticker": "OKTA",
+        "latest_date": "2026-07-09",
+        "staleness_business_days": 2,
+        "reason": "stale_or_missing_market_data"
+      },
+      {
+        "ticker": "PWR",
+        "latest_date": "2026-07-09",
+        "staleness_business_days": 2,
+        "reason": "stale_or_missing_market_data"
+      },
+      {
+        "ticker": "RBLX",
         "latest_date": "2026-07-09",
         "staleness_business_days": 2,
         "reason": "stale_or_missing_market_data"
@@ -156,7 +156,7 @@
     ],
     "loaded_ticker_count": 94,
     "configured_ticker_count": 94,
-    "fresh_request_count": 47,
+    "fresh_request_count": 12,
     "errors_count": 0
   },
   "portfolio_scope": {
@@ -201,6 +201,34 @@
   "risks": {
     "model_portfolio_high": [],
     "watchlist_high_advisory": [
+      {
+        "ticker": "ORCL",
+        "severity_0_100": 100,
+        "latest_date": "2026-07-13",
+        "latest_price": 131.54,
+        "data_fresh": true,
+        "staleness_business_days": 0,
+        "decision_eligible": true,
+        "data_exclusion_reason": null,
+        "reasons": [
+          "failed_rebound_risk active",
+          "5d pullback not reclaimed",
+          "below MA20",
+          "below MA50",
+          "below MA200",
+          "drawdown from 52w high <= -12%"
+        ],
+        "failed_rebound_samples_20d": 157,
+        "failed_rebound_valid_20d": true,
+        "failed_rebound_avg_return_pct": 1.52,
+        "failed_rebound_median_return_pct": 1.45,
+        "failed_rebound_worst_mae_pct": -33.92,
+        "ret_5d_pct": -8.5,
+        "ret_20d_pct": -28.14,
+        "drawdown_from_52w_high_pct": -59.39,
+        "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+        "risk_scope": "watchlist_advisory"
+      },
       {
         "ticker": "APP",
         "severity_0_100": 100,
@@ -258,38 +286,10 @@
         "risk_scope": "watchlist_advisory"
       },
       {
-        "ticker": "ORCL",
-        "severity_0_100": 100,
-        "latest_date": "2026-07-13",
-        "latest_price": 131.54,
-        "data_fresh": true,
-        "staleness_business_days": 0,
-        "decision_eligible": true,
-        "data_exclusion_reason": null,
-        "reasons": [
-          "failed_rebound_risk active",
-          "5d pullback not reclaimed",
-          "below MA20",
-          "below MA50",
-          "below MA200",
-          "drawdown from 52w high <= -12%"
-        ],
-        "failed_rebound_samples_20d": 157,
-        "failed_rebound_valid_20d": true,
-        "failed_rebound_avg_return_pct": 1.52,
-        "failed_rebound_median_return_pct": 1.45,
-        "failed_rebound_worst_mae_pct": -33.92,
-        "ret_5d_pct": -8.5,
-        "ret_20d_pct": -28.14,
-        "drawdown_from_52w_high_pct": -59.39,
-        "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
-        "risk_scope": "watchlist_advisory"
-      },
-      {
-        "ticker": "ARM",
+        "ticker": "INTC",
         "severity_0_100": 95,
         "latest_date": "2026-07-13",
-        "latest_price": 298.99,
+        "latest_price": 103.12,
         "data_fresh": true,
         "staleness_business_days": 0,
         "decision_eligible": true,
@@ -301,14 +301,14 @@
           "below MA50",
           "drawdown from 52w high <= -12%"
         ],
-        "failed_rebound_samples_20d": 19,
-        "failed_rebound_valid_20d": false,
-        "failed_rebound_avg_return_pct": 5.1,
-        "failed_rebound_median_return_pct": 4.32,
-        "failed_rebound_worst_mae_pct": -38.95,
-        "ret_5d_pct": -7.22,
-        "ret_20d_pct": -12.63,
-        "drawdown_from_52w_high_pct": -31.96,
+        "failed_rebound_samples_20d": 164,
+        "failed_rebound_valid_20d": true,
+        "failed_rebound_avg_return_pct": 1.24,
+        "failed_rebound_median_return_pct": 1.57,
+        "failed_rebound_worst_mae_pct": -40.18,
+        "ret_5d_pct": -15.61,
+        "ret_20d_pct": -11.83,
+        "drawdown_from_52w_high_pct": -26.83,
         "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
         "risk_scope": "watchlist_advisory"
       },
@@ -340,10 +340,37 @@
         "risk_scope": "watchlist_advisory"
       },
       {
-        "ticker": "TSLA",
+        "ticker": "ARM",
+        "severity_0_100": 95,
+        "latest_date": "2026-07-13",
+        "latest_price": 298.99,
+        "data_fresh": true,
+        "staleness_business_days": 0,
+        "decision_eligible": true,
+        "data_exclusion_reason": null,
+        "reasons": [
+          "failed_rebound_risk active",
+          "5d pullback not reclaimed",
+          "below MA20",
+          "below MA50",
+          "drawdown from 52w high <= -12%"
+        ],
+        "failed_rebound_samples_20d": 19,
+        "failed_rebound_valid_20d": false,
+        "failed_rebound_avg_return_pct": 5.1,
+        "failed_rebound_median_return_pct": 4.32,
+        "failed_rebound_worst_mae_pct": -38.95,
+        "ret_5d_pct": -7.22,
+        "ret_20d_pct": -12.63,
+        "drawdown_from_52w_high_pct": -31.96,
+        "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
+        "risk_scope": "watchlist_advisory"
+      },
+      {
+        "ticker": "MSTR",
         "severity_0_100": 80,
         "latest_date": "2026-07-13",
-        "latest_price": 394.76,
+        "latest_price": 92.1,
         "data_fresh": true,
         "staleness_business_days": 0,
         "decision_eligible": true,
@@ -355,14 +382,14 @@
           "below MA200",
           "drawdown from 52w high <= -12%"
         ],
-        "failed_rebound_samples_20d": 123,
+        "failed_rebound_samples_20d": 164,
         "failed_rebound_valid_20d": true,
-        "failed_rebound_avg_return_pct": 1.24,
-        "failed_rebound_median_return_pct": 0.35,
-        "failed_rebound_worst_mae_pct": -47.53,
-        "ret_5d_pct": -5.96,
-        "ret_20d_pct": -1.1,
-        "drawdown_from_52w_high_pct": -19.42,
+        "failed_rebound_avg_return_pct": 1.06,
+        "failed_rebound_median_return_pct": 0.71,
+        "failed_rebound_worst_mae_pct": -52.25,
+        "ret_5d_pct": -8.6,
+        "ret_20d_pct": -23.35,
+        "drawdown_from_52w_high_pct": -79.8,
         "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
         "risk_scope": "watchlist_advisory"
       },
@@ -443,32 +470,6 @@
         "drawdown_from_52w_high_pct": -13.24,
         "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
         "risk_scope": "watchlist_advisory"
-      },
-      {
-        "ticker": "TSM",
-        "severity_0_100": 80,
-        "latest_date": "2026-07-13",
-        "latest_price": 421.58,
-        "data_fresh": true,
-        "staleness_business_days": 0,
-        "decision_eligible": true,
-        "data_exclusion_reason": null,
-        "reasons": [
-          "failed_rebound_risk active",
-          "5d pullback not reclaimed",
-          "below MA20",
-          "below MA50"
-        ],
-        "failed_rebound_samples_20d": 161,
-        "failed_rebound_valid_20d": true,
-        "failed_rebound_avg_return_pct": 2.2,
-        "failed_rebound_median_return_pct": 1.7,
-        "failed_rebound_worst_mae_pct": -26.42,
-        "ret_5d_pct": -6.69,
-        "ret_20d_pct": 0.12,
-        "drawdown_from_52w_high_pct": -11.72,
-        "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
-        "risk_scope": "watchlist_advisory"
       }
     ],
     "stale_excluded": [
@@ -500,24 +501,6 @@
         "risk_scope": "watchlist_advisory"
       },
       {
-        "ticker": "INTC",
-        "latest_date": "2026-07-09",
-        "staleness_business_days": 2,
-        "data_fresh": false,
-        "decision_eligible": false,
-        "data_exclusion_reason": "stale_or_missing_market_data",
-        "risk_scope": "watchlist_advisory"
-      },
-      {
-        "ticker": "MSTR",
-        "latest_date": "2026-07-09",
-        "staleness_business_days": 2,
-        "data_fresh": false,
-        "decision_eligible": false,
-        "data_exclusion_reason": "stale_or_missing_market_data",
-        "risk_scope": "watchlist_advisory"
-      },
-      {
         "ticker": "RKLB",
         "latest_date": "2026-07-10",
         "staleness_business_days": 1,
@@ -530,24 +513,6 @@
         "ticker": "COIN",
         "latest_date": "2026-07-07",
         "staleness_business_days": 4,
-        "data_fresh": false,
-        "decision_eligible": false,
-        "data_exclusion_reason": "stale_or_missing_market_data",
-        "risk_scope": "watchlist_advisory"
-      },
-      {
-        "ticker": "MCHP",
-        "latest_date": "2026-07-09",
-        "staleness_business_days": 2,
-        "data_fresh": false,
-        "decision_eligible": false,
-        "data_exclusion_reason": "stale_or_missing_market_data",
-        "risk_scope": "watchlist_advisory"
-      },
-      {
-        "ticker": "MPWR",
-        "latest_date": "2026-07-09",
-        "staleness_business_days": 2,
         "data_fresh": false,
         "decision_eligible": false,
         "data_exclusion_reason": "stale_or_missing_market_data",
@@ -573,15 +538,6 @@
       },
       {
         "ticker": "ESTC",
-        "latest_date": "2026-07-09",
-        "staleness_business_days": 2,
-        "data_fresh": false,
-        "decision_eligible": false,
-        "data_exclusion_reason": "stale_or_missing_market_data",
-        "risk_scope": "watchlist_advisory"
-      },
-      {
-        "ticker": "PATH",
         "latest_date": "2026-07-09",
         "staleness_business_days": 2,
         "data_fresh": false,
@@ -645,6 +601,51 @@
       },
       {
         "ticker": "AMAT",
+        "latest_date": "2026-07-09",
+        "staleness_business_days": 2,
+        "data_fresh": false,
+        "decision_eligible": false,
+        "data_exclusion_reason": "stale_or_missing_market_data",
+        "risk_scope": "watchlist_advisory"
+      },
+      {
+        "ticker": "MRVL",
+        "latest_date": "2026-07-09",
+        "staleness_business_days": 2,
+        "data_fresh": false,
+        "decision_eligible": false,
+        "data_exclusion_reason": "stale_or_missing_market_data",
+        "risk_scope": "watchlist_advisory"
+      },
+      {
+        "ticker": "MU",
+        "latest_date": "2026-07-09",
+        "staleness_business_days": 2,
+        "data_fresh": false,
+        "decision_eligible": false,
+        "data_exclusion_reason": "stale_or_missing_market_data",
+        "risk_scope": "watchlist_advisory"
+      },
+      {
+        "ticker": "GRID",
+        "latest_date": "2026-07-10",
+        "staleness_business_days": 1,
+        "data_fresh": false,
+        "decision_eligible": false,
+        "data_exclusion_reason": "stale_or_missing_market_data",
+        "risk_scope": "watchlist_advisory"
+      },
+      {
+        "ticker": "ARKK",
+        "latest_date": "2026-07-07",
+        "staleness_business_days": 4,
+        "data_fresh": false,
+        "decision_eligible": false,
+        "data_exclusion_reason": "stale_or_missing_market_data",
+        "risk_scope": "watchlist_advisory"
+      },
+      {
+        "ticker": "GTLB",
         "latest_date": "2026-07-09",
         "staleness_business_days": 2,
         "data_fresh": false,
