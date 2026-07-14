@@ -19,8 +19,11 @@ from scripts.market_data_contract import (
     PRICE_FREQUENCY,
 )
 from scripts.prospective_universe_contract import (
+    AMENDMENT_POLICY,
     PROSPECTIVE_SURVIVORSHIP_BIAS_STATUS,
     PROSPECTIVE_UNIVERSE_STATUS,
+    SELECTION_BASIS,
+    TICKER_SOURCE,
     ProspectiveUniverseContractError,
     load_and_validate_prospective_universe_contract,
 )
@@ -128,9 +131,9 @@ def prospective_universe_contract(tickers: list[str]) -> dict:
         "status": "FROZEN",
         "frozen_on_date": "2026-07-12",
         "effective_after_market_date": "2026-07-10",
-        "selection_basis": "TEST_PRECOMMITTED_UNIVERSE",
-        "ticker_source": "test fixture",
-        "amendment_policy": "Universe changes start a new validation generation.",
+        "selection_basis": SELECTION_BASIS,
+        "ticker_source": TICKER_SOURCE,
+        "amendment_policy": AMENDMENT_POLICY,
         "strategy_fingerprint": STRATEGY_FINGERPRINT,
         "split_manifest_fingerprint": split_manifest_fingerprint(manifest),
         "ticker_count": len(tickers),
@@ -233,6 +236,24 @@ class ValidationSplitTests(unittest.TestCase):
                     split_manifest=manifest,
                     expected_tickers=["AAA", "BBB", "CCC"],
                 )
+
+    def test_prospective_universe_policy_drift_fails(self) -> None:
+        manifest = load_strict_json(SPLIT_PATH)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "prospective_universe.json"
+            for field in ("selection_basis", "ticker_source", "amendment_policy"):
+                contract = prospective_universe_contract(["AAA", "BBB", "CCC"])
+                contract[field] = f"{contract[field]} changed"
+                write_json(path, contract)
+                with self.subTest(field=field), self.assertRaisesRegex(
+                    ProspectiveUniverseContractError,
+                    rf"{field} drifted",
+                ):
+                    load_and_validate_prospective_universe_contract(
+                        path,
+                        split_manifest=manifest,
+                        expected_tickers=["AAA", "BBB", "CCC"],
+                    )
 
 
 class ForwardLedgerTests(unittest.TestCase):

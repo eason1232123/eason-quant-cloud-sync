@@ -24,6 +24,13 @@ PROSPECTIVE_SURVIVORSHIP_BIAS_STATUS = (
 HISTORICAL_SURVIVORSHIP_BIAS_STATUS = (
     "KNOWN_UNCONTROLLED_RETROSPECTIVE_RESEARCH_UNIVERSE"
 )
+SELECTION_BASIS = "PRECOMMITTED_CONFIGURED_RESEARCH_UNIVERSE"
+TICKER_SOURCE = "config.py:TICKERS"
+AMENDMENT_POLICY = (
+    "Any ticker addition, removal, rename, or selection-policy change starts a new "
+    "validation generation; existing prospective cohorts must not be combined with "
+    "the amended universe."
+)
 TICKER_PATTERN = re.compile(r"^[A-Z0-9][A-Z0-9.-]{0,19}$")
 UNIVERSE_CONTRACT_FIELDS = {
     "schema_version",
@@ -132,9 +139,16 @@ def validate_prospective_universe_contract(
             "prospective universe freeze date does not match the validation split"
         )
 
-    for field in ("selection_basis", "ticker_source", "amendment_policy"):
-        if not isinstance(contract.get(field), str) or not contract[field].strip():
-            raise ProspectiveUniverseContractError(f"{field} must be non-empty")
+    expected_policy_fields = {
+        "selection_basis": SELECTION_BASIS,
+        "ticker_source": TICKER_SOURCE,
+        "amendment_policy": AMENDMENT_POLICY,
+    }
+    for field, expected in expected_policy_fields.items():
+        if contract.get(field) != expected:
+            raise ProspectiveUniverseContractError(
+                f"prospective universe {field} drifted"
+            )
     if contract.get("strategy_fingerprint") != STRATEGY_FINGERPRINT:
         raise ProspectiveUniverseContractError(
             "prospective universe strategy fingerprint drifted"
