@@ -21,8 +21,8 @@ def _human_ready_release(*, promotion_evidence_ready: bool) -> dict[str, Any]:
     counts["public_signal_primary_horizon_outcomes"] = thresholds[
         "public_signal_primary_horizon_outcomes"
     ]
-    counts["sanitized_live_review_matured_outcomes"] = thresholds[
-        "sanitized_live_review_matured_outcomes"
+    counts["shadow_review_matured_outcomes"] = thresholds[
+        "shadow_review_matured_outcomes"
     ]
     counts["sanitized_live_review_predictions"] = thresholds[
         "ibkr_bound_sanitized_live_reviews"
@@ -33,10 +33,10 @@ def _human_ready_release(*, promotion_evidence_ready: bool) -> dict[str, Any]:
     release["release_gates"].update(
         {
             "model_artifacts_valid": True,
-            "live_review_forward_artifacts_valid": True,
+            "shadow_review_forward_artifacts_valid": True,
             "public_signal_minimum_sample_reached": True,
             "model_governance_promotion_sample_reached": promotion_evidence_ready,
-            "live_review_minimum_sample_reached": True,
+            "shadow_review_minimum_sample_reached": True,
             "ibkr_to_chatgpt_contract_evidenced": True,
         }
     )

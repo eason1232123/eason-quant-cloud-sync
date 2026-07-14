@@ -34,6 +34,7 @@ FILES = {
     "vectorbt_validation": OUT / "vectorbt_validation.json",
     "vectorbt_report": OUT / "vectorbt_report.json",
     "market_report": OUT / "market_report.json",
+    "holding_review_status": OUT / "holding_review_status.json",
 }
 
 
@@ -79,6 +80,21 @@ def get_signal_action(signal: dict[str, Any]) -> str:
     # build_decision_report.py writes final_action.
     # legacy build_eason_signal.py wrote today_action.
     return str(signal.get("final_action") or signal.get("today_action") or "UNKNOWN")
+
+
+def holding_review_for_current_decision(
+    holding_review: dict[str, Any],
+    decision_packet: dict[str, Any],
+) -> dict[str, Any]:
+    review = dict(holding_review) if isinstance(holding_review, dict) else {}
+    review_market_date = review.get("observation_market_date")
+    quant_market_date = decision_packet.get("market_data", {}).get("data_timestamp")
+    current = bool(review_market_date and review_market_date == quant_market_date)
+    review["current_for_quant_market_date"] = current
+    review["usable_for_current_holding_decision"] = bool(
+        current and review.get("status") in {"NO_OPEN_HOLDINGS", "HOLDING_REVIEW_COMPLETE"}
+    )
+    return review
 
 
 def compact_portfolio(portfolio: dict[str, Any]) -> dict[str, Any]:
@@ -431,7 +447,7 @@ def compact_active_signals(vbt_report: dict[str, Any], limit: int = 30) -> dict[
 def finalize_decision_packet(packet: dict[str, Any], gate: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(packet, dict) or not packet.get("schema_version"):
         return {
-            "schema_version": "decision-packet-v5.0",
+            "schema_version": "decision-packet-v5.1",
             "available": False,
             "reason": "decision packet was not produced by build_decision_report.py",
         }
@@ -465,6 +481,10 @@ def build_chatgpt_snapshot(
     regime = loaded.get("market_regime_report", {})
     overfit = loaded.get("overfitting_check", {})
     trade = loaded.get("trade_review", {})
+    holding_review = holding_review_for_current_decision(
+        loaded.get("holding_review_status", {}),
+        decision_packet,
+    )
 
     return {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
@@ -474,6 +494,7 @@ def build_chatgpt_snapshot(
             "docs/decision_packet.json",
             "docs/chatgpt_snapshot.json",
             "docs/model_governance.json",
+            "docs/holding_review_status.json",
             "docs/eason_master_status.json",
             "docs/action_board.json",
             "docs/market_report.json",
@@ -483,6 +504,7 @@ def build_chatgpt_snapshot(
         "github_data_quality": score_github_data_quality(market_report, vectorbt_report, decision_packet),
         "final_gate": gate,
         "signal_summary": sig_summary,
+        "holding_review": holding_review,
         "market_report_status": market_report_status(market_report),
         "vectorbt_evidence_summary": {
             "available": vectorbt_report.get("available", False),
@@ -572,10 +594,18 @@ def main() -> None:
     gate = final_gate(signal, overfit, trade, vectorbt_validation, vectorbt_report)
     sig_summary = signal_summary(signal)
     decision_packet = finalize_decision_packet(decision_packet_input, gate)
+    holding_review = holding_review_for_current_decision(
+        loaded.get("holding_review_status", {}),
+        decision_packet,
+    )
+    sig_summary["shadow_research_review"] = decision_packet.get("candidates", {}).get(
+        "shadow"
+    )
+    sig_summary["holding_review"] = holding_review
 
     master = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "eason-master-action-board-v6.0-model-governance-t2",
+        "version": "eason-master-action-board-v6.2-holding-review",
         "purpose": "One evidence file for ChatGPT to review the decision contract, prospective model governance, quant validation, portfolio backtest, regime behavior, and actual trade review before live-market judgment.",
         "roles": {
             "github": "data, backtest, vectorbt validation/evidence, stability, risk, and trade-review evidence layer",
@@ -593,6 +623,7 @@ def main() -> None:
         "walk_forward_report": compact_walk_forward(walk),
         "market_regime_report": regime,
         "model_governance": model_governance,
+        "holding_review": holding_review,
         "overfitting_check": overfit,
         "trade_review": trade,
         "actual_vs_backtest": actual,

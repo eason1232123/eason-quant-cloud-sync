@@ -31,7 +31,7 @@
     "human_confirmation_required"
   ],
   "properties": {
-    "schema_version": {"const": "v6-operating-status-v2"},
+    "schema_version": {"const": "v6-operating-status-v3"},
     "generated_at_utc": {"type": "string", "format": "date-time"},
     "operating_mode": {
       "enum": ["UNAVAILABLE", "READ_ONLY_SHADOW", "HUMAN_PILOT_REVIEW_READY"]
@@ -102,18 +102,18 @@
       "additionalProperties": false,
       "required": [
         "model_artifacts_valid",
-        "live_review_forward_artifacts_valid",
+        "shadow_review_forward_artifacts_valid",
         "public_signal_minimum_sample_reached",
         "model_governance_promotion_sample_reached",
-        "live_review_minimum_sample_reached",
+        "shadow_review_minimum_sample_reached",
         "ibkr_to_chatgpt_contract_evidenced"
       ],
       "properties": {
         "model_artifacts_valid": {"type": "boolean"},
-        "live_review_forward_artifacts_valid": {"type": "boolean"},
+        "shadow_review_forward_artifacts_valid": {"type": "boolean"},
         "public_signal_minimum_sample_reached": {"type": "boolean"},
         "model_governance_promotion_sample_reached": {"type": "boolean"},
-        "live_review_minimum_sample_reached": {"type": "boolean"},
+        "shadow_review_minimum_sample_reached": {"type": "boolean"},
         "ibkr_to_chatgpt_contract_evidenced": {"type": "boolean"}
       }
     },
@@ -157,10 +157,10 @@
     "releaseGateName": {
       "enum": [
         "model_artifacts_valid",
-        "live_review_forward_artifacts_valid",
+        "shadow_review_forward_artifacts_valid",
         "public_signal_minimum_sample_reached",
         "model_governance_promotion_sample_reached",
-        "live_review_minimum_sample_reached",
+        "shadow_review_minimum_sample_reached",
         "ibkr_to_chatgpt_contract_evidenced"
       ]
     },
@@ -188,13 +188,13 @@
       "required": [
         "public_signal_primary_horizon_outcomes",
         "governance_paired_samples_per_challenger",
-        "sanitized_live_review_matured_outcomes",
+        "shadow_review_matured_outcomes",
         "ibkr_bound_sanitized_live_reviews"
       ],
       "properties": {
         "public_signal_primary_horizon_outcomes": {"type": "integer", "minimum": 0},
         "governance_paired_samples_per_challenger": {"type": "integer", "minimum": 0},
-        "sanitized_live_review_matured_outcomes": {"type": "integer", "minimum": 0},
+        "shadow_review_matured_outcomes": {"type": "integer", "minimum": 0},
         "ibkr_bound_sanitized_live_reviews": {"type": "integer", "minimum": 0}
       }
     },
@@ -205,13 +205,15 @@
         "public_signal_primary_horizon_outcomes",
         "minimum_governance_paired_samples",
         "sanitized_live_review_predictions",
-        "sanitized_live_review_matured_outcomes"
+        "shadow_review_predictions",
+        "shadow_review_matured_outcomes"
       ],
       "properties": {
         "public_signal_primary_horizon_outcomes": {"type": "integer", "minimum": 0},
         "minimum_governance_paired_samples": {"type": "integer", "minimum": 0},
         "sanitized_live_review_predictions": {"type": "integer", "minimum": 0},
-        "sanitized_live_review_matured_outcomes": {"type": "integer", "minimum": 0}
+        "shadow_review_predictions": {"type": "integer", "minimum": 0},
+        "shadow_review_matured_outcomes": {"type": "integer", "minimum": 0}
       }
     },
     "fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"}

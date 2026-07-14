@@ -181,9 +181,11 @@ def _held_symbols(context: dict[str, Any]) -> list[str]:
 
 
 def _candidate_symbols(decision_packet: dict[str, Any]) -> list[str]:
-    rows = decision_packet.get("candidates", {}).get("top_actionable", [])
+    candidates = decision_packet.get("candidates", {})
+    execution = candidates.get("execution", {}) if isinstance(candidates, dict) else {}
+    rows = execution.get("top", []) if isinstance(execution, dict) else []
     if not isinstance(rows, list):
-        raise LiveReviewError("decision packet top_actionable candidates must be a list")
+        raise LiveReviewError("decision packet execution candidates must be a list")
     symbols: set[str] = set()
     for row in rows:
         symbol = row.get("ticker") if isinstance(row, dict) else None

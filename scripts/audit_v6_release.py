@@ -24,6 +24,13 @@ from scripts.build_live_review_forward_ledger import (  # noqa: E402
     load_live_review_ledger,
     validate_live_review_forward_artifacts,
 )
+from scripts.build_shadow_review_forward_ledger import (  # noqa: E402
+    DEFAULT_LEDGER as DEFAULT_SHADOW_REVIEW_LEDGER,
+    DEFAULT_SUMMARY as DEFAULT_SHADOW_REVIEW_SUMMARY,
+    ShadowReviewForwardLedgerError,
+    _load_ledger as load_shadow_review_ledger,
+    validate_shadow_review_forward_artifacts,
+)
 from scripts.model_governance import load_governance_config  # noqa: E402
 from scripts.strategy_contract import (  # noqa: E402
     MIN_EFFECTIVE_SAMPLE,
@@ -35,20 +42,20 @@ from scripts.validate_validation_split import assert_finite_json  # noqa: E402
 
 DEFAULT_DOCS = ROOT / "docs"
 DEFAULT_OUTPUT = DEFAULT_DOCS / "v6_release_status.json"
-SCHEMA_VERSION = "v6-release-readiness-status-v2"
+SCHEMA_VERSION = "v6-release-readiness-status-v3"
 RELEASE_GATE_ORDER = (
     "model_artifacts_valid",
-    "live_review_forward_artifacts_valid",
+    "shadow_review_forward_artifacts_valid",
     "public_signal_minimum_sample_reached",
     "model_governance_promotion_sample_reached",
-    "live_review_minimum_sample_reached",
+    "shadow_review_minimum_sample_reached",
     "ibkr_to_chatgpt_contract_evidenced",
 )
 HUMAN_PILOT_REQUIRED_GATES = (
     "model_artifacts_valid",
-    "live_review_forward_artifacts_valid",
+    "shadow_review_forward_artifacts_valid",
     "public_signal_minimum_sample_reached",
-    "live_review_minimum_sample_reached",
+    "shadow_review_minimum_sample_reached",
     "ibkr_to_chatgpt_contract_evidenced",
 )
 CHALLENGER_MODEL_PROMOTION_EVIDENCE_REQUIRED_GATES = (
@@ -59,12 +66,13 @@ EVIDENCE_COUNT_FIELDS = (
     "public_signal_primary_horizon_outcomes",
     "minimum_governance_paired_samples",
     "sanitized_live_review_predictions",
-    "sanitized_live_review_matured_outcomes",
+    "shadow_review_predictions",
+    "shadow_review_matured_outcomes",
 )
 EVIDENCE_THRESHOLD_FIELDS = (
     "public_signal_primary_horizon_outcomes",
     "governance_paired_samples_per_challenger",
-    "sanitized_live_review_matured_outcomes",
+    "shadow_review_matured_outcomes",
     "ibkr_bound_sanitized_live_reviews",
 )
 COUNT_GATE_REQUIREMENTS = {
@@ -76,9 +84,9 @@ COUNT_GATE_REQUIREMENTS = {
         "minimum_governance_paired_samples",
         "governance_paired_samples_per_challenger",
     ),
-    "live_review_minimum_sample_reached": (
-        "sanitized_live_review_matured_outcomes",
-        "sanitized_live_review_matured_outcomes",
+    "shadow_review_minimum_sample_reached": (
+        "shadow_review_matured_outcomes",
+        "shadow_review_matured_outcomes",
     ),
     "ibkr_to_chatgpt_contract_evidenced": (
         "sanitized_live_review_predictions",
@@ -87,15 +95,15 @@ COUNT_GATE_REQUIREMENTS = {
 }
 BLOCKER_BY_GATE = {
     "model_artifacts_valid": "MODEL_ARTIFACT_VALIDATION_FAILED",
-    "live_review_forward_artifacts_valid": "LIVE_REVIEW_ARTIFACT_VALIDATION_FAILED",
+    "shadow_review_forward_artifacts_valid": "SHADOW_REVIEW_ARTIFACT_VALIDATION_FAILED",
     "public_signal_minimum_sample_reached": (
         "PUBLIC_SIGNAL_PRIMARY_OUTCOMES_BELOW_MINIMUM"
     ),
     "model_governance_promotion_sample_reached": (
         "MODEL_GOVERNANCE_PAIRED_SAMPLES_BELOW_PROMOTION_THRESHOLD"
     ),
-    "live_review_minimum_sample_reached": (
-        "LIVE_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM"
+    "shadow_review_minimum_sample_reached": (
+        "SHADOW_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM"
     ),
     "ibkr_to_chatgpt_contract_evidenced": (
         "IBKR_TO_CHATGPT_RUNTIME_NOT_YET_EVIDENCED"
@@ -106,6 +114,7 @@ KNOWN_LIMITATIONS = (
     "PROSPECTIVE_FROZEN_UNIVERSE_DOES_NOT_SUPPORT_MARKET_WIDE_GENERALIZATION",
     "CONFIGURED_COSTS_ARE_NOT_OBSERVED_LIVE_EXECUTION_COSTS",
     "SANITIZED_RUNTIME_EVIDENCE_IS_NOT_AN_INDEPENDENT_BROKER_ATTESTATION",
+    "DAILY_SHADOW_REVIEW_WINDOWS_MAY_OVERLAP_AND_ARE_NOT_INDEPENDENT_SAMPLES",
     "BACKTEST_OR_PROSPECTIVE_RESULTS_DO_NOT_GUARANTEE_FUTURE_PERFORMANCE",
 )
 
@@ -137,7 +146,7 @@ def _canonical_evidence_thresholds() -> dict[str, int]:
     return {
         "public_signal_primary_horizon_outcomes": MIN_EFFECTIVE_SAMPLE,
         "governance_paired_samples_per_challenger": promotion_threshold,
-        "sanitized_live_review_matured_outcomes": MIN_EFFECTIVE_SAMPLE,
+        "shadow_review_matured_outcomes": MIN_EFFECTIVE_SAMPLE,
         "ibkr_bound_sanitized_live_reviews": 1,
     }
 
@@ -279,11 +288,15 @@ def audit_v6_release(
     signal_ledger_path: Path | None = None,
     live_review_ledger_path: Path | None = None,
     live_review_summary_path: Path | None = None,
+    shadow_review_ledger_path: Path | None = None,
+    shadow_review_summary_path: Path | None = None,
     output_path: Path | None = DEFAULT_OUTPUT,
 ) -> dict[str, Any]:
     signal_path = signal_ledger_path or docs / DEFAULT_SIGNAL_LEDGER.name
     live_path = live_review_ledger_path or docs / DEFAULT_LIVE_REVIEW_LEDGER.name
     live_summary_path = live_review_summary_path or docs / DEFAULT_LIVE_REVIEW_SUMMARY.name
+    shadow_path = shadow_review_ledger_path or docs / DEFAULT_SHADOW_REVIEW_LEDGER.name
+    shadow_summary_path = shadow_review_summary_path or docs / DEFAULT_SHADOW_REVIEW_SUMMARY.name
 
     model_validation = validate_model_artifacts(docs=docs)
     live_validation = validate_live_review_forward_artifacts(
@@ -291,8 +304,14 @@ def audit_v6_release(
         summary_path=live_summary_path,
         report_path=docs / "market_report.json",
     )
+    shadow_validation = validate_shadow_review_forward_artifacts(
+        ledger_path=shadow_path,
+        summary_path=shadow_summary_path,
+        report_path=docs / "market_report.json",
+    )
     signal_events = load_ledger(signal_path)
     live_events = load_live_review_ledger(live_path)
+    shadow_events = load_shadow_review_ledger(shadow_path)
     governance_report = load_public_json(docs / "model_governance.json", "model_governance")
     market_report = load_public_json(docs / "market_report.json", "market_report")
     decision_packet = load_public_json(docs / "decision_packet.json", "decision_packet")
@@ -312,22 +331,27 @@ def audit_v6_release(
     live_predictions = sum(
         event["event_type"] == "LIVE_REVIEW_PREDICTION" for event in live_events
     )
-    live_outcomes = sum(
-        event["event_type"] == "LIVE_REVIEW_OUTCOME" for event in live_events
+    shadow_predictions = sum(
+        event["event_type"] == "SHADOW_REVIEW_PREDICTION" for event in shadow_events
+    )
+    shadow_outcomes = sum(
+        event["event_type"] == "SHADOW_REVIEW_OUTCOME" for event in shadow_events
     )
 
     thresholds = _canonical_evidence_thresholds()
     gates = {
         "model_artifacts_valid": model_validation.get("status") == "VALID",
-        "live_review_forward_artifacts_valid": live_validation.get("status") == "VALID",
+        "shadow_review_forward_artifacts_valid": shadow_validation.get("status") == "VALID",
         "public_signal_minimum_sample_reached": primary_signal_outcomes
         >= thresholds["public_signal_primary_horizon_outcomes"],
         "model_governance_promotion_sample_reached": minimum_paired
         >= thresholds["governance_paired_samples_per_challenger"],
-        "live_review_minimum_sample_reached": live_outcomes
-        >= thresholds["sanitized_live_review_matured_outcomes"],
-        "ibkr_to_chatgpt_contract_evidenced": live_predictions
-        >= thresholds["ibkr_bound_sanitized_live_reviews"],
+        "shadow_review_minimum_sample_reached": shadow_outcomes
+        >= thresholds["shadow_review_matured_outcomes"],
+        "ibkr_to_chatgpt_contract_evidenced": (
+            live_validation.get("status") == "VALID"
+            and live_predictions >= thresholds["ibkr_bound_sanitized_live_reviews"]
+        ),
     }
     blockers = [
         BLOCKER_BY_GATE[name]
@@ -378,7 +402,8 @@ def audit_v6_release(
             "public_signal_primary_horizon_outcomes": primary_signal_outcomes,
             "minimum_governance_paired_samples": minimum_paired,
             "sanitized_live_review_predictions": live_predictions,
-            "sanitized_live_review_matured_outcomes": live_outcomes,
+            "shadow_review_predictions": shadow_predictions,
+            "shadow_review_matured_outcomes": shadow_outcomes,
         },
         "evidence_scope": {
             "public_signal_count": (
@@ -389,8 +414,9 @@ def audit_v6_release(
                 "paired, chronologically non-overlapping incumbent/challenger cohorts; "
                 "sample sufficiency alone is not a promotion approval"
             ),
-            "live_review_count": (
-                "sanitized outcomes with non-overlap enforced per public symbol"
+            "shadow_review_count": (
+                "every deterministically selected public shadow candidate is assessed and "
+                "matured; no real order or private holding is required"
             ),
             "ibkr_runtime_evidence": (
                 "a sanitized prediction is created only after the private read-only IBKR "
@@ -423,7 +449,13 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         payload = audit_v6_release(docs=args.docs, output_path=args.output)
-    except (AssertionError, LiveReviewForwardLedgerError, V6ReleaseAuditError, ValueError) as exc:
+    except (
+        AssertionError,
+        LiveReviewForwardLedgerError,
+        ShadowReviewForwardLedgerError,
+        V6ReleaseAuditError,
+        ValueError,
+    ) as exc:
         print(f"v6 release audit FAILED: {exc}", file=sys.stderr)
         return 1
     print(json.dumps(payload, ensure_ascii=False, allow_nan=False, sort_keys=True))

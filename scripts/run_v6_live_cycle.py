@@ -37,6 +37,13 @@ from scripts.ibkr_readonly import (  # noqa: E402
     capture_private_snapshot,
     resolve_runtime_endpoint,
 )
+from scripts.holding_review_contract import (  # noqa: E402
+    DEFAULT_PUBLIC_STATUS as DEFAULT_HOLDING_REVIEW_STATUS,
+    DEFAULT_REQUEST as DEFAULT_HOLDING_REVIEW_REQUEST,
+    DEFAULT_RESPONSE as DEFAULT_HOLDING_REVIEW_RESPONSE,
+    build_request_from_files as build_holding_review_request_from_files,
+    record_review_from_files as record_holding_review_from_files,
+)
 from scripts.live_review_contract import (  # noqa: E402
     DEFAULT_REQUEST,
     DEFAULT_RESPONSE,
@@ -141,10 +148,20 @@ def prepare_live_cycle(
         max_account_age_seconds=account_age,
         max_context_age_seconds=context_age,
     )
+    holding_request = build_holding_review_request_from_files(
+        context_path=DEFAULT_PRIVATE_CONTEXT,
+        output_path=DEFAULT_HOLDING_REVIEW_REQUEST,
+        max_account_age_seconds=account_age,
+        max_context_age_seconds=context_age,
+    )
     if request.get("automatic_order_allowed") is not False:
         raise V6LiveCycleError("prepared live-review request permits automatic orders")
     if request.get("human_confirmation_required") is not True:
         raise V6LiveCycleError("prepared live-review request omits human confirmation")
+    if holding_request.get("automatic_order_allowed") is not False:
+        raise V6LiveCycleError("prepared holding-review request permits automatic orders")
+    if holding_request.get("human_confirmation_required") is not True:
+        raise V6LiveCycleError("prepared holding-review request omits human confirmation")
     return {
         "status": "V6_LIVE_CYCLE_AWAITING_CHATGPT_RESPONSE",
         "model_artifacts_status": model_validation["status"],
@@ -156,9 +173,21 @@ def prepare_live_cycle(
             _relative(active_config.private_snapshot_path),
             _relative(DEFAULT_PRIVATE_CONTEXT),
             _relative(DEFAULT_REQUEST),
+            _relative(DEFAULT_HOLDING_REVIEW_REQUEST),
         ],
         "expected_private_response": _relative(DEFAULT_RESPONSE),
+        "expected_private_holding_response": _relative(
+            DEFAULT_HOLDING_REVIEW_RESPONSE
+        ),
+        "holding_review_scope": "ALL_CURRENT_PRIVATE_IBKR_HOLDINGS",
+        "holding_review_symbol_count": holding_request["review_scope"][
+            "held_symbol_count"
+        ],
         "next_command": "python -m scripts.run_v6_live_cycle finalize",
+        "next_commands": [
+            "python -m scripts.run_v6_live_cycle finalize-holdings",
+            "python -m scripts.run_v6_live_cycle finalize",
+        ],
         "automatic_order_allowed": False,
         "human_confirmation_required": True,
     }
@@ -196,6 +225,22 @@ def finalize_live_cycle() -> dict[str, Any]:
     }
 
 
+def finalize_holding_review() -> dict[str, Any]:
+    status = record_holding_review_from_files()
+    latest = status.get("latest_review") or {}
+    return {
+        "status": status["status"],
+        "reviewed_holding_count": latest.get("reviewed_holding_count", 0),
+        "coverage_complete": latest.get("coverage_complete", True),
+        "public_artifact": _relative(DEFAULT_HOLDING_REVIEW_STATUS),
+        "quant_final_action": status["quant_boundary"]["quant_final_action"],
+        "quant_final_action_unchanged": True,
+        "buy_standard_modified": False,
+        "automatic_order_allowed": False,
+        "human_confirmation_required": True,
+    }
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
         description="Run the local read-only IBKR -> ChatGPT -> sanitized evidence cycle."
@@ -207,6 +252,7 @@ def main(argv: list[str] | None = None) -> int:
     prepare.add_argument("--max-account-age-seconds", type=float, default=300.0)
     prepare.add_argument("--max-context-age-seconds", type=float, default=300.0)
     subparsers.add_parser("finalize")
+    subparsers.add_parser("finalize-holdings")
     args = parser.parse_args(argv)
     try:
         if args.command == "probe":
@@ -219,8 +265,11 @@ def main(argv: list[str] | None = None) -> int:
                 max_context_age_seconds=args.max_context_age_seconds,
             )
             exit_code = 0
-        else:
+        elif args.command == "finalize":
             result = finalize_live_cycle()
+            exit_code = 0
+        else:
+            result = finalize_holding_review()
             exit_code = 0
     except (
         AssertionError,

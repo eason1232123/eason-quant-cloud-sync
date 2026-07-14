@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/eason-quant/holding_review_request.schema.json",
+  "title": "Private all-holdings review request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "request_id",
+    "generated_at_utc",
+    "expires_at_utc",
+    "privacy",
+    "required_input_files",
+    "source_context",
+    "review_scope",
+    "required_check_ids",
+    "validation_policy",
+    "automatic_order_allowed",
+    "human_confirmation_required",
+    "order_payload"
+  ],
+  "properties": {
+    "schema_version": {"const": "private-holding-review-request-v1"},
+    "status": {
+      "enum": ["AWAITING_HOLDING_REVIEW", "NO_OPEN_HOLDINGS_REVIEW_NOT_REQUIRED"]
+    },
+    "request_id": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "expires_at_utc": {"type": "string", "format": "date-time"},
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "git_publish_allowed",
+        "contains_private_position_symbols",
+        "contains_exact_account_values"
+      ],
+      "properties": {
+        "classification": {"const": "PRIVATE_LOCAL_ONLY"},
+        "git_publish_allowed": {"const": false},
+        "contains_private_position_symbols": {"type": "boolean"},
+        "contains_exact_account_values": {"const": false}
+      }
+    },
+    "required_input_files": {
+      "type": "array",
+      "minItems": 3,
+      "maxItems": 3,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    },
+    "source_context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "context_schema_version",
+        "context_generated_at_utc",
+        "context_sha256",
+        "ibkr",
+        "github"
+      ],
+      "properties": {
+        "context_schema_version": {"type": "string", "minLength": 1},
+        "context_generated_at_utc": {"type": "string", "format": "date-time"},
+        "context_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+        "ibkr": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "account_data_timezone",
+            "data_timestamp",
+            "status",
+            "portfolio_price_temporality"
+          ],
+          "properties": {
+            "source": {"type": "string", "minLength": 1},
+            "account_data_timezone": {"type": "string", "minLength": 1},
+            "data_timestamp": {"type": "string", "format": "date-time"},
+            "status": {"const": "CONNECTED_READ_ONLY_SNAPSHOT"},
+            "portfolio_price_temporality": {"type": "string", "minLength": 1}
+          }
+        },
+        "github": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "source",
+            "market_timezone",
+            "report_generated_at_utc",
+            "data_timestamp",
+            "price_frequency",
+            "price_adjustment_policy",
+            "decision_schema_version",
+            "model_governance_fingerprint"
+          ],
+          "properties": {
+            "source": {"type": "string", "minLength": 1},
+            "market_timezone": {"type": "string", "minLength": 1},
+            "report_generated_at_utc": {"type": "string", "format": "date-time"},
+            "data_timestamp": {"type": "string", "format": "date"},
+            "price_frequency": {"type": "string", "minLength": 1},
+            "price_adjustment_policy": {"type": "string", "minLength": 1},
+            "decision_schema_version": {"type": "string", "minLength": 1},
+            "model_governance_fingerprint": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          }
+        }
+      }
+    },
+    "review_scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layer_type",
+        "scope_type",
+        "selection_policy",
+        "held_symbol_count",
+        "held_symbols",
+        "required_assessment_for_every_held_symbol",
+        "allowed_actions",
+        "can_create_buy_candidate",
+        "affects_quant_final_action",
+        "quant_final_action_at_request"
+      ],
+      "properties": {
+        "layer_type": {"const": "HOLDING_REVIEW"},
+        "scope_type": {"const": "ALL_CURRENT_PRIVATE_IBKR_HOLDINGS"},
+        "selection_policy": {"const": "COMPLETE_UNRANKED_UNCAPPED_DISTINCT_SYMBOLS"},
+        "held_symbol_count": {"type": "integer", "minimum": 0},
+        "held_symbols": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^[A-Z0-9.-]+$"}
+        },
+        "required_assessment_for_every_held_symbol": {"const": true},
+        "allowed_actions": {
+          "const": ["HOLD", "REDUCE_REVIEW", "EXIT_REVIEW", "NO_ACTION"]
+        },
+        "can_create_buy_candidate": {"const": false},
+        "affects_quant_final_action": {"const": false},
+        "quant_final_action_at_request": {
+          "enum": [
+            "DATA_REVIEW_REQUIRED",
+            "NO_TRADE",
+            "RISK_REVIEW_REQUIRED",
+            "BUY_CANDIDATE_REVIEW_REQUIRED"
+          ]
+        }
+      }
+    },
+    "required_check_ids": {
+      "const": [
+        "market_data",
+        "technical_risk",
+        "fresh_news_events",
+        "earnings_fundamentals",
+        "actual_account_risk"
+      ]
+    },
+    "validation_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_account_snapshot_age_seconds",
+        "max_context_age_seconds",
+        "request_ttl_seconds",
+        "response_max_age_seconds",
+        "complete_coverage_required",
+        "incomplete_evidence_action"
+      ],
+      "properties": {
+        "max_account_snapshot_age_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "max_context_age_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "request_ttl_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "response_max_age_seconds": {"type": "number", "exclusiveMinimum": 0},
+        "complete_coverage_required": {"const": true},
+        "incomplete_evidence_action": {"const": "NO_ACTION"}
+      }
+    },
+    "automatic_order_allowed": {"const": false},
+    "human_confirmation_required": {"const": true},
+    "order_payload": {"type": "null"}
+  }
+}

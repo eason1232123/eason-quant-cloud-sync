@@ -129,7 +129,7 @@ def _public_inputs(
         "price_basis_by_ticker": {"QQQ": "adjusted"},
     }
     packet = {
-        "schema_version": "decision-packet-v5.0",
+        "schema_version": "decision-packet-v5.1",
         "market_data": {
             "source": SOURCE,
             "market_timezone": "America/New_York",
@@ -152,8 +152,10 @@ def _public_inputs(
             "automatic_order_allowed": False,
         },
         "candidates": {
-            "actionable_count": len(candidate_rows),
-            "top_actionable": candidate_rows,
+            "execution": {
+                "candidate_count": len(candidate_rows),
+                "top": candidate_rows,
+            },
         },
     }
     return packet, report

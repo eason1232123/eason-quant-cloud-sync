@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/eason-quant/holding_review_status.schema.json",
+  "title": "Public sanitized holding-review status",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "generated_at_utc",
+    "observation_market_date",
+    "privacy",
+    "scope",
+    "latest_review",
+    "quant_boundary",
+    "automatic_order_allowed",
+    "human_confirmation_required"
+  ],
+  "properties": {
+    "schema_version": {"const": "public-holding-review-status-v1"},
+    "status": {
+      "enum": [
+        "PRIVATE_IBKR_CONTEXT_REQUIRED",
+        "NO_OPEN_HOLDINGS",
+        "HOLDING_REVIEW_COMPLETE"
+      ]
+    },
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "observation_market_date": {"type": "string", "format": "date"},
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "contains_private_position_symbols",
+        "contains_exact_account_values",
+        "contains_account_identifiers"
+      ],
+      "properties": {
+        "contains_private_position_symbols": {"const": false},
+        "contains_exact_account_values": {"const": false},
+        "contains_account_identifiers": {"const": false}
+      }
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "layer_type",
+        "scope_type",
+        "selection_policy",
+        "allowed_actions",
+        "tradingagents_adapter_compatible"
+      ],
+      "properties": {
+        "layer_type": {"const": "HOLDING_REVIEW"},
+        "scope_type": {"const": "ALL_CURRENT_PRIVATE_IBKR_HOLDINGS"},
+        "selection_policy": {"const": "COMPLETE_UNRANKED_UNCAPPED_DISTINCT_SYMBOLS"},
+        "allowed_actions": {
+          "const": ["HOLD", "REDUCE_REVIEW", "EXIT_REVIEW", "NO_ACTION"]
+        },
+        "tradingagents_adapter_compatible": {"const": true}
+      }
+    },
+    "latest_review": {
+      "anyOf": [
+        {"type": "null"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "reviewed_at_utc",
+            "reviewed_holding_count",
+            "coverage_complete",
+            "action_counts",
+            "reviewer_fingerprint"
+          ],
+          "properties": {
+            "reviewed_at_utc": {"type": "string", "format": "date-time"},
+            "reviewed_holding_count": {"type": "integer", "minimum": 0},
+            "coverage_complete": {"const": true},
+            "action_counts": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["HOLD", "REDUCE_REVIEW", "EXIT_REVIEW", "NO_ACTION"],
+              "properties": {
+                "HOLD": {"type": "integer", "minimum": 0},
+                "REDUCE_REVIEW": {"type": "integer", "minimum": 0},
+                "EXIT_REVIEW": {"type": "integer", "minimum": 0},
+                "NO_ACTION": {"type": "integer", "minimum": 0}
+              }
+            },
+            "reviewer_fingerprint": {"type": "string", "pattern": "^[a-f0-9]{64}$"}
+          }
+        }
+      ]
+    },
+    "quant_boundary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "quant_final_action",
+        "quant_final_action_unchanged",
+        "buy_standard_modified",
+        "can_create_buy_candidate",
+        "affects_shadow_evidence_gate"
+      ],
+      "properties": {
+        "quant_final_action": {
+          "enum": [
+            "DATA_REVIEW_REQUIRED",
+            "NO_TRADE",
+            "RISK_REVIEW_REQUIRED",
+            "BUY_CANDIDATE_REVIEW_REQUIRED"
+          ]
+        },
+        "quant_final_action_unchanged": {"const": true},
+        "buy_standard_modified": {"const": false},
+        "can_create_buy_candidate": {"const": false},
+        "affects_shadow_evidence_gate": {"const": false}
+      }
+    },
+    "automatic_order_allowed": {"const": false},
+    "human_confirmation_required": {"const": true}
+  }
+}

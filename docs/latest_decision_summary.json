@@ -1,9 +1,9 @@
 {
-  "generated_at_utc": "2026-07-14T14:36:58.028897+00:00",
+  "generated_at_utc": "2026-07-14T16:13:29.933629+00:00",
   "summary_type": "decision",
   "source_file": "eason_signal.json",
   "decision_packet_file": "decision_packet.json",
-  "summary_file_version": "v5.0-holdings-aware-freshness-gate",
+  "summary_file_version": "v5.1-shadow-evidence-without-execution-upgrade",
   "final_action": "NO_TRADE",
   "reason": "No fresh active signal passed the sample, return, alpha, and MAE filters.",
   "buy_permission": "NO_QUANT_CANDIDATE",
@@ -20,6 +20,8 @@
     "metadata_status": "COMPLETE"
   },
   "actionable_buy_count": 0,
+  "shadow_candidate_count": 3,
+  "shadow_collection_status": "BEFORE_PROSPECTIVE_START",
   "risk_candidate_count": 73,
   "high_risk_count": 0,
   "model_portfolio_high_risk_count": 0,

@@ -34,10 +34,10 @@ from scripts.validate_validation_split import assert_finite_json  # noqa: E402
 
 DEFAULT_OUTPUT = DEFAULT_DOCS / "v6_operating_status.json"
 DEFAULT_SCHEMA = ROOT / "schemas" / "v6_operating_status.schema.json"
-SCHEMA_VERSION = "v6-operating-status-v2"
+SCHEMA_VERSION = "v6-operating-status-v3"
 SHADOW_REQUIRED_GATES = (
     "model_artifacts_valid",
-    "live_review_forward_artifacts_valid",
+    "shadow_review_forward_artifacts_valid",
     "ibkr_to_chatgpt_contract_evidenced",
 )
 FINAL_EXECUTION_LAYER = "IBKR_MANUAL_WITH_EXPLICIT_HUMAN_CONFIRMATION"
@@ -176,7 +176,7 @@ def validate_v6_operating_status(
     expected_capabilities = {
         "github_public_evidence_available": release_gates["model_artifacts_valid"],
         "chatgpt_live_review_available": (
-            release_gates["live_review_forward_artifacts_valid"]
+            release_gates["shadow_review_forward_artifacts_valid"]
             and release_gates["ibkr_to_chatgpt_contract_evidenced"]
         ),
         "ibkr_readonly_context_evidenced": release_gates[
@@ -284,7 +284,7 @@ def derive_v6_operating_status(
         "capabilities": {
             "github_public_evidence_available": release_gates["model_artifacts_valid"],
             "chatgpt_live_review_available": (
-                release_gates["live_review_forward_artifacts_valid"]
+                release_gates["shadow_review_forward_artifacts_valid"]
                 and release_gates["ibkr_to_chatgpt_contract_evidenced"]
             ),
             "ibkr_readonly_context_evidenced": release_gates[

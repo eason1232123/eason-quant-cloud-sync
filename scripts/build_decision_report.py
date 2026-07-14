@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -14,6 +14,10 @@ if str(ROOT) not in sys.path:
 
 from scripts.market_clock import reference_market_context, weekday_lag
 from scripts.market_data_contract import extract_market_data_metadata
+from scripts.shadow_evidence_policy import (
+    load_shadow_evidence_policy,
+    prospective_start_market_date,
+)
 from scripts.validate_decision_packet import validate_invariants, validate_schema
 
 OUT = Path("docs")
@@ -37,6 +41,8 @@ BUY_RULES = {
     "relative_strength_rebound",
     "momentum_leader",
 }
+
+SHADOW_POLICY = load_shadow_evidence_policy()
 
 LIVE_REVIEW_CHECKLIST = [
     "Read action_board.json, eason_signal.json, portfolio_backtest.json, and market_report.json freshness first.",
@@ -391,13 +397,104 @@ def build_buy_candidates(report: dict, freshness_by_ticker: dict[str, dict[str, 
     return sorted(
         candidates,
         key=lambda x: (
-            x["status"] == "QUANT_PASS_NEEDS_CHATGPT_REVIEW",
-            x.get("data_fresh", False),
-            x.get("evidence_score_0_100") or 0,
-            x.get("samples") or 0,
+            0 if x["status"] == "QUANT_PASS_NEEDS_CHATGPT_REVIEW" else 1,
+            0 if x.get("data_fresh", False) else 1,
+            -(x.get("evidence_score_0_100") or 0),
+            -(x.get("samples") or 0),
+            x["ticker"],
+            x["rule"],
         ),
-        reverse=True,
     )
+
+
+def select_shadow_candidates(
+    buy_candidates: list[dict[str, Any]],
+    *,
+    reference_market_date: str,
+    policy: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Freeze the deterministic public research cohort without changing execution eligibility."""
+    frozen_policy = policy or SHADOW_POLICY
+    maximum = frozen_policy["selection"]["maximum_candidates_per_market_date"]
+    start = prospective_start_market_date(frozen_policy)
+    observation = date.fromisoformat(reference_market_date)
+    rule_valid = [
+        row
+        for row in buy_candidates
+        if row.get("status")
+        in {
+            "QUANT_PASS_NEEDS_CHATGPT_REVIEW",
+            "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE",
+        }
+        and row.get("rule") in BUY_RULES
+        and row.get("data_fresh") is True
+        and row.get("decision_eligible") is True
+        and row.get("latest_date") == reference_market_date
+        and isinstance(row.get("latest_price"), (int, float))
+        and not isinstance(row.get("latest_price"), bool)
+        and float(row["latest_price"]) > 0
+        and isinstance(row.get("benchmark"), str)
+        and bool(row["benchmark"])
+        and isinstance(row.get("evidence_score_0_100"), (int, float))
+        and not isinstance(row.get("evidence_score_0_100"), bool)
+    ]
+    selected = rule_valid[:maximum]
+    evidence_eligible = observation >= start
+    if not evidence_eligible:
+        status = "BEFORE_PROSPECTIVE_START"
+    elif selected:
+        status = "READY_FOR_SAME_DAY_SHADOW_REVIEW"
+    else:
+        status = "NO_FRESH_RULE_VALID_ACTIVE_SIGNAL"
+    fields = (
+        "ticker",
+        "rule",
+        "status",
+        "latest_date",
+        "latest_price",
+        "data_fresh",
+        "staleness_business_days",
+        "decision_eligible",
+        "horizon_days",
+        "samples",
+        "valid",
+        "win_rate_pct",
+        "avg_return_pct",
+        "median_return_pct",
+        "worst_return_pct",
+        "avg_mae_pct",
+        "worst_mae_pct",
+        "benchmark",
+        "avg_alpha_vs_benchmark_pct",
+        "evidence_score_0_100",
+        "fail_reasons",
+    )
+    compact = []
+    for rank, row in enumerate(selected, start=1):
+        compact.append(
+            {
+                "candidate_type": "SHADOW_CANDIDATE",
+                "selection_rank": rank,
+                **{key: row.get(key) for key in fields},
+                "prospective_evidence_eligible": evidence_eligible,
+                "counterfactual_only": True,
+                "execution_eligible": False,
+                "automatic_order_allowed": False,
+            }
+        )
+    return {
+        "candidate_type": "SHADOW_CANDIDATE",
+        "collection_status": status,
+        "prospective_start_market_date": start.isoformat(),
+        "allow_historical_backfill": False,
+        "selection_policy": frozen_policy["selection"]["ranking_policy"],
+        "maximum_candidates_per_market_date": maximum,
+        "candidate_count": len(compact),
+        "top": compact,
+        "counterfactual_only": True,
+        "execution_eligible": False,
+        "automatic_order_allowed": False,
+    }
 
 
 def build_risk_candidates(report: dict, freshness_by_ticker: dict[str, dict[str, Any]] | None = None) -> list[dict]:
@@ -598,6 +695,10 @@ def build_action_board(
     portfolio: dict,
 ) -> dict:
     final_action = decision["final_action"]
+    shadow_research = select_shadow_candidates(
+        buy_candidates,
+        reference_market_date=decision["freshness"]["reference_market_date"],
+    )
     if final_action == "DATA_REVIEW_REQUIRED":
         chatgpt_task = "Model-portfolio market data is stale or missing. Refresh data before using quant signals or risk flags."
         default_human_action = "NO_TRADE_UNTIL_DATA_REFRESH"
@@ -623,6 +724,21 @@ def build_action_board(
         "portfolio_backtest": portfolio_digest(portfolio),
         "chatgpt_final_review_required": final_action != "NO_TRADE",
         "chatgpt_task": chatgpt_task,
+        "shadow_research_review": {
+            "review_due": shadow_research["collection_status"]
+            == "READY_FOR_SAME_DAY_SHADOW_REVIEW",
+            "collection_status": shadow_research["collection_status"],
+            "candidate_count": shadow_research["candidate_count"],
+            "candidates": shadow_research["top"],
+            "allowed_assessments": ["BUY_REVIEW", "WAIT", "REJECT", "NO_TRADE"],
+            "task": (
+                "Assess every frozen shadow candidate for prospective research even when the "
+                "execution decision remains NO_TRADE. The assessment cannot create an order."
+            ),
+            "counterfactual_only": True,
+            "execution_eligible": False,
+            "automatic_order_allowed": False,
+        },
         "top_quant_buy_candidate": actionable[0] if actionable else None,
         "top_active_buy_candidate_even_if_insufficient": buy_candidates[0] if buy_candidates else None,
         "top_risk_candidate": model_high_risk[0] if model_high_risk else (risk_candidates[0] if risk_candidates else None),
@@ -731,9 +847,19 @@ def build_decision_packet(
         "final_order_permission",
     )
     compact_actionable = [
-        {key: row.get(key) for key in candidate_fields}
+        {
+            "candidate_type": "EXECUTION_CANDIDATE",
+            **{key: row.get(key) for key in candidate_fields},
+            "counterfactual_only": False,
+            "execution_eligible": True,
+            "automatic_order_allowed": False,
+        }
         for row in decision["actionable_buy_candidates"][:5]
     ]
+    shadow_candidates = select_shadow_candidates(
+        decision["all_active_buy_candidates"],
+        reference_market_date=freshness_summary["reference_market_date"],
+    )
     stale_risk_fields = (
         "ticker",
         "latest_date",
@@ -751,7 +877,7 @@ def build_decision_packet(
     if model_regime not in {"base", "defensive", "severe_defensive"}:
         model_regime = None
     return {
-        "schema_version": "decision-packet-v5.0",
+        "schema_version": "decision-packet-v5.1",
         "generated_at_utc": decision["generated_at_utc"],
         "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
         "roles": {
@@ -781,8 +907,17 @@ def build_decision_packet(
             "default_human_action": action_board["default_human_action_before_chatgpt_review"],
         },
         "candidates": {
-            "actionable_count": decision.get("actionable_buy_count_total", len(decision["actionable_buy_candidates"])),
-            "top_actionable": compact_actionable,
+            "execution": {
+                "candidate_type": "EXECUTION_CANDIDATE",
+                "candidate_count": decision.get(
+                    "actionable_buy_count_total",
+                    len(decision["actionable_buy_candidates"]),
+                ),
+                "top": compact_actionable,
+                "counterfactual_only": False,
+                "automatic_order_allowed": False,
+            },
+            "shadow": shadow_candidates,
         },
         "risks": {
             "model_portfolio_high": model_high_risk[:10],
@@ -882,7 +1017,7 @@ def compile_decision_outputs(
         buy_permission = "NO_QUANT_CANDIDATE"
 
     decision = {
-        "schema_version": "eason-signal-v5.0",
+        "schema_version": "eason-signal-v5.1",
         "generated_at_utc": generated_at_utc,
         "source": "Derived from market_report.json, portfolio_backtest.json, and cached quant evidence.",
         "decision_policy": {
@@ -948,13 +1083,17 @@ def compile_decision_outputs(
         "summary_type": "decision",
         "source_file": "eason_signal.json",
         "decision_packet_file": "decision_packet.json",
-        "summary_file_version": "v5.0-holdings-aware-freshness-gate",
+        "summary_file_version": "v5.1-shadow-evidence-without-execution-upgrade",
         "final_action": final_action,
         "reason": reason,
         "buy_permission": buy_permission,
         "market_regime": decision.get("market_regime"),
         "market_data": decision["market_data"],
         "actionable_buy_count": len(actionable),
+        "shadow_candidate_count": action_board["shadow_research_review"]["candidate_count"],
+        "shadow_collection_status": action_board["shadow_research_review"][
+            "collection_status"
+        ],
         "risk_candidate_count": len(risk_candidates),
         "high_risk_count": len(model_high_risk),
         "model_portfolio_high_risk_count": len(model_high_risk),
@@ -1013,7 +1152,7 @@ def main() -> None:
     packet = outputs["decision_packet"]
     signal_text = "\n".join(
         [
-            "Eason Quant v5 Decision Status",
+            "Eason Quant v5.1 Decision Status",
             f"generated_at_utc: {packet['generated_at_utc']}",
             f"data_source: {packet['market_data']['source']}",
             f"market_timezone: {packet['market_data']['market_timezone']}",

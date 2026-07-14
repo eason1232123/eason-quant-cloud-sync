@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/eason-quant/holding_review_response.schema.json",
+  "title": "Private all-holdings review response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "status",
+    "request_id",
+    "input_context_sha256",
+    "reviewed_at_utc",
+    "reviewer",
+    "privacy",
+    "coverage",
+    "assessments",
+    "quant_boundary_confirmation",
+    "automatic_order_allowed",
+    "human_confirmation_required",
+    "order_payload"
+  ],
+  "properties": {
+    "schema_version": {"const": "private-holding-review-response-v1"},
+    "status": {"const": "HOLDING_REVIEW_COMPLETED"},
+    "request_id": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "input_context_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "reviewed_at_utc": {"type": "string", "format": "date-time"},
+    "reviewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["system", "model_id", "adapter_version"],
+      "properties": {
+        "system": {"enum": ["CHATGPT", "CODEX", "TRADINGAGENTS"]},
+        "model_id": {"type": "string", "minLength": 1, "maxLength": 200},
+        "adapter_version": {"type": "string", "minLength": 1, "maxLength": 200}
+      }
+    },
+    "privacy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classification",
+        "git_publish_allowed",
+        "contains_private_account_reasoning"
+      ],
+      "properties": {
+        "classification": {"const": "PRIVATE_LOCAL_ONLY"},
+        "git_publish_allowed": {"const": false},
+        "contains_private_account_reasoning": {"const": true}
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required_holding_count", "assessed_holding_count", "complete"],
+      "properties": {
+        "required_holding_count": {"type": "integer", "minimum": 0},
+        "assessed_holding_count": {"type": "integer", "minimum": 0},
+        "complete": {"const": true}
+      }
+    },
+    "assessments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "symbol",
+          "action",
+          "confidence",
+          "reason_codes",
+          "summary",
+          "checks"
+        ],
+        "properties": {
+          "symbol": {"type": "string", "pattern": "^[A-Z0-9.-]+$"},
+          "action": {"enum": ["HOLD", "REDUCE_REVIEW", "EXIT_REVIEW", "NO_ACTION"]},
+          "confidence": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+          "reason_codes": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^[A-Z0-9_]+$"}
+          },
+          "summary": {"type": "string", "minLength": 1, "maxLength": 4000},
+          "checks": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 5,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["check_id", "status", "finding", "evidence_sources"],
+              "properties": {
+                "check_id": {
+                  "enum": [
+                    "market_data",
+                    "technical_risk",
+                    "fresh_news_events",
+                    "earnings_fundamentals",
+                    "actual_account_risk"
+                  ]
+                },
+                "status": {"enum": ["PASS", "FAIL", "UNAVAILABLE"]},
+                "finding": {"type": "string", "minLength": 1, "maxLength": 4000},
+                "evidence_sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "required": [
+                      "source_name",
+                      "source_type",
+                      "source_url",
+                      "observed_at_utc",
+                      "market_timezone",
+                      "data_kind"
+                    ],
+                    "properties": {
+                      "source_name": {"type": "string", "minLength": 1, "maxLength": 300},
+                      "source_type": {
+                        "enum": [
+                          "IBKR_TWS",
+                          "PUBLIC_MARKET_DATA",
+                          "PUBLIC_NEWS",
+                          "PUBLIC_FILINGS",
+                          "GITHUB_EVIDENCE",
+                          "PRIVATE_CONTEXT"
+                        ]
+                      },
+                      "source_url": {
+                        "anyOf": [
+                          {"type": "string", "format": "uri"},
+                          {"type": "null"}
+                        ]
+                      },
+                      "observed_at_utc": {"type": "string", "format": "date-time"},
+                      "market_timezone": {"type": "string", "minLength": 1},
+                      "data_kind": {
+                        "enum": [
+                          "INTRADAY_REALTIME_BID_ASK",
+                          "INTRADAY_REALTIME_LAST",
+                          "INTRADAY_DELAYED",
+                          "END_OF_DAY_ADJUSTED",
+                          "END_OF_DAY_UNADJUSTED",
+                          "NEWS_OR_EVENT",
+                          "FUNDAMENTAL_OR_EARNINGS",
+                          "PRIVATE_ACCOUNT_SNAPSHOT",
+                          "GITHUB_QUANT_EVIDENCE",
+                          "UNKNOWN_NOT_USED"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "quant_boundary_confirmation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "original_quant_final_action",
+        "unchanged",
+        "buy_permission_modified",
+        "buy_candidate_created"
+      ],
+      "properties": {
+        "original_quant_final_action": {
+          "enum": [
+            "DATA_REVIEW_REQUIRED",
+            "NO_TRADE",
+            "RISK_REVIEW_REQUIRED",
+            "BUY_CANDIDATE_REVIEW_REQUIRED"
+          ]
+        },
+        "unchanged": {"const": true},
+        "buy_permission_modified": {"const": false},
+        "buy_candidate_created": {"const": false}
+      }
+    },
+    "automatic_order_allowed": {"const": false},
+    "human_confirmation_required": {"const": true},
+    "order_payload": {"type": "null"}
+  }
+}

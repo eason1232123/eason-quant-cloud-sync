@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/eason1232123/eason-quant-cloud-sync/schemas/shadow_review_response.schema.json",
+  "title": "Counterfactual Shadow Review Response",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "reviewed_at_utc",
+    "reviewer",
+    "assessments",
+    "execution_impact",
+    "counterfactual_only",
+    "execution_eligible",
+    "automatic_order_allowed",
+    "human_confirmation_required"
+  ],
+  "properties": {
+    "schema_version": {"const": "shadow-review-response-v1"},
+    "request_id": {"type": "string", "pattern": "^shr_[0-9a-f]{64}$"},
+    "reviewed_at_utc": {"type": "string", "format": "date-time"},
+    "reviewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["system", "model_id"],
+      "properties": {
+        "system": {"enum": ["CHATGPT", "CODEX"]},
+        "model_id": {"type": "string", "minLength": 1, "maxLength": 120}
+      }
+    },
+    "assessments": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/assessment"}
+    },
+    "execution_impact": {"const": "NONE_COUNTERFACTUAL_ONLY"},
+    "counterfactual_only": {"const": true},
+    "execution_eligible": {"const": false},
+    "automatic_order_allowed": {"const": false},
+    "human_confirmation_required": {"const": true}
+  },
+  "$defs": {
+    "ticker": {"type": "string", "pattern": "^[A-Z][A-Z0-9.-]{0,14}$"},
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "symbol",
+        "rule",
+        "assessment",
+        "confidence",
+        "checks"
+      ],
+      "properties": {
+        "candidate_id": {"type": "string", "pattern": "^shc_[0-9a-f]{64}$"},
+        "symbol": {"$ref": "#/$defs/ticker"},
+        "rule": {
+          "enum": [
+            "pullback_reclaim_5dma",
+            "rsi_oversold_reclaim_40",
+            "ma20_reclaim_bullish",
+            "ma50_reclaim_bullish",
+            "relative_strength_rebound",
+            "momentum_leader"
+          ]
+        },
+        "assessment": {"enum": ["BUY_REVIEW", "WAIT", "REJECT", "NO_TRADE"]},
+        "confidence": {"enum": ["LOW", "MEDIUM", "HIGH"]},
+        "checks": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["check_id", "status"],
+            "properties": {
+              "check_id": {
+                "enum": [
+                  "live_price_context",
+                  "fresh_news_macro",
+                  "earnings_valuation",
+                  "risk_reward"
+                ]
+              },
+              "status": {"enum": ["PASS", "FAIL", "UNAVAILABLE"]}
+            }
+          }
+        }
+      }
+    }
+  }
+}

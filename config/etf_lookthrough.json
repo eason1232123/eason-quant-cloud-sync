@@ -1,0 +1,16 @@
+{
+  "schema_version": "official-etf-lookthrough-policy-v1",
+  "maximum_staleness_weekdays": 2,
+  "funds": {
+    "QQQ": {
+      "provider": "Invesco",
+      "official_url": "https://www.invesco.com/us/en/financial-products/etfs/invesco-qqq-trust-series-1.html",
+      "cache_file": "docs/etf_holdings_QQQ.csv"
+    },
+    "SMH": {
+      "provider": "VanEck",
+      "official_url": "https://www.vaneck.com/us/en/investments/semiconductor-etf-smh/",
+      "cache_file": "docs/etf_holdings_SMH.csv"
+    }
+  }
+}
