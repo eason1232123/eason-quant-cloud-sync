@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-14T14:36:58.028897+00:00",
+  "generated_at_utc": "2026-07-14T15:28:52.443065+00:00",
   "summary_type": "decision",
   "source_file": "eason_signal.json",
   "decision_packet_file": "decision_packet.json",
@@ -83,7 +83,7 @@
     "final_order_permission": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW",
     "risk_scope": "watchlist_advisory"
   },
-  "chatgpt_final_review_required": false,
+  "chatgpt_final_review_required": true,
   "default_human_action_before_chatgpt_review": "NO_TRADE",
   "portfolio_backtest_available": true,
   "freshness": {

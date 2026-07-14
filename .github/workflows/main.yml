@@ -65,6 +65,7 @@ jobs:
         run: |
           python -m scripts.validate_generated_json
           python -m scripts.validate_decision_packet
+          python -m scripts.validate_publication_bundle
           python -m scripts.validate_market_universe
           python -m scripts.validate_model_artifacts
           python -m scripts.build_v6_operating_status --validate-only
@@ -109,9 +110,12 @@ jobs:
           test -s docs/promotion_queue.csv
           test -s docs/promotion_queue.json
           test -s docs/decision_packet.json
+          test -s docs/artifact_manifest.json
           python -m scripts.validate_market_universe
           python -m scripts.validate_decision_packet
           python -m scripts.validate_generated_json
+          python -m scripts.validate_publication_bundle --write-manifest
+          python -m scripts.validate_publication_bundle
           python - <<'PY'
           import json
           from pathlib import Path
@@ -331,7 +335,11 @@ jobs:
 
       - name: Enforce operational market-data health before publication
         timeout-minutes: 2
-        run: python -m scripts.validate_operational_health
+        run: |
+          python -m scripts.validate_publication_bundle --write-manifest
+          test -s docs/artifact_manifest.json
+          python -m scripts.validate_publication_bundle
+          python -m scripts.validate_operational_health
 
       - name: Commit updated reports
         run: |

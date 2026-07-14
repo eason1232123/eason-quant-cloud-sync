@@ -1,0 +1,135 @@
+{
+  "schema_version": "publication-artifact-manifest-v1",
+  "generated_at_utc": "2026-07-14T15:32:39.587745+00:00",
+  "status": "VALIDATED",
+  "purpose": "Small connector-readable integrity proof for the public decision bundle, including large artifacts that connectors may not return inline.",
+  "decision_batch": {
+    "decision_generated_at_utc": "2026-07-14T15:28:52.443065+00:00",
+    "market_data_timestamp": "2026-07-13",
+    "final_action": "NO_TRADE",
+    "buy_permission": "NO_QUANT_CANDIDATE",
+    "chatgpt_review_required": true
+  },
+  "cross_file_consistency": {
+    "status": "CONSISTENT",
+    "fields_checked": [
+      "buy_permission",
+      "chatgpt_review_required",
+      "decision_generated_at_utc",
+      "final_action",
+      "market_data_timestamp"
+    ],
+    "exact_decision_contract_match": true
+  },
+  "artifacts": [
+    {
+      "path": "docs/market_report.json",
+      "size_bytes": 4359993,
+      "sha256": "8a74e9738509e43ac3689b04521e3adb0cd2725042de37e3ad9ea37f0e81f0dc",
+      "generated_at_utc": "2026-07-14T14:34:56.171033+00:00"
+    },
+    {
+      "path": "docs/latest_market_summary.json",
+      "size_bytes": 114051,
+      "sha256": "8fc35035656f21f6033975c2d2e68a472e2fb029653479384c3a9328420973b7",
+      "generated_at_utc": "2026-07-14T14:34:56.171033+00:00"
+    },
+    {
+      "path": "docs/portfolio_backtest.json",
+      "size_bytes": 9552,
+      "sha256": "1c99fd82716204e057123b4fe86854865c29070b0645686de2852178b12aec6f",
+      "generated_at_utc": "2026-07-14T14:36:56.773909+00:00"
+    },
+    {
+      "path": "docs/trade_review.json",
+      "size_bytes": 1173,
+      "sha256": "ddf9ef17903bfaabc43db0c47c4040e7b109df5c0715015922ab6125aa429dba",
+      "generated_at_utc": "2026-07-14T15:28:52.133116+00:00"
+    },
+    {
+      "path": "docs/forward_validation_status.json",
+      "size_bytes": 2066,
+      "sha256": "f5096c1ecb816970f756362ab26b1c60855773cb46895b60c3e2872cc543f024",
+      "generated_at_utc": "2026-07-14T14:34:56.171033+00:00"
+    },
+    {
+      "path": "docs/live_review_forward_status.json",
+      "size_bytes": 3135,
+      "sha256": "502c3f8980fbbb9951de47beb7da73055b24004ea0bfce65fe3842750074a8f6",
+      "generated_at_utc": "2026-07-14T14:34:56.171033+00:00"
+    },
+    {
+      "path": "docs/v6_release_status.json",
+      "size_bytes": 3400,
+      "sha256": "4e80c3a6b3f2f056931e273829bcac474c2662290cdcd19a6a2971793e6b4380",
+      "generated_at_utc": "2026-07-14T14:34:56.171033+00:00"
+    },
+    {
+      "path": "docs/v6_operating_status.json",
+      "size_bytes": 4105,
+      "sha256": "809951fbfb3f2fd8586c968056798116f3aa20f752781dae6b9e34f63d266dce",
+      "generated_at_utc": "2026-07-14T14:34:56.171033+00:00"
+    },
+    {
+      "path": "docs/eason_signal.json",
+      "size_bytes": 144204,
+      "sha256": "fd5401135fee172a451eaf170069f6525dcb0cd79a1f3db3b641c44f9fdf9433",
+      "generated_at_utc": "2026-07-14T15:28:52.443065+00:00"
+    },
+    {
+      "path": "docs/latest_decision_summary.json",
+      "size_bytes": 10227,
+      "sha256": "5c4103bbdfd1176d7cceb02129e9b7f72f025ed1b6974a456675b9b7a1822e0d",
+      "generated_at_utc": "2026-07-14T15:28:52.443065+00:00"
+    },
+    {
+      "path": "docs/decision_packet.json",
+      "size_bytes": 22908,
+      "sha256": "f5d2457c42b485a69d7697e066f32057b14cbad6813b9a23c3c6e4be108e7d43",
+      "generated_at_utc": "2026-07-14T15:28:52.443065+00:00"
+    },
+    {
+      "path": "docs/action_board.json",
+      "size_bytes": 244828,
+      "sha256": "b0b0072aea6778c3407a4aa5fd8c79bb9416e6eaf9713956a19664c0c227e0d4",
+      "generated_at_utc": "2026-07-14T15:28:52.833044+00:00"
+    }
+  ],
+  "evidence_readiness": {
+    "operating_mode": "READ_ONLY_SHADOW",
+    "human_pilot_review_ready": false,
+    "release_blockers": [
+      "PUBLIC_SIGNAL_PRIMARY_OUTCOMES_BELOW_MINIMUM",
+      "LIVE_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM"
+    ],
+    "evidence_counts": {
+      "minimum_governance_paired_samples": 0,
+      "public_signal_primary_horizon_outcomes": 0,
+      "sanitized_live_review_matured_outcomes": 0,
+      "sanitized_live_review_predictions": 2
+    },
+    "evidence_thresholds": {
+      "governance_paired_samples_per_challenger": 48,
+      "ibkr_bound_sanitized_live_reviews": 1,
+      "public_signal_primary_horizon_outcomes": 20,
+      "sanitized_live_review_matured_outcomes": 20
+    },
+    "release_status": "PROSPECTIVE_VALIDATION_IN_PROGRESS",
+    "logged_trade_count": 0,
+    "actual_vs_backtest_available": false,
+    "actual_vs_backtest_reason": "No actual trades logged yet."
+  },
+  "concentration_readiness": {
+    "public_model_measure": "DIRECT_MODEL_WEIGHTS_QQQ_SMH_MSFT",
+    "private_account_measure": "DIRECT_SYMBOLS_ONLY_NO_ETF_LOOKTHROUGH",
+    "etf_lookthrough_status": "NOT_AVAILABLE_REQUIRES_CURRENT_FUND_HOLDINGS",
+    "interpretation": "Direct-symbol concentration must not be described as ETF look-through validated."
+  },
+  "large_artifact_access": {
+    "market_report_path": "docs/market_report.json",
+    "connector_inline_content_may_be_empty": true,
+    "verification_method": "Use this manifest's size_bytes and sha256; inspect decision_packet.json or chatgpt_snapshot.json for compact content."
+  },
+  "automatic_order_allowed": false,
+  "human_confirmation_required": true
+}

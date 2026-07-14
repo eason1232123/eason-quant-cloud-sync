@@ -338,6 +338,11 @@ class DecisionContractTests(unittest.TestCase):
     def test_packet_schema_and_no_automatic_order(self):
         outputs = self.compile(report(), portfolio())
         packet = outputs["decision_packet"]
+        self.assertTrue(outputs["latest_decision_summary"]["chatgpt_final_review_required"])
+        self.assertEqual(
+            outputs["latest_decision_summary"]["chatgpt_final_review_required"],
+            packet["decision"]["chatgpt_review_required"],
+        )
         schema_path = Path("schemas/decision_packet.schema.json")
         schema = json.loads(schema_path.read_text(encoding="utf-8"))
         contract_validator.validate_schema(packet, schema)

@@ -49,6 +49,8 @@ build_report_safe.py
 
 `docs/decision_packet.json` 是 GitHub 证据层交给 ChatGPT 的首要入口。它只包含公开模型组合的 ticker 范围，不包含真实股数、现金或账户价值。
 
+`docs/artifact_manifest.json` 是发布完整性的首要入口。它记录关键报告的文件大小、SHA-256、统一决策批次、跨文件一致性、前瞻证据门槛和实盘复盘状态。`market_report.json` 体积较大，部分连接器可能返回空的内联内容；这不等于文件为空，必须先用 manifest 的大小和哈希验证，再读取紧凑的 `decision_packet.json` / `chatgpt_snapshot.json`。
+
 ```text
 1. 只有公开模型组合（默认 QQQ/SMH/MSFT/SPY）的新鲜高风险信号可以封锁 GitHub 全局闸门
 2. 非模型组合的观察池高风险只作为 advisory，必须由 ChatGPT/IBKR 确认真实持仓
@@ -173,6 +175,7 @@ Actions
 跑完后，优先打开：
 
 ```text
+https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/artifact_manifest.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/decision_packet.json
 https://raw.githubusercontent.com/eason1232123/eason-quant-cloud-sync/main/docs/action_board.json
 ```

@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
+from scripts.artifact_io import atomic_write_csv, atomic_write_json
 from scripts.market_data_contract import extract_market_data_metadata, read_checked_daily_csv
 
 DATA = Path("data")
@@ -260,22 +261,17 @@ def main() -> None:
         "price_adjustment_policy": metadata["price_adjustment_policy"],
     }.items():
         reviews[field] = value
-    reviews.to_csv(OUT / "trade_review.csv", index=False)
-    with open(OUT / "trade_review.json", "w", encoding="utf-8") as f:
-        json.dump(summary, f, indent=2, ensure_ascii=False, allow_nan=False)
-    with open(OUT / "actual_vs_backtest.json", "w", encoding="utf-8") as f:
-        json.dump(
-            {
-                "generated_at_utc": generated_at_utc,
-                **metadata,
-                "review_price_basis": "unadjusted_close_matched_to_actual_fill",
-                **actual,
-            },
-            f,
-            indent=2,
-            ensure_ascii=False,
-            allow_nan=False,
-        )
+    atomic_write_csv(OUT / "trade_review.csv", reviews)
+    atomic_write_json(OUT / "trade_review.json", summary)
+    atomic_write_json(
+        OUT / "actual_vs_backtest.json",
+        {
+            "generated_at_utc": generated_at_utc,
+            **metadata,
+            "review_price_basis": "unadjusted_close_matched_to_actual_fill",
+            **actual,
+        },
+    )
 
     print("Saved docs/trade_review.json, docs/trade_review.csv, docs/actual_vs_backtest.json")
 

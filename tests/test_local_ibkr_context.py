@@ -151,6 +151,15 @@ class LocalIbkrContextTests(unittest.TestCase):
         self.assertEqual(usd["total_cash_value"], 860.0)
         self.assertEqual(usd["gross_position_exposure_weight"], 0.57)
         self.assertEqual(usd["QQQ_SMH_MSFT_gross_concentration_weight"], 0.52)
+        self.assertEqual(
+            usd["concentration_method"],
+            "DIRECT_SYMBOLS_ONLY_NO_ETF_LOOKTHROUGH",
+        )
+        self.assertIsNone(usd["etf_lookthrough_exposure_weight"])
+        self.assertEqual(
+            usd["etf_lookthrough_status"],
+            "NOT_AVAILABLE_REQUIRES_CURRENT_FUND_HOLDINGS",
+        )
         qqq = next(row for row in usd["positions"] if row["symbol"] == "QQQ")
         self.assertEqual(qqq["net_liquidation_weight"], 0.52)
         self.assertFalse(context["automatic_order_allowed"])
@@ -164,6 +173,13 @@ class LocalIbkrContextTests(unittest.TestCase):
         self.assertEqual(
             context["sources"]["github_strategy_evidence"]["data_timestamp"],
             "2026-07-10",
+        )
+        self.assertTrue(
+            context["risk_calculation_policy"]["direct_symbol_concentration_only"]
+        )
+        self.assertEqual(
+            context["risk_calculation_policy"]["etf_lookthrough_status"],
+            "NOT_AVAILABLE_REQUIRES_CURRENT_FUND_HOLDINGS",
         )
 
     def test_missing_net_liquidation_stays_null_not_zero(self) -> None:

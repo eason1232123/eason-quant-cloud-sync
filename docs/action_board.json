@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-14T14:36:59.210841+00:00",
+  "generated_at_utc": "2026-07-14T15:28:52.833044+00:00",
   "version": "eason-master-action-board-v6.0-model-governance-t2",
   "purpose": "One evidence file for ChatGPT to review the decision contract, prospective model governance, quant validation, portfolio backtest, regime behavior, and actual trade review before live-market judgment.",
   "roles": {
@@ -20,7 +20,7 @@
   },
   "decision_contract": {
     "schema_version": "decision-packet-v5.0",
-    "generated_at_utc": "2026-07-14T14:36:58.028897+00:00",
+    "generated_at_utc": "2026-07-14T15:28:52.443065+00:00",
     "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
     "roles": {
       "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",
@@ -678,7 +678,8 @@
     "execution_contract": {
       "automatic_order_allowed": false,
       "required_live_checks": [
-        "Read action_board.json, eason_signal.json, portfolio_backtest.json, and market_report.json freshness first.",
+        "Read artifact_manifest.json and decision_packet.json first; verify the large market_report.json size/hash before relying on it.",
+        "Read action_board.json, eason_signal.json, portfolio_backtest.json, and market_report.json freshness before any order.",
         "Check current tradable bid/ask/last from IBKR if available; otherwise cross-check at least two public quote sources.",
         "Check whether current price is still close to the tested signal entry area; do not chase if price already ran far away.",
         "Check same-day regime: SPY/QQQ trend, VIX, 10Y yield, breadth, and semiconductor leadership.",
@@ -6293,7 +6294,7 @@
     "available": true
   },
   "trade_review": {
-    "generated_at_utc": "2026-07-14T14:36:57.593160+00:00",
+    "generated_at_utc": "2026-07-14T15:28:52.133116+00:00",
     "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
     "data_timestamp": "2026-07-13",
@@ -6317,7 +6318,7 @@
     "available": true
   },
   "actual_vs_backtest": {
-    "generated_at_utc": "2026-07-14T14:36:57.593160+00:00",
+    "generated_at_utc": "2026-07-14T15:28:52.133116+00:00",
     "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
     "data_timestamp": "2026-07-13",
@@ -6330,6 +6331,7 @@
     "reason": "No actual trades logged yet."
   },
   "required_live_checks_before_order": [
+    "artifact_manifest hashes and cross-file consistency status",
     "IBKR bid/ask/last or two public quote sources",
     "current price vs tested signal area",
     "same-day SPY/QQQ/VIX/10Y/breadth/regime",
