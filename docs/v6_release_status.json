@@ -20,7 +20,7 @@
     "minimum_governance_paired_samples": 0,
     "public_signal_primary_horizon_outcomes": 0,
     "sanitized_live_review_matured_outcomes": 0,
-    "sanitized_live_review_predictions": 1
+    "sanitized_live_review_predictions": 2
   },
   "evidence_scope": {
     "ibkr_runtime_evidence": "a sanitized prediction is created only after the private read-only IBKR context and live-review response validate; this is application-level, not broker-independent attestation",

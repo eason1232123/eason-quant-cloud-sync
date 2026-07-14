@@ -23,7 +23,7 @@
     "minimum_governance_paired_samples": 0,
     "public_signal_primary_horizon_outcomes": 0,
     "sanitized_live_review_matured_outcomes": 0,
-    "sanitized_live_review_predictions": 1
+    "sanitized_live_review_predictions": 2
   },
   "evidence_thresholds": {
     "governance_paired_samples_per_challenger": 48,
@@ -32,7 +32,7 @@
     "sanitized_live_review_matured_outcomes": 20
   },
   "final_execution_layer": "IBKR_MANUAL_WITH_EXPLICIT_HUMAN_CONFIRMATION",
-  "generated_at_utc": "2026-07-14T00:59:08.780348+00:00",
+  "generated_at_utc": "2026-07-14T04:10:56.349340+00:00",
   "human_confirmation_required": true,
   "important_limit": "READ_ONLY_SHADOW is decision support, not validated pilot performance or an order. Human pilot review requires every frozen release gate; automatic execution is prohibited.",
   "market_timezone": "America/New_York",
