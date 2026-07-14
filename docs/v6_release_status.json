@@ -37,7 +37,7 @@
     "public_signal_primary_horizon_outcomes": 20,
     "sanitized_live_review_matured_outcomes": 20
   },
-  "generated_at_utc": "2026-07-14T13:08:45.595933+00:00",
+  "generated_at_utc": "2026-07-14T13:49:07.082316+00:00",
   "human_confirmation_required": true,
   "known_limitations": [
     "RETROSPECTIVE_BACKTEST_SURVIVORSHIP_BIAS_REMAINS_UNCONTROLLED",

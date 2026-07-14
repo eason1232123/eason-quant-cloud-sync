@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-14T13:08:45.595933+00:00",
+  "generated_at_utc": "2026-07-14T13:49:07.082316+00:00",
   "source_file": "market_report.json",
   "summary_file_version": "v4.4-latest-market-summary-no-name-conflict",
   "summary_type": "market",
@@ -3560,504 +3560,504 @@
   ],
   "top_rule_evidence": [
     {
-      "samples": 167,
-      "evidence_score_0_100": 32.0,
       "worst_mae": -0.5179,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0015,
-      "rule": "failed_rebound_risk",
+      "samples": 167,
       "ticker": "GE",
-      "win_rate": 0.515
+      "valid": true,
+      "win_rate": 0.515,
+      "evidence_score_0_100": 32.0
     },
     {
-      "samples": 165,
-      "evidence_score_0_100": 43.0,
       "worst_mae": -0.6625,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0172,
-      "rule": "failed_rebound_risk",
+      "samples": 165,
       "ticker": "AMAT",
-      "win_rate": 0.5758
+      "valid": true,
+      "win_rate": 0.5758,
+      "evidence_score_0_100": 43.0
     },
     {
-      "samples": 165,
-      "evidence_score_0_100": 39.7,
       "worst_mae": -0.4871,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0183,
-      "rule": "failed_rebound_risk",
-      "ticker": "MU",
-      "win_rate": 0.5394
-    },
-    {
       "samples": 165,
-      "evidence_score_0_100": 46.8,
+      "ticker": "MU",
+      "valid": true,
+      "win_rate": 0.5394,
+      "evidence_score_0_100": 39.7
+    },
+    {
       "worst_mae": -0.3793,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0257,
-      "rule": "failed_rebound_risk",
+      "samples": 165,
       "ticker": "LRCX",
-      "win_rate": 0.5879
+      "valid": true,
+      "win_rate": 0.5879,
+      "evidence_score_0_100": 46.8
     },
     {
-      "samples": 164,
-      "evidence_score_0_100": 45.4,
       "worst_mae": -0.2834,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0122,
-      "rule": "failed_rebound_risk",
+      "samples": 164,
       "ticker": "COST",
-      "win_rate": 0.6159
+      "valid": true,
+      "win_rate": 0.6159,
+      "evidence_score_0_100": 45.4
     },
     {
-      "samples": 164,
-      "evidence_score_0_100": 42.2,
       "worst_mae": -0.4018,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0157,
-      "rule": "failed_rebound_risk",
-      "ticker": "INTC",
-      "win_rate": 0.5732
-    },
-    {
       "samples": 164,
-      "evidence_score_0_100": 34.7,
+      "ticker": "INTC",
+      "valid": true,
+      "win_rate": 0.5732,
+      "evidence_score_0_100": 42.2
+    },
+    {
       "worst_mae": -0.5225,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0071,
-      "rule": "failed_rebound_risk",
+      "samples": 164,
       "ticker": "MSTR",
-      "win_rate": 0.5244
+      "valid": true,
+      "win_rate": 0.5244,
+      "evidence_score_0_100": 34.7
     },
     {
-      "samples": 163,
-      "evidence_score_0_100": 39.7,
       "worst_mae": -0.4425,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0164,
-      "rule": "failed_rebound_risk",
-      "ticker": "NRG",
-      "win_rate": 0.546
-    },
-    {
       "samples": 163,
-      "evidence_score_0_100": 37.3,
+      "ticker": "NRG",
+      "valid": true,
+      "win_rate": 0.546,
+      "evidence_score_0_100": 39.7
+    },
+    {
       "worst_mae": -0.5365,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0087,
-      "rule": "failed_rebound_risk",
+      "samples": 163,
       "ticker": "XLE",
-      "win_rate": 0.546
+      "valid": true,
+      "win_rate": 0.546,
+      "evidence_score_0_100": 37.3
     },
     {
-      "samples": 162,
-      "evidence_score_0_100": 39.1,
       "worst_mae": -0.0983,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0,
-      "rule": "failed_rebound_risk",
+      "samples": 162,
       "ticker": "TLT",
-      "win_rate": 0.5
+      "valid": true,
+      "win_rate": 0.5,
+      "evidence_score_0_100": 39.1
     },
     {
-      "samples": 162,
-      "evidence_score_0_100": 31.8,
       "worst_mae": -0.5342,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0018,
-      "rule": "failed_rebound_risk",
-      "ticker": "ON",
-      "win_rate": 0.5123
-    },
-    {
       "samples": 162,
-      "evidence_score_0_100": 39.5,
+      "ticker": "ON",
+      "valid": true,
+      "win_rate": 0.5123,
+      "evidence_score_0_100": 31.8
+    },
+    {
       "worst_mae": -0.2986,
-      "valid": true,
-      "median_return": 0.0145,
       "rule": "failed_rebound_risk",
+      "median_return": 0.0145,
+      "samples": 162,
       "ticker": "QCOM",
-      "win_rate": 0.5494
+      "valid": true,
+      "win_rate": 0.5494,
+      "evidence_score_0_100": 39.5
     },
     {
-      "samples": 161,
-      "evidence_score_0_100": 44.9,
       "worst_mae": -0.2953,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0228,
-      "rule": "failed_rebound_risk",
+      "samples": 161,
       "ticker": "AMZN",
-      "win_rate": 0.5776
+      "valid": true,
+      "win_rate": 0.5776,
+      "evidence_score_0_100": 44.9
     },
     {
-      "samples": 161,
-      "evidence_score_0_100": 45.6,
       "worst_mae": -0.2642,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.017,
-      "rule": "failed_rebound_risk",
+      "samples": 161,
       "ticker": "TSM",
-      "win_rate": 0.6025
+      "valid": true,
+      "win_rate": 0.6025,
+      "evidence_score_0_100": 45.6
     },
     {
-      "samples": 161,
-      "evidence_score_0_100": 40.9,
       "worst_mae": -0.2744,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0079,
-      "rule": "failed_rebound_risk",
-      "ticker": "TXN",
-      "win_rate": 0.5839
-    },
-    {
       "samples": 161,
-      "evidence_score_0_100": 39.7,
+      "ticker": "TXN",
+      "valid": true,
+      "win_rate": 0.5839,
+      "evidence_score_0_100": 40.9
+    },
+    {
       "worst_mae": -0.3126,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0061,
-      "rule": "failed_rebound_risk",
+      "samples": 161,
       "ticker": "LLY",
-      "win_rate": 0.5776
+      "valid": true,
+      "win_rate": 0.5776,
+      "evidence_score_0_100": 39.7
     },
     {
-      "samples": 160,
-      "evidence_score_0_100": 31.9,
       "worst_mae": -0.3408,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0022,
-      "rule": "failed_rebound_risk",
+      "samples": 160,
       "ticker": "MRVL",
-      "win_rate": 0.5125
+      "valid": true,
+      "win_rate": 0.5125,
+      "evidence_score_0_100": 31.9
     },
     {
-      "samples": 160,
-      "evidence_score_0_100": 41.8,
       "worst_mae": -0.4216,
-      "valid": true,
-      "median_return": 0.0178,
       "rule": "failed_rebound_risk",
-      "ticker": "ADBE",
-      "win_rate": 0.5625
-    },
-    {
+      "median_return": 0.0178,
       "samples": 160,
-      "evidence_score_0_100": 44.7,
+      "ticker": "ADBE",
+      "valid": true,
+      "win_rate": 0.5625,
+      "evidence_score_0_100": 41.8
+    },
+    {
       "worst_mae": -0.4392,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0149,
-      "rule": "failed_rebound_risk",
+      "samples": 160,
       "ticker": "MCHP",
-      "win_rate": 0.6
+      "valid": true,
+      "win_rate": 0.6,
+      "evidence_score_0_100": 44.7
     },
     {
-      "samples": 159,
-      "evidence_score_0_100": 41.9,
       "worst_mae": -0.0583,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0002,
-      "rule": "failed_rebound_risk",
+      "samples": 159,
       "ticker": "IEF",
-      "win_rate": 0.5031
+      "valid": true,
+      "win_rate": 0.5031,
+      "evidence_score_0_100": 41.9
     },
     {
-      "samples": 159,
-      "evidence_score_0_100": 48.0,
       "worst_mae": -0.4555,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0303,
-      "rule": "failed_rebound_risk",
+      "samples": 159,
       "ticker": "NVDA",
-      "win_rate": 0.5849
+      "valid": true,
+      "win_rate": 0.5849,
+      "evidence_score_0_100": 48.0
     },
     {
-      "samples": 159,
-      "evidence_score_0_100": 45.4,
       "worst_mae": -0.5063,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0242,
-      "rule": "failed_rebound_risk",
+      "samples": 159,
       "ticker": "CRM",
-      "win_rate": 0.5786
+      "valid": true,
+      "win_rate": 0.5786,
+      "evidence_score_0_100": 45.4
     },
     {
-      "samples": 159,
-      "evidence_score_0_100": 50.1,
       "worst_mae": -0.4209,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0211,
-      "rule": "failed_rebound_risk",
-      "ticker": "JPM",
-      "win_rate": 0.6352
-    },
-    {
       "samples": 159,
-      "evidence_score_0_100": 48.3,
+      "ticker": "JPM",
+      "valid": true,
+      "win_rate": 0.6352,
+      "evidence_score_0_100": 50.1
+    },
+    {
       "worst_mae": -0.2483,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0129,
-      "rule": "failed_rebound_risk",
+      "samples": 159,
       "ticker": "XLV",
-      "win_rate": 0.6415
+      "valid": true,
+      "win_rate": 0.6415,
+      "evidence_score_0_100": 48.3
     },
     {
-      "samples": 158,
-      "evidence_score_0_100": 42.7,
       "worst_mae": -0.42,
-      "valid": true,
-      "median_return": 0.0184,
       "rule": "failed_rebound_risk",
+      "median_return": 0.0184,
+      "samples": 158,
       "ticker": "ETN",
-      "win_rate": 0.5696
+      "valid": true,
+      "win_rate": 0.5696,
+      "evidence_score_0_100": 42.7
     },
     {
-      "samples": 158,
-      "evidence_score_0_100": 43.7,
       "worst_mae": -0.2009,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0082,
-      "rule": "failed_rebound_risk",
-      "ticker": "GLD",
-      "win_rate": 0.5823
-    },
-    {
       "samples": 158,
-      "evidence_score_0_100": 45.0,
+      "ticker": "GLD",
+      "valid": true,
+      "win_rate": 0.5823,
+      "evidence_score_0_100": 43.7
+    },
+    {
       "worst_mae": -0.3971,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0217,
-      "rule": "failed_rebound_risk",
+      "samples": 158,
       "ticker": "KLAC",
-      "win_rate": 0.5823
+      "valid": true,
+      "win_rate": 0.5823,
+      "evidence_score_0_100": 45.0
     },
     {
-      "samples": 157,
-      "evidence_score_0_100": 30.0,
       "worst_mae": -0.4822,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": -0.0173,
-      "rule": "failed_rebound_risk",
+      "samples": 157,
       "ticker": "AMD",
-      "win_rate": 0.465
+      "valid": true,
+      "win_rate": 0.465,
+      "evidence_score_0_100": 30.0
     },
     {
-      "samples": 157,
-      "evidence_score_0_100": 41.2,
       "worst_mae": -0.3392,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0145,
-      "rule": "failed_rebound_risk",
-      "ticker": "ORCL",
-      "win_rate": 0.5669
-    },
-    {
       "samples": 157,
-      "evidence_score_0_100": 47.7,
+      "ticker": "ORCL",
+      "valid": true,
+      "win_rate": 0.5669,
+      "evidence_score_0_100": 41.2
+    },
+    {
       "worst_mae": -0.3106,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.023,
-      "rule": "failed_rebound_risk",
+      "samples": 157,
       "ticker": "EQIX",
-      "win_rate": 0.6051
+      "valid": true,
+      "win_rate": 0.6051,
+      "evidence_score_0_100": 47.7
     },
     {
-      "samples": 156,
-      "evidence_score_0_100": 40.9,
       "worst_mae": -0.4072,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0081,
-      "rule": "failed_rebound_risk",
+      "samples": 156,
       "ticker": "XLF",
-      "win_rate": 0.5833
+      "valid": true,
+      "win_rate": 0.5833,
+      "evidence_score_0_100": 40.9
     },
     {
-      "samples": 156,
-      "evidence_score_0_100": 40.3,
       "worst_mae": -0.3483,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0105,
-      "rule": "failed_rebound_risk",
+      "samples": 156,
       "ticker": "XLU",
-      "win_rate": 0.5705
+      "valid": true,
+      "win_rate": 0.5705,
+      "evidence_score_0_100": 40.3
     },
     {
-      "samples": 156,
-      "evidence_score_0_100": 39.6,
       "worst_mae": -0.2245,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0115,
-      "rule": "failed_rebound_risk",
+      "samples": 156,
       "ticker": "MSFT",
-      "win_rate": 0.5449
+      "valid": true,
+      "win_rate": 0.5449,
+      "evidence_score_0_100": 39.6
     },
     {
-      "samples": 156,
-      "evidence_score_0_100": 37.5,
       "worst_mae": -0.3161,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0075,
-      "rule": "failed_rebound_risk",
+      "samples": 156,
       "ticker": "ADI",
-      "win_rate": 0.5513
+      "valid": true,
+      "win_rate": 0.5513,
+      "evidence_score_0_100": 37.5
     },
     {
-      "samples": 156,
-      "evidence_score_0_100": 36.6,
       "worst_mae": -0.3084,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0068,
-      "rule": "failed_rebound_risk",
-      "ticker": "CSCO",
-      "win_rate": 0.5449
-    },
-    {
       "samples": 156,
-      "evidence_score_0_100": 43.3,
+      "ticker": "CSCO",
+      "valid": true,
+      "win_rate": 0.5449,
+      "evidence_score_0_100": 36.6
+    },
+    {
       "worst_mae": -0.4475,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0178,
-      "rule": "failed_rebound_risk",
+      "samples": 156,
       "ticker": "DLR",
-      "win_rate": 0.5769
+      "valid": true,
+      "win_rate": 0.5769,
+      "evidence_score_0_100": 43.3
     },
     {
-      "samples": 155,
-      "evidence_score_0_100": 44.5,
       "worst_mae": -0.3037,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0207,
-      "rule": "failed_rebound_risk",
+      "samples": 155,
       "ticker": "PWR",
-      "win_rate": 0.5806
+      "valid": true,
+      "win_rate": 0.5806,
+      "evidence_score_0_100": 44.5
     },
     {
-      "samples": 154,
-      "evidence_score_0_100": 44.2,
       "worst_mae": -0.3947,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0184,
-      "rule": "failed_rebound_risk",
+      "samples": 154,
       "ticker": "AAPL",
-      "win_rate": 0.5844
+      "valid": true,
+      "win_rate": 0.5844,
+      "evidence_score_0_100": 44.2
     },
     {
-      "samples": 154,
-      "evidence_score_0_100": 43.3,
       "worst_mae": -0.2723,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0238,
-      "rule": "failed_rebound_risk",
-      "ticker": "GOOGL",
-      "win_rate": 0.5584
-    },
-    {
       "samples": 154,
-      "evidence_score_0_100": 48.9,
+      "ticker": "GOOGL",
+      "valid": true,
+      "win_rate": 0.5584,
+      "evidence_score_0_100": 43.3
+    },
+    {
       "worst_mae": -0.5982,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0189,
-      "rule": "failed_rebound_risk",
+      "samples": 154,
       "ticker": "IGV",
-      "win_rate": 0.6299
+      "valid": true,
+      "win_rate": 0.6299,
+      "evidence_score_0_100": 48.9
     },
     {
-      "samples": 153,
-      "evidence_score_0_100": 37.0,
       "worst_mae": -0.328,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0131,
-      "rule": "failed_rebound_risk",
+      "samples": 153,
       "ticker": "ASML",
-      "win_rate": 0.5294
+      "valid": true,
+      "win_rate": 0.5294,
+      "evidence_score_0_100": 37.0
     },
     {
-      "samples": 151,
-      "evidence_score_0_100": 48.7,
       "worst_mae": -0.227,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0099,
-      "rule": "failed_rebound_risk",
+      "samples": 151,
       "ticker": "XLP",
-      "win_rate": 0.6424
+      "valid": true,
+      "win_rate": 0.6424,
+      "evidence_score_0_100": 48.7
     },
     {
-      "samples": 150,
-      "evidence_score_0_100": 49.1,
       "worst_mae": -0.4739,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0269,
-      "rule": "failed_rebound_risk",
+      "samples": 150,
       "ticker": "MPWR",
-      "win_rate": 0.6067
+      "valid": true,
+      "win_rate": 0.6067,
+      "evidence_score_0_100": 49.1
     },
     {
-      "samples": 149,
-      "evidence_score_0_100": 43.3,
       "worst_mae": -0.7812,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0135,
-      "rule": "failed_rebound_risk",
-      "ticker": "SOXX",
-      "win_rate": 0.5906
-    },
-    {
       "samples": 149,
-      "evidence_score_0_100": 50.2,
+      "ticker": "SOXX",
+      "valid": true,
+      "win_rate": 0.5906,
+      "evidence_score_0_100": 43.3
+    },
+    {
       "worst_mae": -0.3429,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.0163,
-      "rule": "failed_rebound_risk",
+      "samples": 149,
       "ticker": "IGM",
-      "win_rate": 0.651
+      "valid": true,
+      "win_rate": 0.651,
+      "evidence_score_0_100": 50.2
     },
     {
-      "samples": 148,
-      "evidence_score_0_100": 47.6,
       "worst_mae": -0.2798,
-      "valid": true,
+      "rule": "momentum_leader",
       "median_return": 0.0195,
-      "rule": "momentum_leader",
+      "samples": 148,
       "ticker": "PWR",
-      "win_rate": 0.6149
+      "valid": true,
+      "win_rate": 0.6149,
+      "evidence_score_0_100": 47.6
     },
     {
-      "samples": 148,
-      "evidence_score_0_100": 43.9,
       "worst_mae": -0.2781,
-      "valid": true,
+      "rule": "failed_rebound_risk",
       "median_return": 0.01,
-      "rule": "failed_rebound_risk",
-      "ticker": "QQQ",
-      "win_rate": 0.6081
-    },
-    {
       "samples": 148,
-      "evidence_score_0_100": 42.6,
+      "ticker": "QQQ",
+      "valid": true,
+      "win_rate": 0.6081,
+      "evidence_score_0_100": 43.9
+    },
+    {
       "worst_mae": -0.3109,
-      "valid": true,
-      "median_return": 0.008,
       "rule": "failed_rebound_risk",
+      "median_return": 0.008,
+      "samples": 148,
       "ticker": "SMH",
-      "win_rate": 0.6014
+      "valid": true,
+      "win_rate": 0.6014,
+      "evidence_score_0_100": 42.6
     },
     {
-      "samples": 147,
-      "evidence_score_0_100": 39.2,
       "worst_mae": -0.2412,
-      "valid": true,
-      "median_return": 0.0072,
       "rule": "momentum_leader",
+      "median_return": 0.0072,
+      "samples": 147,
       "ticker": "AMZN",
-      "win_rate": 0.5646
+      "valid": true,
+      "win_rate": 0.5646,
+      "evidence_score_0_100": 39.2
     },
     {
-      "samples": 147,
-      "evidence_score_0_100": 58.3,
       "worst_mae": -0.3852,
-      "valid": true,
-      "median_return": 0.0504,
       "rule": "momentum_leader",
+      "median_return": 0.0504,
+      "samples": 147,
       "ticker": "NVDA",
-      "win_rate": 0.6259
+      "valid": true,
+      "win_rate": 0.6259,
+      "evidence_score_0_100": 58.3
     }
   ],
   "note": "Market-only summary for ChatGPT reading. Decision summary is latest_decision_summary.json."

@@ -111,7 +111,7 @@
   },
   "evaluation_horizon_bars": 20,
   "evidence_classification": "PROSPECTIVE",
-  "generated_at_utc": "2026-07-14T13:08:45.595933+00:00",
+  "generated_at_utc": "2026-07-14T13:49:07.082316+00:00",
   "important_limit": "Governance uses only paired, non-overlapping prospective public-model samples. It cannot place an order and cannot infer current private IBKR holdings.",
   "ledger_counts": {
     "new_outcome_events": 0,
