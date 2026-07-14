@@ -1,0 +1,32 @@
+{
+  "schema_version": "shadow-evidence-policy-v1",
+  "frozen_at_utc": "2026-07-14T00:00:00+00:00",
+  "prospective_start_market_date": "2026-07-15",
+  "allow_historical_backfill": false,
+  "selection": {
+    "maximum_candidates_per_market_date": 3,
+    "required_signal_state": "ACTIVE",
+    "require_fresh_market_data": true,
+    "ranking_policy": "QUANT_PASS_FIRST_THEN_EVIDENCE_SCORE_SAMPLES_TICKER_RULE_V1"
+  },
+  "review": {
+    "required_assessment_for_every_selected_candidate": true,
+    "allowed_assessments": [
+      "BUY_REVIEW",
+      "WAIT",
+      "REJECT",
+      "NO_TRADE"
+    ]
+  },
+  "evaluation": {
+    "entry_close_offset_bars": 1,
+    "horizon_bars": 20,
+    "minimum_matured_samples_for_human_pilot": 20
+  },
+  "execution_boundary": {
+    "counterfactual_only": true,
+    "execution_eligible": false,
+    "automatic_order_allowed": false,
+    "human_confirmation_required": true
+  }
+}

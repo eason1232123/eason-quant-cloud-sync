@@ -34,9 +34,9 @@ class V6ReleaseAuditTests(unittest.TestCase):
             >= thresholds["governance_paired_samples_per_challenger"],
         )
         self.assertEqual(
-            gates["live_review_minimum_sample_reached"],
-            counts["sanitized_live_review_matured_outcomes"]
-            >= thresholds["sanitized_live_review_matured_outcomes"],
+            gates["shadow_review_minimum_sample_reached"],
+            counts["shadow_review_matured_outcomes"]
+            >= thresholds["shadow_review_matured_outcomes"],
         )
         self.assertEqual(
             payload["ready_for_human_pilot_review"],
@@ -102,8 +102,8 @@ class V6ReleaseAuditTests(unittest.TestCase):
         separated["evidence_counts"]["public_signal_primary_horizon_outcomes"] = (
             separated["evidence_thresholds"]["public_signal_primary_horizon_outcomes"]
         )
-        separated["evidence_counts"]["sanitized_live_review_matured_outcomes"] = (
-            separated["evidence_thresholds"]["sanitized_live_review_matured_outcomes"]
+        separated["evidence_counts"]["shadow_review_matured_outcomes"] = (
+            separated["evidence_thresholds"]["shadow_review_matured_outcomes"]
         )
         separated["evidence_counts"]["minimum_governance_paired_samples"] = (
             separated["evidence_thresholds"][
@@ -159,9 +159,9 @@ class V6ReleaseAuditTests(unittest.TestCase):
                 "minimum_governance_paired_samples",
                 "governance_paired_samples_per_challenger",
             ),
-            "live_review_minimum_sample_reached": (
-                "sanitized_live_review_matured_outcomes",
-                "sanitized_live_review_matured_outcomes",
+            "shadow_review_minimum_sample_reached": (
+                "shadow_review_matured_outcomes",
+                "shadow_review_matured_outcomes",
             ),
             "ibkr_to_chatgpt_contract_evidenced": (
                 "sanitized_live_review_predictions",

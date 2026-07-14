@@ -89,7 +89,7 @@ def _decision(action: str = "BUY_CANDIDATE_REVIEW_REQUIRED") -> dict:
         "DATA_REVIEW_REQUIRED": "BLOCKED_BY_MODEL_PORTFOLIO_DATA",
     }
     return {
-        "schema_version": "decision-packet-v5.0",
+        "schema_version": "decision-packet-v5.1",
         "market_data": {
             "source": "fixture EOD source",
             "market_timezone": "America/New_York",
@@ -105,8 +105,10 @@ def _decision(action: str = "BUY_CANDIDATE_REVIEW_REQUIRED") -> dict:
             "automatic_order_allowed": False,
         },
         "candidates": {
-            "actionable_count": len(candidate_rows),
-            "top_actionable": candidate_rows,
+            "execution": {
+                "candidate_count": len(candidate_rows),
+                "top": candidate_rows,
+            },
         },
     }
 

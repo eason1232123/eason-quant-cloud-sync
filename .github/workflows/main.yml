@@ -99,6 +99,8 @@ jobs:
         run: |
           python -u scripts/build_decision_report.py
           python -u scripts/build_action_board_v3.py
+          python -u scripts/build_etf_lookthrough.py
+          python -u scripts/build_etf_lookthrough.py --validate-only
 
       - name: Verify expected outputs
         run: |
@@ -244,6 +246,15 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_portfolio_backtest.py
 
+      - name: Refresh official QQQ and SMH lookthrough
+        timeout-minutes: 3
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python -u scripts/build_etf_lookthrough.py --refresh
+          python -u scripts/build_etf_lookthrough.py --validate-only
+
       - name: Build walk-forward and overfitting reports
         timeout-minutes: 8
         env:
@@ -293,6 +304,13 @@ jobs:
           PYTHONUNBUFFERED: "1"
         run: python -u scripts/build_live_review_forward_ledger.py update-outcomes
 
+      - name: Mature counterfactual shadow-review outcomes
+        timeout-minutes: 4
+        env:
+          PYTHONPATH: ${{ github.workspace }}
+          PYTHONUNBUFFERED: "1"
+        run: python -u scripts/build_shadow_review_forward_ledger.py update-outcomes
+
       - name: Validate final decision packet contract
         timeout-minutes: 2
         run: |
@@ -302,10 +320,13 @@ jobs:
           test -e docs/model_candidate_forward_ledger.jsonl
           test -s docs/live_review_forward_status.json
           test -e docs/live_review_forward_ledger.jsonl
+          test -s docs/shadow_review_forward_status.json
+          test -e docs/shadow_review_forward_ledger.jsonl
           test -s schemas/decision_packet.schema.json
           python -m scripts.validate_decision_packet
           python -m scripts.validate_validation_split
           python -m scripts.validate_model_artifacts
+          python -m scripts.build_shadow_review_forward_ledger validate
           python -m scripts.validate_generated_json
 
       - name: Audit v6 human-pilot release readiness

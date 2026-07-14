@@ -21,7 +21,7 @@
   ],
   "properties": {
     "schema_version": {
-      "const": "decision-packet-v5.0"
+      "const": "decision-packet-v5.1"
     },
     "generated_at_utc": {
       "type": "string",
@@ -345,17 +345,74 @@
     "candidates": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["actionable_count", "top_actionable"],
+      "required": ["execution", "shadow"],
       "properties": {
-        "actionable_count": {
-          "type": "integer",
-          "minimum": 0
+        "execution": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "candidate_type",
+            "candidate_count",
+            "top",
+            "counterfactual_only",
+            "automatic_order_allowed"
+          ],
+          "properties": {
+            "candidate_type": {"const": "EXECUTION_CANDIDATE"},
+            "candidate_count": {"type": "integer", "minimum": 0},
+            "top": {
+              "type": "array",
+              "maxItems": 5,
+              "items": {"$ref": "#/$defs/actionableCandidate"}
+            },
+            "counterfactual_only": {"const": false},
+            "automatic_order_allowed": {"const": false}
+          }
         },
-        "top_actionable": {
-          "type": "array",
-          "maxItems": 5,
-          "items": {
-            "$ref": "#/$defs/actionableCandidate"
+        "shadow": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "candidate_type",
+            "collection_status",
+            "prospective_start_market_date",
+            "allow_historical_backfill",
+            "selection_policy",
+            "maximum_candidates_per_market_date",
+            "candidate_count",
+            "top",
+            "counterfactual_only",
+            "execution_eligible",
+            "automatic_order_allowed"
+          ],
+          "properties": {
+            "candidate_type": {"const": "SHADOW_CANDIDATE"},
+            "collection_status": {
+              "enum": [
+                "BEFORE_PROSPECTIVE_START",
+                "READY_FOR_SAME_DAY_SHADOW_REVIEW",
+                "NO_FRESH_RULE_VALID_ACTIVE_SIGNAL"
+              ]
+            },
+            "prospective_start_market_date": {"type": "string", "format": "date"},
+            "allow_historical_backfill": {"const": false},
+            "selection_policy": {
+              "const": "QUANT_PASS_FIRST_THEN_EVIDENCE_SCORE_SAMPLES_TICKER_RULE_V1"
+            },
+            "maximum_candidates_per_market_date": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 3
+            },
+            "candidate_count": {"type": "integer", "minimum": 0, "maximum": 3},
+            "top": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {"$ref": "#/$defs/shadowCandidate"}
+            },
+            "counterfactual_only": {"const": true},
+            "execution_eligible": {"const": false},
+            "automatic_order_allowed": {"const": false}
           }
         }
       }
@@ -630,6 +687,7 @@
       "type": "object",
       "additionalProperties": false,
       "required": [
+        "candidate_type",
         "ticker",
         "rule",
         "status",
@@ -651,9 +709,13 @@
         "avg_alpha_vs_benchmark_pct",
         "evidence_score_0_100",
         "fail_reasons",
-        "final_order_permission"
+        "final_order_permission",
+        "counterfactual_only",
+        "execution_eligible",
+        "automatic_order_allowed"
       ],
       "properties": {
+        "candidate_type": {"const": "EXECUTION_CANDIDATE"},
         "ticker": {
           "$ref": "#/$defs/ticker"
         },
@@ -746,7 +808,89 @@
         },
         "final_order_permission": {
           "const": "NOT_ALLOWED_UNTIL_CHATGPT_LIVE_REVIEW"
-        }
+        },
+        "counterfactual_only": {"const": false},
+        "execution_eligible": {"const": true},
+        "automatic_order_allowed": {"const": false}
+      }
+    },
+    "shadowCandidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_type",
+        "selection_rank",
+        "ticker",
+        "rule",
+        "status",
+        "latest_date",
+        "latest_price",
+        "data_fresh",
+        "staleness_business_days",
+        "decision_eligible",
+        "horizon_days",
+        "samples",
+        "valid",
+        "win_rate_pct",
+        "avg_return_pct",
+        "median_return_pct",
+        "worst_return_pct",
+        "avg_mae_pct",
+        "worst_mae_pct",
+        "benchmark",
+        "avg_alpha_vs_benchmark_pct",
+        "evidence_score_0_100",
+        "fail_reasons",
+        "prospective_evidence_eligible",
+        "counterfactual_only",
+        "execution_eligible",
+        "automatic_order_allowed"
+      ],
+      "properties": {
+        "candidate_type": {"const": "SHADOW_CANDIDATE"},
+        "selection_rank": {"type": "integer", "minimum": 1, "maximum": 3},
+        "ticker": {"$ref": "#/$defs/ticker"},
+        "rule": {
+          "enum": [
+            "pullback_reclaim_5dma",
+            "rsi_oversold_reclaim_40",
+            "ma20_reclaim_bullish",
+            "ma50_reclaim_bullish",
+            "relative_strength_rebound",
+            "momentum_leader"
+          ]
+        },
+        "status": {
+          "enum": [
+            "QUANT_PASS_NEEDS_CHATGPT_REVIEW",
+            "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE"
+          ]
+        },
+        "latest_date": {"type": "string", "format": "date"},
+        "latest_price": {"type": "number", "exclusiveMinimum": 0},
+        "data_fresh": {"const": true},
+        "staleness_business_days": {"type": "integer", "minimum": 0},
+        "decision_eligible": {"const": true},
+        "horizon_days": {"const": 20},
+        "samples": {"type": ["integer", "null"], "minimum": 0},
+        "valid": {"type": ["boolean", "null"]},
+        "win_rate_pct": {"type": ["number", "null"], "minimum": 0, "maximum": 100},
+        "avg_return_pct": {"type": ["number", "null"]},
+        "median_return_pct": {"type": ["number", "null"]},
+        "worst_return_pct": {"type": ["number", "null"]},
+        "avg_mae_pct": {"type": ["number", "null"]},
+        "worst_mae_pct": {"type": ["number", "null"]},
+        "benchmark": {"$ref": "#/$defs/ticker"},
+        "avg_alpha_vs_benchmark_pct": {"type": ["number", "null"]},
+        "evidence_score_0_100": {"type": "number", "minimum": 0, "maximum": 100},
+        "fail_reasons": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "prospective_evidence_eligible": {"type": "boolean"},
+        "counterfactual_only": {"const": true},
+        "execution_eligible": {"const": false},
+        "automatic_order_allowed": {"const": false}
       }
     },
     "riskCandidate": {

@@ -6,7 +6,7 @@
 
 - `DATA_REVIEW_REQUIRED` 或 `NO_TRADE`：GPT 只能返回 `NO_TRADE` 或 `WAIT`。
 - `RISK_REVIEW_REQUIRED`：只有真实持仓中的符号可以进入 `REDUCE_REVIEW`。
-- `BUY_CANDIDATE_REVIEW_REQUIRED`：只有 GitHub 当前 `top_actionable` 中的符号可以进入 `BUY_REVIEW`。
+- `BUY_CANDIDATE_REVIEW_REQUIRED`：只有 GitHub 当前 `candidates.execution.top` 中的符号可以进入真实 `BUY_REVIEW`；影子标签不改变该边界。
 - 任一必需检查失败或不可用时，只能 `NO_TRADE` 或 `WAIT`。
 - `BUY_REVIEW` 必须六项检查全部通过，并至少有一个明确标记为实时的行情源。
 - 所有结论仍要求人工确认；`automatic_order_allowed=false`，`order_payload=null`。

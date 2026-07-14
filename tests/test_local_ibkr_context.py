@@ -100,7 +100,7 @@ def private_snapshot() -> dict:
 
 def decision_packet() -> dict:
     return {
-        "schema_version": "decision-packet-v5.0",
+        "schema_version": "decision-packet-v5.1",
         "market_data": {
             "source": "fixture EOD source",
             "market_timezone": "America/New_York",

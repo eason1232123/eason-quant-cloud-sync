@@ -139,16 +139,52 @@ def validate_invariants(packet: dict[str, Any]) -> dict[str, Any]:
         raise AssertionError(f"unsupported reference market date status: {reference_status}")
     reference = date.fromisoformat(reference_date)
 
-    assert len(candidates["top_actionable"]) == min(candidates["actionable_count"], 5)
-    if candidates["actionable_count"]:
+    execution_candidates = candidates["execution"]
+    shadow_candidates = candidates["shadow"]
+    assert len(execution_candidates["top"]) == min(
+        execution_candidates["candidate_count"], 5
+    )
+    if execution_candidates["candidate_count"]:
         assert quality["fresh_ticker_count"] > 0
     assert all(
         row["data_fresh"]
         and row["decision_eligible"]
         and row["status"] == "QUANT_PASS_NEEDS_CHATGPT_REVIEW"
         and row["latest_date"] == reference_date
-        for row in candidates["top_actionable"]
+        and row["candidate_type"] == "EXECUTION_CANDIDATE"
+        and row["counterfactual_only"] is False
+        and row["execution_eligible"] is True
+        and row["automatic_order_allowed"] is False
+        for row in execution_candidates["top"]
     )
+    assert shadow_candidates["candidate_count"] == len(shadow_candidates["top"])
+    assert shadow_candidates["candidate_count"] <= shadow_candidates[
+        "maximum_candidates_per_market_date"
+    ]
+    shadow_start = date.fromisoformat(shadow_candidates["prospective_start_market_date"])
+    shadow_is_eligible = reference >= shadow_start
+    assert all(
+        row["selection_rank"] == rank
+        and row["latest_date"] == reference_date
+        and row["data_fresh"] is True
+        and row["decision_eligible"] is True
+        and row["prospective_evidence_eligible"] is shadow_is_eligible
+        and row["candidate_type"] == "SHADOW_CANDIDATE"
+        and row["counterfactual_only"] is True
+        and row["execution_eligible"] is False
+        and row["automatic_order_allowed"] is False
+        for rank, row in enumerate(shadow_candidates["top"], start=1)
+    )
+    if not shadow_is_eligible:
+        assert shadow_candidates["collection_status"] == "BEFORE_PROSPECTIVE_START"
+    elif shadow_candidates["candidate_count"]:
+        assert shadow_candidates["collection_status"] == "READY_FOR_SAME_DAY_SHADOW_REVIEW"
+    else:
+        assert shadow_candidates["collection_status"] == "NO_FRESH_RULE_VALID_ACTIVE_SIGNAL"
+    assert shadow_candidates["allow_historical_backfill"] is False
+    assert shadow_candidates["counterfactual_only"] is True
+    assert shadow_candidates["execution_eligible"] is False
+    assert shadow_candidates["automatic_order_allowed"] is False
 
     assert "CASH" not in scope["tickers"]
     assert len(scope["tickers"]) == len(set(scope["tickers"]))
@@ -212,12 +248,12 @@ def validate_invariants(packet: dict[str, Any]) -> dict[str, Any]:
     elif final_action == "BUY_CANDIDATE_REVIEW_REQUIRED":
         assert quality["data_status"] in {"FRESH", "PARTIAL_STALE_WATCHLIST"}
         assert decision["buy_permission"] == "CHATGPT_LIVE_REVIEW_REQUIRED"
-        assert candidates["actionable_count"] > 0 and candidates["top_actionable"]
+        assert execution_candidates["candidate_count"] > 0 and execution_candidates["top"]
         assert not risks["model_portfolio_high"]
     elif final_action == "NO_TRADE":
         assert quality["data_status"] in {"FRESH", "PARTIAL_STALE_WATCHLIST"}
         assert decision["buy_permission"] == "NO_QUANT_CANDIDATE"
-        assert candidates["actionable_count"] == 0
+        assert execution_candidates["candidate_count"] == 0
         assert not risks["model_portfolio_high"]
     else:
         raise AssertionError(f"unsupported final action: {final_action}")
@@ -232,7 +268,7 @@ def validate_invariants(packet: dict[str, Any]) -> dict[str, Any]:
         "schema_version": packet["schema_version"],
         "final_action": final_action,
         "data_status": quality["data_status"],
-        "actionable_count": candidates["actionable_count"],
+        "actionable_count": execution_candidates["candidate_count"],
         "model_high_risk_count": len(risks["model_portfolio_high"]),
     }
 

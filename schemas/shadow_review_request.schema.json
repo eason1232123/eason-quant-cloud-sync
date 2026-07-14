@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/eason1232123/eason-quant-cloud-sync/schemas/shadow_review_request.schema.json",
+  "title": "Counterfactual Shadow Review Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "generated_at_utc",
+    "observation_market_date",
+    "decision_packet_fingerprint",
+    "quant_final_action",
+    "selection_policy",
+    "candidates",
+    "required_check_ids",
+    "allowed_assessments",
+    "review_contract",
+    "counterfactual_only",
+    "execution_eligible",
+    "automatic_order_allowed",
+    "human_confirmation_required"
+  ],
+  "properties": {
+    "schema_version": {"const": "shadow-review-request-v1"},
+    "request_id": {"type": "string", "pattern": "^shr_[0-9a-f]{64}$"},
+    "generated_at_utc": {"type": "string", "format": "date-time"},
+    "observation_market_date": {"type": "string", "format": "date"},
+    "decision_packet_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "quant_final_action": {
+      "enum": [
+        "DATA_REVIEW_REQUIRED",
+        "RISK_REVIEW_REQUIRED",
+        "BUY_CANDIDATE_REVIEW_REQUIRED",
+        "NO_TRADE"
+      ]
+    },
+    "selection_policy": {
+      "const": "QUANT_PASS_FIRST_THEN_EVIDENCE_SCORE_SAMPLES_TICKER_RULE_V1"
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {"$ref": "#/$defs/candidate"}
+    },
+    "required_check_ids": {
+      "const": ["live_price_context", "fresh_news_macro", "earnings_valuation", "risk_reward"]
+    },
+    "allowed_assessments": {
+      "const": ["BUY_REVIEW", "WAIT", "REJECT", "NO_TRADE"]
+    },
+    "review_contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "assess_every_candidate",
+        "missing_assessment_rejects_entire_cohort",
+        "historical_backfill_allowed",
+        "assessment_changes_execution_decision"
+      ],
+      "properties": {
+        "assess_every_candidate": {"const": true},
+        "missing_assessment_rejects_entire_cohort": {"const": true},
+        "historical_backfill_allowed": {"const": false},
+        "assessment_changes_execution_decision": {"const": false}
+      }
+    },
+    "counterfactual_only": {"const": true},
+    "execution_eligible": {"const": false},
+    "automatic_order_allowed": {"const": false},
+    "human_confirmation_required": {"const": true}
+  },
+  "$defs": {
+    "ticker": {"type": "string", "pattern": "^[A-Z][A-Z0-9.-]{0,14}$"},
+    "candidate": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "candidate_id",
+        "candidate_type",
+        "selection_rank",
+        "symbol",
+        "rule",
+        "signal_status",
+        "benchmark",
+        "latest_price",
+        "evidence_score_0_100",
+        "quant_evidence_sufficient",
+        "counterfactual_only",
+        "execution_eligible",
+        "automatic_order_allowed"
+      ],
+      "properties": {
+        "candidate_id": {"type": "string", "pattern": "^shc_[0-9a-f]{64}$"},
+        "candidate_type": {"const": "SHADOW_CANDIDATE"},
+        "selection_rank": {"type": "integer", "minimum": 1, "maximum": 3},
+        "symbol": {"$ref": "#/$defs/ticker"},
+        "rule": {
+          "enum": [
+            "pullback_reclaim_5dma",
+            "rsi_oversold_reclaim_40",
+            "ma20_reclaim_bullish",
+            "ma50_reclaim_bullish",
+            "relative_strength_rebound",
+            "momentum_leader"
+          ]
+        },
+        "signal_status": {
+          "enum": [
+            "QUANT_PASS_NEEDS_CHATGPT_REVIEW",
+            "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE"
+          ]
+        },
+        "benchmark": {"$ref": "#/$defs/ticker"},
+        "latest_price": {"type": "number", "exclusiveMinimum": 0},
+        "evidence_score_0_100": {"type": "number", "minimum": 0, "maximum": 100},
+        "quant_evidence_sufficient": {"type": "boolean"},
+        "counterfactual_only": {"const": true},
+        "execution_eligible": {"const": false},
+        "automatic_order_allowed": {"const": false}
+      }
+    }
+  }
+}

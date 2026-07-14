@@ -2,7 +2,7 @@
   "automatic_order_allowed": false,
   "blockers": [
     "PUBLIC_SIGNAL_PRIMARY_OUTCOMES_BELOW_MINIMUM",
-    "LIVE_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM"
+    "SHADOW_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM"
   ],
   "challenger_model_promotion_blockers": [
     "MODEL_GOVERNANCE_PAIRED_SAMPLES_BELOW_PROMOTION_THRESHOLD"
@@ -22,20 +22,21 @@
   "evidence_counts": {
     "minimum_governance_paired_samples": 0,
     "public_signal_primary_horizon_outcomes": 0,
-    "sanitized_live_review_matured_outcomes": 0,
-    "sanitized_live_review_predictions": 2
+    "sanitized_live_review_predictions": 2,
+    "shadow_review_matured_outcomes": 0,
+    "shadow_review_predictions": 0
   },
   "evidence_scope": {
     "ibkr_runtime_evidence": "a sanitized prediction is created only after the private read-only IBKR context and live-review response validate; this is application-level, not broker-independent attestation",
-    "live_review_count": "sanitized outcomes with non-overlap enforced per public symbol",
     "model_governance_count": "paired, chronologically non-overlapping incumbent/challenger cohorts; sample sufficiency alone is not a promotion approval",
-    "public_signal_count": "matured primary-horizon outcomes whose immutable source prediction state is ACTIVE; supporting evidence only, not an independence claim"
+    "public_signal_count": "matured primary-horizon outcomes whose immutable source prediction state is ACTIVE; supporting evidence only, not an independence claim",
+    "shadow_review_count": "every deterministically selected public shadow candidate is assessed and matured; no real order or private holding is required"
   },
   "evidence_thresholds": {
     "governance_paired_samples_per_challenger": 48,
     "ibkr_bound_sanitized_live_reviews": 1,
     "public_signal_primary_horizon_outcomes": 20,
-    "sanitized_live_review_matured_outcomes": 20
+    "shadow_review_matured_outcomes": 20
   },
   "generated_at_utc": "2026-07-14T14:34:56.171033+00:00",
   "human_confirmation_required": true,
@@ -44,6 +45,7 @@
     "PROSPECTIVE_FROZEN_UNIVERSE_DOES_NOT_SUPPORT_MARKET_WIDE_GENERALIZATION",
     "CONFIGURED_COSTS_ARE_NOT_OBSERVED_LIVE_EXECUTION_COSTS",
     "SANITIZED_RUNTIME_EVIDENCE_IS_NOT_AN_INDEPENDENT_BROKER_ATTESTATION",
+    "DAILY_SHADOW_REVIEW_WINDOWS_MAY_OVERLAP_AND_ARE_NOT_INDEPENDENT_SAMPLES",
     "BACKTEST_OR_PROSPECTIVE_RESULTS_DO_NOT_GUARANTEE_FUTURE_PERFORMANCE"
   ],
   "market_timezone": "America/New_York",
@@ -52,13 +54,13 @@
   "ready_for_human_pilot_review": false,
   "release_gates": {
     "ibkr_to_chatgpt_contract_evidenced": true,
-    "live_review_forward_artifacts_valid": true,
-    "live_review_minimum_sample_reached": false,
     "model_artifacts_valid": true,
     "model_governance_promotion_sample_reached": false,
-    "public_signal_minimum_sample_reached": false
+    "public_signal_minimum_sample_reached": false,
+    "shadow_review_forward_artifacts_valid": true,
+    "shadow_review_minimum_sample_reached": false
   },
   "release_scope": "V6_DECISION_SUPPORT_HUMAN_PILOT_NOT_AUTOMATIC_EXECUTION",
-  "schema_version": "v6-release-readiness-status-v2",
+  "schema_version": "v6-release-readiness-status-v3",
   "status": "PROSPECTIVE_VALIDATION_IN_PROGRESS"
 }

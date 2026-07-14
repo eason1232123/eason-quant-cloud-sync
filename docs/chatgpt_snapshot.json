@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-14T14:36:59.210890+00:00",
+  "generated_at_utc": "2026-07-14T16:15:11.342989+00:00",
   "version": "chatgpt-compact-snapshot-v6.0-model-governance-t2",
   "purpose": "Small connector-friendly evidence file for ChatGPT. Read this before large market_report.json/action_board.json to avoid large JSON connector truncation/empty-content issues.",
   "read_priority_for_chatgpt": [
@@ -11,8 +11,8 @@
     "docs/market_report.json"
   ],
   "decision_contract": {
-    "schema_version": "decision-packet-v5.0",
-    "generated_at_utc": "2026-07-14T14:36:58.028897+00:00",
+    "schema_version": "decision-packet-v5.1",
+    "generated_at_utc": "2026-07-14T16:13:29.933629+00:00",
     "purpose": "Small, stable handoff contract from GitHub evidence to ChatGPT live-market judgment.",
     "roles": {
       "github": "data quality, reproducible quant evidence, portfolio-model risk scope, and candidate generation",
@@ -207,8 +207,120 @@
       "default_human_action": "NO_TRADE_UNLESS_LIVE_RISK_OVERRIDE"
     },
     "candidates": {
-      "actionable_count": 0,
-      "top_actionable": []
+      "execution": {
+        "candidate_type": "EXECUTION_CANDIDATE",
+        "candidate_count": 0,
+        "top": [],
+        "counterfactual_only": false,
+        "automatic_order_allowed": false
+      },
+      "shadow": {
+        "candidate_type": "SHADOW_CANDIDATE",
+        "collection_status": "BEFORE_PROSPECTIVE_START",
+        "prospective_start_market_date": "2026-07-15",
+        "allow_historical_backfill": false,
+        "selection_policy": "QUANT_PASS_FIRST_THEN_EVIDENCE_SCORE_SAMPLES_TICKER_RULE_V1",
+        "maximum_candidates_per_market_date": 3,
+        "candidate_count": 3,
+        "top": [
+          {
+            "candidate_type": "SHADOW_CANDIDATE",
+            "selection_rank": 1,
+            "ticker": "AAPL",
+            "rule": "momentum_leader",
+            "status": "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE",
+            "latest_date": "2026-07-13",
+            "latest_price": 317.31,
+            "data_fresh": true,
+            "staleness_business_days": 0,
+            "decision_eligible": true,
+            "horizon_days": 20,
+            "samples": 146,
+            "valid": true,
+            "win_rate_pct": 65.07,
+            "avg_return_pct": 3.08,
+            "median_return_pct": 3.43,
+            "worst_return_pct": -20.42,
+            "avg_mae_pct": -4.85,
+            "worst_mae_pct": -24.65,
+            "benchmark": "SPY",
+            "avg_alpha_vs_benchmark_pct": 2.24,
+            "evidence_score_0_100": 56.0,
+            "fail_reasons": [
+              "worst_MAE<-15%"
+            ],
+            "prospective_evidence_eligible": false,
+            "counterfactual_only": true,
+            "execution_eligible": false,
+            "automatic_order_allowed": false
+          },
+          {
+            "candidate_type": "SHADOW_CANDIDATE",
+            "selection_rank": 2,
+            "ticker": "PANW",
+            "rule": "momentum_leader",
+            "status": "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE",
+            "latest_date": "2026-07-13",
+            "latest_price": 330.3,
+            "data_fresh": true,
+            "staleness_business_days": 0,
+            "decision_eligible": true,
+            "horizon_days": 20,
+            "samples": 100,
+            "valid": true,
+            "win_rate_pct": 67.0,
+            "avg_return_pct": 2.3,
+            "median_return_pct": 2.54,
+            "worst_return_pct": -24.86,
+            "avg_mae_pct": -6.72,
+            "worst_mae_pct": -29.37,
+            "benchmark": "QQQ",
+            "avg_alpha_vs_benchmark_pct": 1.15,
+            "evidence_score_0_100": 54.9,
+            "fail_reasons": [
+              "worst_MAE<-15%"
+            ],
+            "prospective_evidence_eligible": false,
+            "counterfactual_only": true,
+            "execution_eligible": false,
+            "automatic_order_allowed": false
+          },
+          {
+            "candidate_type": "SHADOW_CANDIDATE",
+            "selection_rank": 3,
+            "ticker": "ANET",
+            "rule": "momentum_leader",
+            "status": "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE",
+            "latest_date": "2026-07-13",
+            "latest_price": 181.15,
+            "data_fresh": true,
+            "staleness_business_days": 0,
+            "decision_eligible": true,
+            "horizon_days": 20,
+            "samples": 95,
+            "valid": true,
+            "win_rate_pct": 63.16,
+            "avg_return_pct": 2.82,
+            "median_return_pct": 3.45,
+            "worst_return_pct": -24.63,
+            "avg_mae_pct": -8.07,
+            "worst_mae_pct": -29.63,
+            "benchmark": "SPY",
+            "avg_alpha_vs_benchmark_pct": 1.66,
+            "evidence_score_0_100": 53.9,
+            "fail_reasons": [
+              "worst_MAE<-15%"
+            ],
+            "prospective_evidence_eligible": false,
+            "counterfactual_only": true,
+            "execution_eligible": false,
+            "automatic_order_allowed": false
+          }
+        ],
+        "counterfactual_only": true,
+        "execution_eligible": false,
+        "automatic_order_allowed": false
+      }
     },
     "risks": {
       "model_portfolio_high": [],
@@ -1139,6 +1251,113 @@
       "coverage_gaps_count": 0,
       "errors_count": 0,
       "note": "coverage_gaps are tickers without usable cache yet; errors are true processing/fetch failures not classified as rotation/rate-limit coverage gaps."
+    },
+    "shadow_research_review": {
+      "candidate_type": "SHADOW_CANDIDATE",
+      "collection_status": "BEFORE_PROSPECTIVE_START",
+      "prospective_start_market_date": "2026-07-15",
+      "allow_historical_backfill": false,
+      "selection_policy": "QUANT_PASS_FIRST_THEN_EVIDENCE_SCORE_SAMPLES_TICKER_RULE_V1",
+      "maximum_candidates_per_market_date": 3,
+      "candidate_count": 3,
+      "top": [
+        {
+          "candidate_type": "SHADOW_CANDIDATE",
+          "selection_rank": 1,
+          "ticker": "AAPL",
+          "rule": "momentum_leader",
+          "status": "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE",
+          "latest_date": "2026-07-13",
+          "latest_price": 317.31,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "horizon_days": 20,
+          "samples": 146,
+          "valid": true,
+          "win_rate_pct": 65.07,
+          "avg_return_pct": 3.08,
+          "median_return_pct": 3.43,
+          "worst_return_pct": -20.42,
+          "avg_mae_pct": -4.85,
+          "worst_mae_pct": -24.65,
+          "benchmark": "SPY",
+          "avg_alpha_vs_benchmark_pct": 2.24,
+          "evidence_score_0_100": 56.0,
+          "fail_reasons": [
+            "worst_MAE<-15%"
+          ],
+          "prospective_evidence_eligible": false,
+          "counterfactual_only": true,
+          "execution_eligible": false,
+          "automatic_order_allowed": false
+        },
+        {
+          "candidate_type": "SHADOW_CANDIDATE",
+          "selection_rank": 2,
+          "ticker": "PANW",
+          "rule": "momentum_leader",
+          "status": "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE",
+          "latest_date": "2026-07-13",
+          "latest_price": 330.3,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "horizon_days": 20,
+          "samples": 100,
+          "valid": true,
+          "win_rate_pct": 67.0,
+          "avg_return_pct": 2.3,
+          "median_return_pct": 2.54,
+          "worst_return_pct": -24.86,
+          "avg_mae_pct": -6.72,
+          "worst_mae_pct": -29.37,
+          "benchmark": "QQQ",
+          "avg_alpha_vs_benchmark_pct": 1.15,
+          "evidence_score_0_100": 54.9,
+          "fail_reasons": [
+            "worst_MAE<-15%"
+          ],
+          "prospective_evidence_eligible": false,
+          "counterfactual_only": true,
+          "execution_eligible": false,
+          "automatic_order_allowed": false
+        },
+        {
+          "candidate_type": "SHADOW_CANDIDATE",
+          "selection_rank": 3,
+          "ticker": "ANET",
+          "rule": "momentum_leader",
+          "status": "WATCH_ONLY_INSUFFICIENT_QUANT_EVIDENCE",
+          "latest_date": "2026-07-13",
+          "latest_price": 181.15,
+          "data_fresh": true,
+          "staleness_business_days": 0,
+          "decision_eligible": true,
+          "horizon_days": 20,
+          "samples": 95,
+          "valid": true,
+          "win_rate_pct": 63.16,
+          "avg_return_pct": 2.82,
+          "median_return_pct": 3.45,
+          "worst_return_pct": -24.63,
+          "avg_mae_pct": -8.07,
+          "worst_mae_pct": -29.63,
+          "benchmark": "SPY",
+          "avg_alpha_vs_benchmark_pct": 1.66,
+          "evidence_score_0_100": 53.9,
+          "fail_reasons": [
+            "worst_MAE<-15%"
+          ],
+          "prospective_evidence_eligible": false,
+          "counterfactual_only": true,
+          "execution_eligible": false,
+          "automatic_order_allowed": false
+        }
+      ],
+      "counterfactual_only": true,
+      "execution_eligible": false,
+      "automatic_order_allowed": false
     }
   },
   "market_report_status": {

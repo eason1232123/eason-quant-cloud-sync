@@ -431,7 +431,7 @@ def compact_active_signals(vbt_report: dict[str, Any], limit: int = 30) -> dict[
 def finalize_decision_packet(packet: dict[str, Any], gate: dict[str, Any]) -> dict[str, Any]:
     if not isinstance(packet, dict) or not packet.get("schema_version"):
         return {
-            "schema_version": "decision-packet-v5.0",
+            "schema_version": "decision-packet-v5.1",
             "available": False,
             "reason": "decision packet was not produced by build_decision_report.py",
         }
@@ -572,10 +572,13 @@ def main() -> None:
     gate = final_gate(signal, overfit, trade, vectorbt_validation, vectorbt_report)
     sig_summary = signal_summary(signal)
     decision_packet = finalize_decision_packet(decision_packet_input, gate)
+    sig_summary["shadow_research_review"] = decision_packet.get("candidates", {}).get(
+        "shadow"
+    )
 
     master = {
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
-        "version": "eason-master-action-board-v6.0-model-governance-t2",
+        "version": "eason-master-action-board-v6.1-shadow-evidence",
         "purpose": "One evidence file for ChatGPT to review the decision contract, prospective model governance, quant validation, portfolio backtest, regime behavior, and actual trade review before live-market judgment.",
         "roles": {
             "github": "data, backtest, vectorbt validation/evidence, stability, risk, and trade-review evidence layer",

@@ -1,0 +1,39 @@
+{
+  "automatic_order_allowed": false,
+  "contains_private_account_data": false,
+  "execution_review_requirement": "UNAVAILABLE or stale lookthrough must be disclosed during actual-account review; it never upgrades or creates a buy candidate.",
+  "funds": {
+    "QQQ": {
+      "cache_file": "docs/etf_holdings_QQQ.csv",
+      "constituent_count": 0,
+      "holdings_as_of_date": null,
+      "official_url": "https://www.invesco.com/us/en/financial-products/etfs/invesco-qqq-trust-series-1.html",
+      "provider": "Invesco",
+      "reason": "OFFICIAL_HOLDINGS_CACHE_MISSING",
+      "refresh_result": null,
+      "staleness_weekdays": null,
+      "status": "UNAVAILABLE",
+      "weight_sum_pct": null
+    },
+    "SMH": {
+      "cache_file": "docs/etf_holdings_SMH.csv",
+      "constituent_count": 0,
+      "holdings_as_of_date": null,
+      "official_url": "https://www.vaneck.com/us/en/investments/semiconductor-etf-smh/",
+      "provider": "VanEck",
+      "reason": "OFFICIAL_HOLDINGS_CACHE_MISSING",
+      "refresh_result": null,
+      "staleness_weekdays": null,
+      "status": "UNAVAILABLE",
+      "weight_sum_pct": null
+    }
+  },
+  "generated_at_utc": "2026-07-14T16:06:17.098879+00:00",
+  "human_pilot_release_gate": false,
+  "market_data_timestamp": "2026-07-13",
+  "maximum_staleness_weekdays": 2,
+  "overlap_analysis": null,
+  "schema_version": "official-etf-lookthrough-status-v1",
+  "shadow_evidence_collection_blocked": false,
+  "status": "UNAVAILABLE"
+}

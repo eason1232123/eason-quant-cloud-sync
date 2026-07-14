@@ -1,0 +1,63 @@
+{
+  "assessment_counts": {
+    "buy_review": 0,
+    "no_trade": 0,
+    "reject": 0,
+    "wait": 0
+  },
+  "automatic_order_allowed": false,
+  "contains_private_account_data": false,
+  "counterfactual_only": true,
+  "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
+  "data_timestamp": "2026-07-13",
+  "evaluation_policy": {
+    "entry_close_offset_bars": 1,
+    "evaluation_horizon_bars": 20,
+    "every_selected_candidate_must_be_assessed": true,
+    "minimum_matured_samples_for_human_pilot": 20,
+    "overlapping_windows_may_be_correlated": true
+  },
+  "evidence_classification": "PROSPECTIVE",
+  "execution_eligible": false,
+  "generated_at_utc": "2026-07-14T14:34:56.171033+00:00",
+  "historical_backfill_allowed": false,
+  "human_confirmation_required": true,
+  "important_limit": "Shadow outcomes are counterfactual and may contain correlated overlapping windows. They do not prove an order was placed and do not guarantee future performance.",
+  "ledger_counts": {
+    "matured_outcome_events": 0,
+    "pending_outcomes": 0,
+    "prediction_events": 0
+  },
+  "market_timezone": "America/New_York",
+  "matured_metrics": {
+    "buy_review": {
+      "mean_close_path_max_adverse_excursion": null,
+      "mean_hypothetical_net_return_after_frozen_costs": null,
+      "mean_net_return_after_costs_minus_benchmark": null,
+      "positive_hypothetical_return_rate": null,
+      "positive_relative_return_rate": null,
+      "sample_count": 0
+    },
+    "buy_review_mean_net_return_minus_filtered_mean": null,
+    "sample_confidence": "INSUFFICIENT_SAMPLE",
+    "wait_reject_or_no_trade_filter": {
+      "mean_close_path_max_adverse_excursion": null,
+      "mean_hypothetical_net_return_after_frozen_costs": null,
+      "mean_net_return_after_costs_minus_benchmark": null,
+      "positive_hypothetical_return_rate": null,
+      "positive_relative_return_rate": null,
+      "sample_count": 0
+    }
+  },
+  "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
+  "price_frequency": "end_of_day_daily",
+  "prospective_start_market_date": "2026-07-15",
+  "real_trade_count_used_as_release_prerequisite": false,
+  "release_gate_eligible_matured_sample_count": 0,
+  "rule_fingerprint": "58872b8925760906ed358f88a8ce7ab4a660bd2161a935df41649fec13705436",
+  "schema_version": "shadow-review-forward-status-v1",
+  "shadow_evidence_policy_fingerprint": "1ca8a94fffc564bd4b587944fc0a1ebe45871d020358713011bff729a8437271",
+  "status": "BEFORE_PROSPECTIVE_START",
+  "strategy_contract_version": "v6-rc2-shared-rules-next-close",
+  "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807"
+}

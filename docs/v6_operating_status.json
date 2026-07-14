@@ -26,14 +26,15 @@
   "evidence_counts": {
     "minimum_governance_paired_samples": 0,
     "public_signal_primary_horizon_outcomes": 0,
-    "sanitized_live_review_matured_outcomes": 0,
-    "sanitized_live_review_predictions": 2
+    "sanitized_live_review_predictions": 2,
+    "shadow_review_matured_outcomes": 0,
+    "shadow_review_predictions": 0
   },
   "evidence_thresholds": {
     "governance_paired_samples_per_challenger": 48,
     "ibkr_bound_sanitized_live_reviews": 1,
     "public_signal_primary_horizon_outcomes": 20,
-    "sanitized_live_review_matured_outcomes": 20
+    "shadow_review_matured_outcomes": 20
   },
   "final_execution_layer": "IBKR_MANUAL_WITH_EXPLICIT_HUMAN_CONFIRMATION",
   "generated_at_utc": "2026-07-14T14:34:56.171033+00:00",
@@ -58,14 +59,14 @@
     "human_pilot_review": {
       "failed_release_gates": [
         "public_signal_minimum_sample_reached",
-        "live_review_minimum_sample_reached"
+        "shadow_review_minimum_sample_reached"
       ],
       "passed": false,
       "required_release_gates": [
         "model_artifacts_valid",
-        "live_review_forward_artifacts_valid",
+        "shadow_review_forward_artifacts_valid",
         "public_signal_minimum_sample_reached",
-        "live_review_minimum_sample_reached",
+        "shadow_review_minimum_sample_reached",
         "ibkr_to_chatgpt_contract_evidenced"
       ]
     },
@@ -74,7 +75,7 @@
       "passed": true,
       "required_release_gates": [
         "model_artifacts_valid",
-        "live_review_forward_artifacts_valid",
+        "shadow_review_forward_artifacts_valid",
         "ibkr_to_chatgpt_contract_evidenced"
       ]
     }
@@ -85,16 +86,16 @@
   "price_frequency": "end_of_day_daily",
   "release_blockers": [
     "PUBLIC_SIGNAL_PRIMARY_OUTCOMES_BELOW_MINIMUM",
-    "LIVE_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM"
+    "SHADOW_REVIEW_MATURED_SAMPLES_BELOW_MINIMUM"
   ],
   "release_gates": {
     "ibkr_to_chatgpt_contract_evidenced": true,
-    "live_review_forward_artifacts_valid": true,
-    "live_review_minimum_sample_reached": false,
     "model_artifacts_valid": true,
     "model_governance_promotion_sample_reached": false,
-    "public_signal_minimum_sample_reached": false
+    "public_signal_minimum_sample_reached": false,
+    "shadow_review_forward_artifacts_valid": true,
+    "shadow_review_minimum_sample_reached": false
   },
-  "schema_version": "v6-operating-status-v2",
+  "schema_version": "v6-operating-status-v3",
   "source_release_status": "PROSPECTIVE_VALIDATION_IN_PROGRESS"
 }

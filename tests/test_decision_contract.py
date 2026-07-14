@@ -208,6 +208,25 @@ class DecisionContractTests(unittest.TestCase):
         self.assertIsNone(candidate["worst_mae_pct"])
         self.assertIn("worst_MAE_missing_or_invalid", candidate["fail_reasons"])
 
+    def test_shadow_candidate_collects_evidence_without_upgrading_no_trade(self):
+        market_report = report()
+        market_report["backtests"]["LRCX"]["relative_strength_rebound"]["20d"].pop(
+            "worst_mae"
+        )
+        outputs = self.compile(market_report, portfolio())
+        packet = outputs["decision_packet"]
+
+        self.assertEqual(packet["decision"]["final_action"], "NO_TRADE")
+        self.assertEqual(packet["candidates"]["execution"]["candidate_count"], 0)
+        shadow = packet["candidates"]["shadow"]
+        self.assertEqual(shadow["candidate_type"], "SHADOW_CANDIDATE")
+        self.assertEqual(shadow["candidate_count"], 1)
+        self.assertEqual(shadow["top"][0]["ticker"], "LRCX")
+        self.assertTrue(shadow["top"][0]["counterfactual_only"])
+        self.assertFalse(shadow["top"][0]["execution_eligible"])
+        self.assertFalse(shadow["top"][0]["automatic_order_allowed"])
+        self.assertFalse(shadow["top"][0]["prospective_evidence_eligible"])
+
     def test_stale_model_ticker_blocks_on_data_not_technical_risk(self):
         outputs = self.compile(report(qqq_date="2026-07-07"), portfolio())
         signal = outputs["decision"]
@@ -395,7 +414,7 @@ class DecisionContractTests(unittest.TestCase):
             contract_validator.validate_invariants(bypassed_live_review)
 
         future_candidate = deepcopy(packet)
-        future_candidate["candidates"]["top_actionable"][0]["latest_date"] = "2026-07-10"
+        future_candidate["candidates"]["execution"]["top"][0]["latest_date"] = "2026-07-10"
         contract_validator.validate_schema(future_candidate, schema)
         with self.assertRaises(AssertionError):
             contract_validator.validate_invariants(future_candidate)
