@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-07-14T08:23:35.637148+00:00",
+  "generated_at_utc": "2026-07-14T13:10:45.645703+00:00",
   "summary_type": "decision",
   "source_file": "eason_signal.json",
   "decision_packet_file": "decision_packet.json",
@@ -11,7 +11,7 @@
   "market_data": {
     "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "report_generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
+    "report_generated_at_utc": "2026-07-14T13:08:45.595933+00:00",
     "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",
@@ -87,11 +87,11 @@
   "default_human_action_before_chatgpt_review": "NO_TRADE",
   "portfolio_backtest_available": true,
   "freshness": {
-    "source_report_generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
+    "source_report_generated_at_utc": "2026-07-14T13:08:45.595933+00:00",
     "market_data": {
       "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
       "market_timezone": "America/New_York",
-      "report_generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
+      "report_generated_at_utc": "2026-07-14T13:08:45.595933+00:00",
       "data_timestamp": "2026-07-13",
       "data_timestamp_granularity": "market_date",
       "data_timestamp_status": "AVAILABLE",

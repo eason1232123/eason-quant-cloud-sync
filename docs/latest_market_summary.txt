@@ -1,6 +1,6 @@
 Eason Quant Latest MARKET Summary
 ========================================
-generated_at_utc: 2026-07-14T08:21:59.461819+00:00
+generated_at_utc: 2026-07-14T13:08:45.595933+00:00
 data_source: Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates
 market_timezone: America/New_York
 data_timestamp: 2026-07-13

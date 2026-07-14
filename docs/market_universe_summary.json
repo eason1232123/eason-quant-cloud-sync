@@ -1,16 +1,16 @@
 {
-  "generated_at_utc": "2026-07-14T08:21:24.617340+00:00",
+  "generated_at_utc": "2026-07-14T13:08:02.128284+00:00",
   "version": "market-universe-v1",
-  "eligible_ticker_count": 5613,
+  "eligible_ticker_count": 5614,
   "exchange_counts": {
     "Cboe": 4,
-    "NASDAQ": 3241,
+    "NASDAQ": 3242,
     "NYSE": 2093,
     "NYSE American": 262,
     "NYSE Arca": 13
   },
   "source_counts": {
-    "NASDAQ": 3241,
+    "NASDAQ": 3242,
     "OTHER": 2372
   },
   "sources": {

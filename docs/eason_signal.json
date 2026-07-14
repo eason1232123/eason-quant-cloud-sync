@@ -1,6 +1,6 @@
 {
   "schema_version": "eason-signal-v5.0",
-  "generated_at_utc": "2026-07-14T08:23:35.637148+00:00",
+  "generated_at_utc": "2026-07-14T13:10:45.645703+00:00",
   "source": "Derived from market_report.json, portfolio_backtest.json, and cached quant evidence.",
   "decision_policy": {
     "github_role": "quantitative evidence filter and public portfolio-model risk scope only",
@@ -23,11 +23,11 @@
     "important_limit": "This is an evidence report, not an automatic trading bot."
   },
   "freshness": {
-    "source_report_generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
+    "source_report_generated_at_utc": "2026-07-14T13:08:45.595933+00:00",
     "market_data": {
       "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
       "market_timezone": "America/New_York",
-      "report_generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
+      "report_generated_at_utc": "2026-07-14T13:08:45.595933+00:00",
       "data_timestamp": "2026-07-13",
       "data_timestamp_granularity": "market_date",
       "data_timestamp_status": "AVAILABLE",
@@ -266,7 +266,7 @@
   "market_data": {
     "source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
     "market_timezone": "America/New_York",
-    "report_generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
+    "report_generated_at_utc": "2026-07-14T13:08:45.595933+00:00",
     "data_timestamp": "2026-07-13",
     "data_timestamp_granularity": "market_date",
     "data_timestamp_status": "AVAILABLE",

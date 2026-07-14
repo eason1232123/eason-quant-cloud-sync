@@ -10,7 +10,7 @@
   "current_report_market_date": "2026-07-13",
   "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
   "data_timestamp": "2026-07-13",
-  "generated_at_utc": "2026-07-14T08:21:59.461819+00:00",
+  "generated_at_utc": "2026-07-14T13:08:45.595933+00:00",
   "historical_data_through_market_date": "2026-07-10",
   "historical_evidence_classification": "RETROSPECTIVE_CONTAMINATED",
   "important_limit": "Prospective observations are evidence, not a guarantee of future performance or an automatic trading instruction.",
