@@ -22,7 +22,7 @@
   },
   "current_data_quality_status": "PARTIAL_STALE_WATCHLIST",
   "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
-  "data_timestamp": "2026-07-13",
+  "data_timestamp": "2026-07-14",
   "evidence_counts": {
     "minimum_governance_paired_samples": 0,
     "public_signal_primary_horizon_outcomes": 0,
@@ -36,7 +36,7 @@
     "sanitized_live_review_matured_outcomes": 20
   },
   "final_execution_layer": "IBKR_MANUAL_WITH_EXPLICIT_HUMAN_CONFIRMATION",
-  "generated_at_utc": "2026-07-14T14:34:56.171033+00:00",
+  "generated_at_utc": "2026-07-15T00:56:23.912689+00:00",
   "human_confirmation_required": true,
   "important_limit": "READ_ONLY_SHADOW is decision support, not validated pilot performance or an order. Human-pilot readiness and challenger-model promotion evidence are separate; neither authorizes model replacement or automatic execution.",
   "market_timezone": "America/New_York",

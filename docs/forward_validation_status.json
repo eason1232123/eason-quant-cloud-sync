@@ -2,24 +2,24 @@
   "automatic_order_allowed": false,
   "contains_private_account_data": false,
   "current_market_date_prediction_counts": {
-    "active": 12,
-    "no_signal": 35,
-    "skipped": 47,
+    "active": 16,
+    "no_signal": 30,
+    "skipped": 48,
     "total": 94
   },
-  "current_report_market_date": "2026-07-13",
+  "current_report_market_date": "2026-07-14",
   "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
-  "data_timestamp": "2026-07-13",
-  "generated_at_utc": "2026-07-14T14:34:56.171033+00:00",
+  "data_timestamp": "2026-07-14",
+  "generated_at_utc": "2026-07-15T00:56:23.912689+00:00",
   "historical_data_through_market_date": "2026-07-10",
   "historical_evidence_classification": "RETROSPECTIVE_CONTAMINATED",
   "important_limit": "Prospective observations are evidence, not a guarantee of future performance or an automatic trading instruction.",
   "ledger_counts": {
     "matured_outcome_events": 0,
     "new_outcome_events": 0,
-    "new_prediction_events": 0,
-    "pending_outcomes": 188,
-    "prediction_events": 94
+    "new_prediction_events": 94,
+    "pending_outcomes": 372,
+    "prediction_events": 188
   },
   "market_timezone": "America/New_York",
   "price_adjustment_policy": "adjusted_ohlc_when_available_else_unadjusted",
@@ -37,5 +37,5 @@
   "status": "PROSPECTIVE_EVENTS_RECORDED",
   "strategy_contract_version": "v6-rc2-shared-rules-next-close",
   "strategy_fingerprint": "0bc190976cd62389f1d4cca6ba7c5d2359f01ee617c8bf764860c40cf2a84807",
-  "validated_prediction_cohort_count": 1
+  "validated_prediction_cohort_count": 2
 }

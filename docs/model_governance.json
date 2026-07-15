@@ -99,7 +99,7 @@
     "warmup": false
   },
   "data_source": "Tiingo Free API with local CSV cache fallback, tiered refresh, 429 circuit breaker, append-only cache updates",
-  "data_timestamp": "2026-07-13",
+  "data_timestamp": "2026-07-14",
   "data_timestamp_granularity": "market_date",
   "data_timestamp_status": "AVAILABLE",
   "effective_target_weights": {
@@ -111,7 +111,7 @@
   },
   "evaluation_horizon_bars": 20,
   "evidence_classification": "PROSPECTIVE",
-  "generated_at_utc": "2026-07-14T14:34:56.171033+00:00",
+  "generated_at_utc": "2026-07-15T00:56:23.912689+00:00",
   "important_limit": "Governance uses only paired, non-overlapping prospective public-model samples. It cannot place an order and cannot infer current private IBKR holdings.",
   "ledger_counts": {
     "new_outcome_events": 0,

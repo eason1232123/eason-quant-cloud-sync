@@ -1,8 +1,8 @@
 {
-  "generated_at_utc": "2026-07-14T14:36:57.232146+00:00",
+  "generated_at_utc": "2026-07-15T00:58:30.536950+00:00",
   "data_source": "Tiingo daily local CSV cache",
   "market_timezone": "America/New_York",
-  "data_timestamp": "2026-07-13",
+  "data_timestamp": "2026-07-14",
   "data_timestamp_granularity": "market_date",
   "data_timestamp_status": "AVAILABLE",
   "price_frequency": "end_of_day_daily",
@@ -23,10 +23,10 @@
   "regimes": [
     {
       "regime": "base",
-      "trading_days": 1264,
-      "share_of_history_pct": 82.24,
-      "avg_daily_return_pct": 0.0961,
-      "daily_win_rate_pct": 56.8,
+      "trading_days": 1265,
+      "share_of_history_pct": 82.25,
+      "avg_daily_return_pct": 0.0965,
+      "daily_win_rate_pct": 56.84,
       "max_regime_drawdown_pct": -12.79,
       "drawdown_definition": "minimum drawdown within contiguous regime episodes",
       "avg_cash_weight_pct": 14.85,
@@ -35,7 +35,7 @@
     {
       "regime": "severe_defensive",
       "trading_days": 247,
-      "share_of_history_pct": 16.07,
+      "share_of_history_pct": 16.06,
       "avg_daily_return_pct": 0.0236,
       "daily_win_rate_pct": 48.18,
       "max_regime_drawdown_pct": -8.69,
